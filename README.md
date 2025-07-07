@@ -55,13 +55,14 @@
 4. 导出项目为.exe文件，默认文件路径是.exe可执行文件的同目录下/userdata
 5. 选择data.zip，解压缩，放置进.exe同意目录内。目录：{exe}/data
 6. 确保目录如下所示：
-   ```
-   父文件夹/
-	├── Streaming Assistant.exe   # 可执行文件
-	├── data/                     # 游戏数据，包含干员和分队信息
-   	|    ├── operators/	      # 干员数据目录
-   	|    └── squads/	      # 分队数据目录
-   	└── userdata/ 		      # 用户数据
+	```
+	父文件夹/
+	 ├── Streaming Assistant.exe   # 可执行文件
+	 ├── data/                    # 游戏数据，包含干员和分队信息
+	 │    ├── operators/          # 干员数据目录
+	 │    └── squads/             # 分队数据目录
+	 └── userdata/                # 用户数据
+   	```
 8. 运行可执行文件并开始使用
 
 ### 数据文件设置
