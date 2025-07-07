@@ -1,4 +1,4 @@
-# 演播室2 - Godot 直播管理系统
+# 演播室 - Arknights Theurgy Cup Like Streaming Assistant - A Godot-based rouge-like Streaming scene helper
 
 一个基于 Godot 4.3 开发的直播间管理工具，用于管理选手、队伍、解说员信息，并提供实时的界面显示功能。
 
@@ -8,9 +8,9 @@
 - **选手管理**: 选手信息录入、编辑和实时选择
 - **队伍管理**: 队伍信息管理和实时显示
 - **解说员管理**: 解说员信息录入和选择
-- **藏品系统**: 开局藏品选择和显示
-- **干员系统**: 干员头像和信息管理
-- **分队系统**: 分队图标和信息显示
+- **藏品系统**: 选手开局藏品选择和显示
+- **干员系统**: 选手选取开局干员头像和信息显示
+- **分队系统**: 选手选取开局分队图标和信息显示
 
 ### 界面功能
 - **控制面板**: 集中的管理界面
@@ -57,7 +57,8 @@
 1. 克隆仓库到本地
 2. 使用 Godot 4.3 打开 `project.godot` 文件
 3. 等待项目导入完成
-4. 运行主场景开始使用
+4. 导出项目为.exe文件，默认文件路径是.exe可执行文件的同目录下/userdata
+5. 运行主场景开始使用
 
 ### 数据文件设置
 项目运行后会自动创建所需的数据目录结构：
@@ -82,12 +83,61 @@
 ### 干员头像
 - **路径**: `data/operators/{星级}/头像_{干员名}.png`
 - **格式**: PNG
-- **分类**: 按星级(3-6)分目录存放
+- **分类**: 按星级(5-6)分目录存放
+- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/operators/{星级}_star_name_list.json`
 
 ### 分队图标
 - **路径**: `data/squads/{分队名}.png`
 - **格式**: PNG
 - **命名**: 使用分队名称
+- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/squads.json`
+
+## 📁 文本资源规范
+
+## 选手数据
+- **路径**：`userdata/players/players.json`
+- **格式**：JSON
+- **数据结构**：
+  ```
+  [
+	{
+		"captain": 0,
+		"icon_path": "{exe_path}/userdata/players/player_icons/小明.jpg",
+		"id": "小明",
+		"name": "小明",
+		"starting_operator_choice": "史尔特尔",
+		"starting_relic_choice": "希望时代的涂鸦",
+		"starting_squad_choice": "魂灵护送分队",
+		"stats": {
+      "money_taken": 20,
+			"score": 325,
+			"slogan": "这是感言"
+		},
+		"team_id": "IGP"
+	}//以此类推
+  ]
+  ```
+
+## 队伍数据
+- **路径**：`userdata/teams/teams.json`
+- **格式**：JSON
+- **数据结构**：
+  ```
+  [
+	{
+		"balance": 180,
+		"captain": null,
+		"icon_path": "C:/Users/duck1/Desktop/LiveStreaming/userdata/teams/team_icons/IGP.jpg",
+		"id": "IGP",
+		"members": [
+			"小明"
+		],
+		"name": "集批战术分队",
+		"rank": null,
+		"score": 325
+	}
+  ]
+  ```
 
 ## 🎮 使用说明
 
