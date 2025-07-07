@@ -30,16 +30,8 @@
 │   ├── fonts/                # 字体文件
 │   ├── icons/                # 图标资源
 │   └── textures/             # 纹理资源
-├── data/                     # 游戏数据
-│   ├── operators/            # 干员数据和图标
-│   ├── squads/              # 分队图标
-│   └── relics.json          # 藏品数据库
-├── userdata/                # 用户数据
-│   ├── players/             # 选手数据和头像
-│   ├── teams/               # 队伍数据和图标
-│   └── announcers/          # 解说员数据
 ├── scripts/                 # 脚本文件
-│   ├── data/                # 数据管理脚本
+│   data/                # 数据管理脚本
 │   ├── main/                # 主要逻辑脚本
 │   ├── prefabs/             # 预制件脚本
 │   └── ui/                  # UI相关脚本
@@ -61,7 +53,16 @@
 2. 使用 Godot 4.3 打开 `project.godot` 文件
 3. 等待项目导入完成
 4. 导出项目为.exe文件，默认文件路径是.exe可执行文件的同目录下/userdata
-5. 运行主场景开始使用
+5. 选择data.zip，解压缩，放置进.exe同意目录内。目录：{exe}/data
+6. 确保目录如下所示：
+   ```
+   父文件夹/
+	├── Streaming Assistant.exe   # 可执行文件
+	├── data/                     # 游戏数据，包含干员和分队信息
+   	|    ├── operators/	      # 干员数据目录
+   	|    └── squads/	      # 分队数据目录
+   	└── userdata/ 		      # 用户数据
+8. 运行可执行文件并开始使用
 
 ### 数据文件设置
 项目运行后会自动创建所需的数据目录结构：
