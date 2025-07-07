@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3 uid="uid://cmjs5mnnv7b2t"]
+
+[ext_resource type="Texture2D" uid="uid://byi3cn5k2khup" path="res://texture/prefabs/ring.png" id="1_a8f67"]
+[ext_resource type="Script" path="res://scripts/prefabs/Ring.gd" id="1_mqa2e"]
+[ext_resource type="Shader" path="res://shaders/Ring.gdshader" id="2_yn6ff"]
+[ext_resource type="Texture2D" uid="uid://cvavoa04ej0oh" path="res://texture/prefabs/gradiant.png" id="3_uk5yx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xaqwf"]
+shader = ExtResource("2_yn6ff")
+shader_parameter/color_texture_sample_degrees = 0.0
+shader_parameter/node_scale = Vector2(1, 1)
+shader_parameter/ring_shape_texture = ExtResource("1_a8f67")
+shader_parameter/color_gradient_texture = ExtResource("3_uk5yx")
+
+[node name="Ring" type="Node2D"]
+position = Vector2(384, 392)
+script = ExtResource("1_mqa2e")
+
+[node name="RingSprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_xaqwf")
+texture = ExtResource("3_uk5yx")

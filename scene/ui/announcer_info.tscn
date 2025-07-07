@@ -1,0 +1,131 @@
+[gd_scene load_steps=5 format=3 uid="uid://bcfho4uj52t7p"]
+
+[ext_resource type="Script" path="res://scripts/ui/announcer_info.gd" id="1_yyeam"]
+[ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="2_u8nfq"]
+[ext_resource type="FontFile" uid="uid://ckdin4yib0r60" path="res://fonts/SourceHanSerifSC-Heavy.otf" id="3_b57mc"]
+[ext_resource type="Texture2D" uid="uid://caocsscnu12co" path="res://texture/ui/icon_frame.png" id="4_nkixi"]
+
+[node name="AnnouncerInfo" type="Node2D"]
+script = ExtResource("1_yyeam")
+
+[node name="Waitingframe1" type="TextureRect" parent="."]
+offset_right = 1223.0
+offset_bottom = 774.0
+texture = ExtResource("2_u8nfq")
+
+[node name="NowAnnouncers" type="Label" parent="."]
+offset_top = 34.0
+offset_right = 1223.0
+offset_bottom = 122.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.959218, 0.7913, 0.897124, 1)
+theme_override_fonts/font = ExtResource("3_b57mc")
+theme_override_font_sizes/font_size = 60
+text = "本场解说"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon1" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 217.0
+offset_top = 240.0
+offset_right = 417.0
+offset_bottom = 520.0
+
+[node name="Frame" type="TextureRect" parent="Icon1"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+texture = ExtResource("4_nkixi")
+
+[node name="Icon" type="TextureRect" parent="Icon1"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 26.0
+offset_right = 240.0
+offset_bottom = 239.0
+expand_mode = 1
+
+[node name="NameLabel" type="Label" parent="Icon1"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 251.0
+offset_right = 252.0
+offset_bottom = 301.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_b57mc")
+theme_override_font_sizes/font_size = 30
+text = "解说员1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon2" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 479.0
+offset_top = 240.0
+offset_right = 679.0
+offset_bottom = 520.0
+
+[node name="Frame" type="TextureRect" parent="Icon2"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+texture = ExtResource("4_nkixi")
+
+[node name="Icon" type="TextureRect" parent="Icon2"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 27.0
+offset_right = 240.0
+offset_bottom = 240.0
+expand_mode = 1
+
+[node name="NameLabel" type="Label" parent="Icon2"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 252.0
+offset_right = 251.0
+offset_bottom = 302.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_b57mc")
+theme_override_font_sizes/font_size = 30
+text = "解说员2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon3" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 741.0
+offset_top = 240.0
+offset_right = 941.0
+offset_bottom = 520.0
+
+[node name="Frame" type="TextureRect" parent="Icon3"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+texture = ExtResource("4_nkixi")
+
+[node name="Icon" type="TextureRect" parent="Icon3"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 27.0
+offset_right = 240.0
+offset_bottom = 240.0
+expand_mode = 1
+
+[node name="NameLabel" type="Label" parent="Icon3"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 252.0
+offset_right = 251.0
+offset_bottom = 302.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_b57mc")
+theme_override_font_sizes/font_size = 30
+text = "解说员3"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2tai4tka7cve"]
+
+[ext_resource type="Texture2D" uid="uid://8qw14jugod2b" path="res://texture/ui/主视觉.png" id="1_djlfh"]
+
+[node name="MainVision" type="Node2D"]
+
+[node name="主视觉" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_djlfh")

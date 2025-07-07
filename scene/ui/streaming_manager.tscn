@@ -1,0 +1,129 @@
+[gd_scene load_steps=5 format=3 uid="uid://dg276nokqdhia"]
+
+[ext_resource type="Script" path="res://scripts/ui/date.gd" id="1_p0uj0"]
+[ext_resource type="Script" path="res://scripts/ui/now_player.gd" id="2_1ec14"]
+[ext_resource type="Script" path="res://scripts/ui/now_announcer.gd" id="3_017sb"]
+[ext_resource type="Script" path="res://scripts/ui/now_team.gd" id="4_now_team"]
+
+[node name="StreamingManager" type="Node2D"]
+
+[node name="Date" type="VBoxContainer" parent="."]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 200.0
+offset_bottom = 93.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("1_p0uj0")
+
+[node name="DateInput" type="LineEdit" parent="Date"]
+layout_mode = 2
+placeholder_text = "比赛日（填写数字）"
+
+[node name="DateInputButton" type="Button" parent="Date"]
+layout_mode = 2
+text = "确认"
+
+[node name="DateInputLabel" type="Label" parent="Date"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NowPlayer" type="VBoxContainer" parent="."]
+offset_top = 128.0
+offset_right = 200.0
+offset_bottom = 385.0
+script = ExtResource("2_1ec14")
+
+[node name="PlayerSelection" type="OptionButton" parent="NowPlayer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayerConfirm" type="Button" parent="NowPlayer"]
+layout_mode = 2
+text = "人物确认（控制界面）"
+
+[node name="CurrentPlayerLabel" type="Label" parent="NowPlayer"]
+layout_mode = 2
+
+[node name="TimerStart" type="Button" parent="NowPlayer"]
+layout_mode = 2
+text = "连麦倒计时开始"
+
+[node name="TimerStop" type="Button" parent="NowPlayer"]
+layout_mode = 2
+text = "连麦倒计时提前结束"
+
+[node name="Label" type="Label" parent="NowPlayer"]
+layout_mode = 2
+text = "剩余连麦次数："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CounterReset" type="Button" parent="NowPlayer"]
+layout_mode = 2
+text = "重置连麦次数"
+
+[node name="MoneyTaken" type="LineEdit" parent="NowPlayer"]
+layout_mode = 2
+placeholder_text = "取钱"
+alignment = 1
+
+[node name="Score" type="LineEdit" parent="NowPlayer"]
+layout_mode = 2
+placeholder_text = "分数"
+alignment = 1
+
+[node name="ScoreConfirm" type="Button" parent="NowPlayer"]
+layout_mode = 2
+text = "分数，取钱确认"
+
+[node name="NowAnnouncer" type="VBoxContainer" parent="."]
+offset_top = 492.0
+offset_right = 200.0
+offset_bottom = 595.0
+script = ExtResource("3_017sb")
+
+[node name="AnnouncerSelection1" type="OptionButton" parent="NowAnnouncer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AnnouncerSelection2" type="OptionButton" parent="NowAnnouncer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AnnouncerSelection3" type="OptionButton" parent="NowAnnouncer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="NowAnnouncer"]
+layout_mode = 2
+text = "确认"
+
+[node name="CurrentAnnouncerLabel" type="Label" parent="NowAnnouncer"]
+layout_mode = 2
+text = "未选择解说员"
+
+[node name="NowTeam" type="VBoxContainer" parent="."]
+offset_top = 655.0
+offset_right = 200.0
+offset_bottom = 759.0
+script = ExtResource("4_now_team")
+
+[node name="TeamName" type="Label" parent="NowTeam"]
+layout_mode = 2
+text = "队伍名称："
+
+[node name="TeamID" type="Label" parent="NowTeam"]
+layout_mode = 2
+text = "队伍ID："
+
+[node name="TeamBalance" type="Label" parent="NowTeam"]
+layout_mode = 2
+text = "余额："
+
+[node name="TeamScore" type="Label" parent="NowTeam"]
+layout_mode = 2
+text = "分数："

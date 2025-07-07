@@ -1,0 +1,45 @@
+# Godot-specific ignores
+.godot/
+.import/
+export_presets.cfg
+
+# Exported executables
+*.exe
+*.pck
+*.console.exe
+
+# Temporary files
+*.tmp
+
+# Build output
+build/
+export/
+
+# Python files (if any)
+__pycache__/
+*.pyc
+*.pyo
+
+# User data that might contain sensitive info (optional)
+# userdata/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test files
+test_*.py

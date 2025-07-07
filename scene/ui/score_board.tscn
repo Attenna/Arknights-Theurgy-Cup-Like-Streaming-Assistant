@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://dk6d6u0lh6y7f"]
+
+[ext_resource type="Script" path="res://scripts/ui/score_board.gd" id="1_p762f"]
+[ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="2_72m24"]
+[ext_resource type="FontFile" uid="uid://dt6f5hjiy3xve" path="res://fonts/SourceHanSansCN-VF.otf" id="3_584ry"]
+
+[node name="RankingList" type="Node2D"]
+script = ExtResource("1_p762f")
+
+[node name="window1" type="TextureRect" parent="."]
+offset_right = 1223.0
+offset_bottom = 774.0
+texture = ExtResource("2_72m24")
+
+[node name="Title" type="Control" parent="window1"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Order" type="Label" parent="window1/Title"]
+layout_mode = 0
+offset_left = 16.0
+offset_right = 136.0
+offset_bottom = 83.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_584ry")
+theme_override_font_sizes/font_size = 55
+text = "名次"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Money" type="Label" parent="window1/Title"]
+layout_mode = 0
+offset_left = 752.0
+offset_right = 862.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_584ry")
+theme_override_font_sizes/font_size = 55
+text = "余额"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TeamName" type="Label" parent="window1/Title"]
+layout_mode = 0
+offset_left = 296.0
+offset_top = 5.0
+offset_right = 516.0
+offset_bottom = 81.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_584ry")
+theme_override_font_sizes/font_size = 55
+text = "队伍名称"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score" type="Label" parent="window1/Title"]
+layout_mode = 0
+offset_left = 1032.0
+offset_right = 1142.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_584ry")
+theme_override_font_sizes/font_size = 55
+text = "分数"
+horizontal_alignment = 1
+vertical_alignment = 1

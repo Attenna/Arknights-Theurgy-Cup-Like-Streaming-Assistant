@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr3iiwbo8bjft"]
+
+[ext_resource type="Script" path="res://scripts/data/announcer_editor.gd" id="1_4o6vv"]
+
+[node name="Panel" type="Node2D"]
+
+[node name="AnnouncerEditor" type="VBoxContainer" parent="."]
+offset_right = 166.0
+offset_bottom = 155.0
+script = ExtResource("1_4o6vv")
+
+[node name="NameLabel" type="Label" parent="AnnouncerEditor"]
+layout_mode = 2
+text = "解说名称"
+
+[node name="NameInput" type="LineEdit" parent="AnnouncerEditor"]
+layout_mode = 2
+
+[node name="SelectIconButton" type="Button" parent="AnnouncerEditor"]
+layout_mode = 2
+text = "选择头像"
+
+[node name="IconPathLabel" type="Label" parent="AnnouncerEditor"]
+layout_mode = 2
+text = "[地址]"
+horizontal_alignment = 1
+
+[node name="SaveButton" type="Button" parent="AnnouncerEditor"]
+layout_mode = 2
+text = "保存信息"

@@ -1,0 +1,14 @@
+[
+	{
+		"id": "team_001",
+		"name": "红队",
+		"balance": 1000,
+		"score": 185
+	},
+	{
+		"id": "team_002",
+		"name": "蓝队",
+		"balance": 1200,
+		"score": 215
+	}
+]

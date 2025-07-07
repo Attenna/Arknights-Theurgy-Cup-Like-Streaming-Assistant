@@ -1,0 +1,183 @@
+[gd_scene load_steps=21 format=3 uid="uid://gyinhbmm8c4o"]
+
+[ext_resource type="Texture2D" uid="uid://bk5mgsfy2s4kk" path="res://texture/prefabs/候场.png" id="1_5gfqk"]
+[ext_resource type="Script" path="res://scripts/waiting_scene.gd" id="1_5yeky"]
+[ext_resource type="Texture2D" uid="uid://biolkgdtimixb" path="res://texture/ui/lengshuikeng_bar.png" id="2_eyxet"]
+[ext_resource type="Texture2D" uid="uid://b1a3bvhkyjbcl" path="res://texture/prefabs/string0.png" id="2_inmlf"]
+[ext_resource type="Texture2D" uid="uid://cj7ufqlvt5ndj" path="res://texture/prefabs/string1.png" id="3_6hv1l"]
+[ext_resource type="Texture2D" uid="uid://c30t1xyfqmuxc" path="res://texture/prefabs/building.png" id="3_adboo"]
+[ext_resource type="Texture2D" uid="uid://cuo8k3ui8gf5v" path="res://texture/prefabs/string2.png" id="4_8duvg"]
+[ext_resource type="Texture2D" uid="uid://byxjrd66erai3" path="res://texture/prefabs/middlebuilding.png" id="4_hr3lv"]
+[ext_resource type="Texture2D" uid="uid://qs72naw64p51" path="res://texture/prefabs/civilight_eterna.png" id="5_mmw5u"]
+[ext_resource type="Texture2D" uid="uid://c6kkpn4w5x5dq" path="res://texture/prefabs/frontbuilding.png" id="5_x5tqn"]
+[ext_resource type="Shader" path="res://shaders/DecoBar.gdshader" id="7_v542x"]
+[ext_resource type="PackedScene" uid="uid://cmjs5mnnv7b2t" path="res://scene/prefabs/Ring.tscn" id="8_uub71"]
+[ext_resource type="Texture2D" uid="uid://p4qnldvxdla3" path="res://texture/ui/waitingframe0.png" id="11_kcbdp"]
+[ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="12_dunpg"]
+[ext_resource type="Texture2D" uid="uid://cd62xld2pgy8c" path="res://texture/ui/titlebar.png" id="13_7jwoo"]
+[ext_resource type="Script" path="res://scripts/ui/title_date.gd" id="15_deiyl"]
+[ext_resource type="FontFile" uid="uid://d1e0vtsvng0bl" path="res://fonts/SourceHanSerifSC-SemiBold.otf" id="15_meaim"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w1g5l"]
+shader = ExtResource("7_v542x")
+shader_parameter/scroll_speed = 0.05
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8mpnk"]
+shader = ExtResource("7_v542x")
+shader_parameter/scroll_speed = 0.07
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c8pnn"]
+shader = ExtResource("7_v542x")
+shader_parameter/scroll_speed = 0.1
+
+[node name="waiting_scene" type="Node2D"]
+script = ExtResource("1_5yeky")
+
+[node name="BG" type="TextureRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_5gfqk")
+
+[node name="RightScene" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1436.0
+offset_right = 1476.0
+offset_bottom = 40.0
+
+[node name="BackBuiliding" type="TextureRect" parent="RightScene"]
+material = SubResource("ShaderMaterial_w1g5l")
+layout_mode = 0
+offset_left = -1436.0
+offset_top = 354.0
+offset_right = 485.0
+offset_bottom = 1080.0
+texture = ExtResource("3_adboo")
+stretch_mode = 1
+
+[node name="MiddleBuilding" type="TextureRect" parent="RightScene"]
+material = SubResource("ShaderMaterial_8mpnk")
+layout_mode = 0
+offset_left = -1436.0
+offset_top = 534.0
+offset_right = 484.0
+offset_bottom = 1080.0
+texture = ExtResource("4_hr3lv")
+stretch_mode = 1
+
+[node name="FrontBuilding" type="TextureRect" parent="RightScene"]
+layout_mode = 0
+offset_left = -107.0
+offset_top = 501.0
+offset_right = 486.0
+offset_bottom = 1060.0
+texture = ExtResource("5_x5tqn")
+
+[node name="CivilightEterna" type="Control" parent="RightScene"]
+anchors_preset = 0
+offset_left = 102.0
+offset_right = 142.0
+offset_bottom = 40.0
+
+[node name="ring2" parent="RightScene/CivilightEterna" instance=ExtResource("8_uub71")]
+position = Vector2(114, 360)
+scale = Vector2(0.7, 0.7)
+node_rotation_speed = -2.0
+texture_fixed_angle = 174.0
+
+[node name="ring1" parent="RightScene/CivilightEterna" instance=ExtResource("8_uub71")]
+position = Vector2(114, 360)
+node_rotation_speed = 3.0
+texture_fixed_angle = 60.0
+
+[node name="String0" type="TextureRect" parent="RightScene/CivilightEterna"]
+layout_mode = 0
+offset_left = -56.0
+offset_right = 301.0
+offset_bottom = 1080.0
+texture = ExtResource("2_inmlf")
+
+[node name="String1" type="TextureRect" parent="RightScene/CivilightEterna"]
+layout_mode = 0
+offset_left = -40.0
+offset_right = 329.0
+offset_bottom = 1080.0
+texture = ExtResource("3_6hv1l")
+
+[node name="String2" type="TextureRect" parent="RightScene/CivilightEterna"]
+layout_mode = 0
+offset_left = -56.0
+offset_right = 289.0
+offset_bottom = 1080.0
+texture = ExtResource("4_8duvg")
+
+[node name="CivilightEterna" type="TextureRect" parent="RightScene/CivilightEterna"]
+layout_mode = 0
+offset_top = 216.0
+offset_right = 230.0
+offset_bottom = 446.0
+texture = ExtResource("5_mmw5u")
+
+[node name="LeftScene" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1436.0
+offset_right = 1476.0
+offset_bottom = 40.0
+
+[node name="window0" type="TextureRect" parent="LeftScene"]
+layout_mode = 0
+offset_left = -1436.0
+offset_right = -92.0
+offset_bottom = 1080.0
+texture = ExtResource("11_kcbdp")
+
+[node name="window1" type="TextureRect" parent="LeftScene"]
+layout_mode = 0
+offset_left = -1361.0
+offset_top = 229.0
+offset_right = -138.0
+offset_bottom = 1003.0
+texture = ExtResource("12_dunpg")
+
+[node name="TtileBar" type="TextureRect" parent="LeftScene"]
+layout_mode = 0
+offset_left = -1436.0
+offset_top = 34.0
+offset_right = -569.0
+offset_bottom = 208.0
+texture = ExtResource("13_7jwoo")
+
+[node name="Title" type="Label" parent="LeftScene"]
+layout_mode = 0
+offset_left = -1324.0
+offset_top = 77.0
+offset_right = -913.0
+offset_bottom = 171.0
+theme_override_fonts/font = ExtResource("15_meaim")
+theme_override_font_sizes/font_size = 65
+text = "冷水坑#2 Day"
+script = ExtResource("15_deiyl")
+
+[node name="InfoContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 75.0
+offset_top = 229.0
+offset_right = 75.0
+offset_bottom = 229.0
+
+[node name="DecoBar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Banner" type="TextureRect" parent="DecoBar"]
+material = SubResource("ShaderMaterial_c8pnn")
+layout_mode = 0
+offset_top = 1003.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("2_eyxet")
+stretch_mode = 1

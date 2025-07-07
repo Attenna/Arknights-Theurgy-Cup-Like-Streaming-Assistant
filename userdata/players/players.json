@@ -1,0 +1,54 @@
+[
+	{
+		"id": "player_001",
+		"name": "小明",
+		"team_id": "team_001",
+		"captain": 1,
+		"starting_relic_choice": "relic_001",
+		"starting_operator_choice": "银灰",
+		"starting_squad_choice": "近卫小队",
+		"stats": {
+			"score": 100,
+			"money_taken": 50
+		}
+	},
+	{
+		"id": "player_002",
+		"name": "小红",
+		"team_id": "team_001",
+		"captain": 0,
+		"starting_relic_choice": "relic_003",
+		"starting_operator_choice": "闪灵",
+		"starting_squad_choice": "医疗小队",
+		"stats": {
+			"score": 85,
+			"money_taken": 30
+		}
+	},
+	{
+		"id": "player_003",
+		"name": "小李",
+		"team_id": "team_002",
+		"captain": 1,
+		"starting_relic_choice": "relic_005",
+		"starting_operator_choice": "艾雅法拉",
+		"starting_squad_choice": "术师小队",
+		"stats": {
+			"score": 120,
+			"money_taken": 60
+		}
+	},
+	{
+		"id": "player_004",
+		"name": "小王",
+		"team_id": "team_002",
+		"captain": 0,
+		"starting_relic_choice": "relic_002",
+		"starting_operator_choice": "能天使",
+		"starting_squad_choice": "狙击小队",
+		"stats": {
+			"score": 95,
+			"money_taken": 40
+		}
+	}
+]

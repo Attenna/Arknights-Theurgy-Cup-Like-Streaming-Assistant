@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://caj57tdkqhqaw"]
+
+[ext_resource type="Script" path="res://scripts/data/team_editor.gd" id="1_cf7k4"]
+
+[node name="Panel" type="Node2D"]
+
+[node name="TeamEditor" type="VBoxContainer" parent="."]
+offset_right = 166.0
+offset_bottom = 155.0
+script = ExtResource("1_cf7k4")
+
+[node name="IDLabel" type="Label" parent="TeamEditor"]
+layout_mode = 2
+text = "队伍简称"
+
+[node name="IDInput" type="LineEdit" parent="TeamEditor"]
+layout_mode = 2
+
+[node name="TeamNameLabel" type="Label" parent="TeamEditor"]
+layout_mode = 2
+text = "队伍名字"
+
+[node name="TeamNameInput" type="LineEdit" parent="TeamEditor"]
+layout_mode = 2
+
+[node name="SelectIconButton" type="Button" parent="TeamEditor"]
+layout_mode = 2
+text = "选择头像"
+
+[node name="IconPathLabel" type="Label" parent="TeamEditor"]
+layout_mode = 2
+text = "[地址]"
+horizontal_alignment = 1
+
+[node name="SaveButton" type="Button" parent="TeamEditor"]
+layout_mode = 2
+text = "保存信息"

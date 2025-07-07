@@ -1,0 +1,87 @@
+[gd_scene load_steps=6 format=3 uid="uid://ctpiu0qfw4hlj"]
+
+[ext_resource type="Script" path="res://scripts/prefabs/score_bar.gd" id="1_ekhri"]
+[ext_resource type="Texture2D" uid="uid://wgkgj81r83ga" path="res://texture/ui/scorebar.png" id="2_gq7rc"]
+[ext_resource type="FontFile" uid="uid://b5cl8dsbvrd6i" path="res://fonts/SourceHanSerifSC-Bold.otf" id="3_417xv"]
+[ext_resource type="FontFile" uid="uid://cg1ivxg8ilb2w" path="res://fonts/SourceHanSerifSC-Medium.otf" id="4_0v3ma"]
+[ext_resource type="FontFile" uid="uid://dt6f5hjiy3xve" path="res://fonts/SourceHanSansCN-VF.otf" id="5_5myo1"]
+
+[node name="ScoreBar" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_right = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ekhri")
+
+[node name="ScoreBarBG" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1149.0
+offset_bottom = 79.0
+texture = ExtResource("2_gq7rc")
+
+[node name="Order" type="Label" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = -9.0
+offset_right = 64.0
+offset_bottom = 79.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.29114, 0.29114, 0.29114, 1)
+theme_override_fonts/font = ExtResource("3_417xv")
+theme_override_font_sizes/font_size = 60
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Balance" type="Label" parent="."]
+layout_mode = 0
+offset_left = 734.0
+offset_top = 5.0
+offset_right = 820.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.179493, 0.179493, 0.179493, 1)
+theme_override_fonts/font = ExtResource("4_0v3ma")
+theme_override_font_sizes/font_size = 50
+text = "999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score" type="Label" parent="."]
+layout_mode = 0
+offset_left = 997.0
+offset_top = 5.0
+offset_right = 1083.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.255659, 0.255659, 0.255659, 1)
+theme_override_fonts/font = ExtResource("4_0v3ma")
+theme_override_font_sizes/font_size = 50
+text = "325"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TeamName" type="Label" parent="."]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 5.0
+offset_right = 362.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.0874577, 0.0874577, 0.0874577, 1)
+theme_override_fonts/font = ExtResource("5_5myo1")
+theme_override_font_sizes/font_size = 46
+text = "1145"
+vertical_alignment = 1
+
+[node name="TeamIcon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 149.0
+offset_top = 7.0
+offset_right = 215.0
+offset_bottom = 72.0
+expand_mode = 1

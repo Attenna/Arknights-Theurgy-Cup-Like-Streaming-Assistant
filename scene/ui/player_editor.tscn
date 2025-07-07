@@ -1,0 +1,77 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6hdnb6pxbgrl"]
+
+[ext_resource type="Script" path="res://scripts/data/player_editor.gd" id="1_l8w7n"]
+
+[node name="Panel" type="Node2D"]
+
+[node name="PlayerEditor" type="VBoxContainer" parent="."]
+offset_right = 166.0
+offset_bottom = 155.0
+script = ExtResource("1_l8w7n")
+
+[node name="TeamLeader" type="CheckButton" parent="PlayerEditor"]
+layout_mode = 2
+text = "是否是队长（是则开启）"
+
+[node name="Label1" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "请输入选手名称"
+
+[node name="IDInput" type="LineEdit" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "请输入战队简称（英文字母）"
+
+[node name="TeamInput" type="LineEdit" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="SelectIconButton" type="Button" parent="PlayerEditor"]
+layout_mode = 2
+text = "选择头像"
+
+[node name="IconPathLabel" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "[地址]"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "开局分队"
+
+[node name="SquadChoice" type="OptionButton" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "开局干员"
+
+[node name="Search" type="LineEdit" parent="PlayerEditor"]
+layout_mode = 2
+placeholder_text = "搜索"
+alignment = 1
+
+[node name="StarSelection" type="OptionButton" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="OperatorSelection" type="OptionButton" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="Label5" type="Label" parent="PlayerEditor"]
+layout_mode = 2
+text = "开局藏品"
+
+[node name="RelicChoice" type="OptionButton" parent="PlayerEditor"]
+layout_mode = 2
+
+[node name="SloganEdit" type="TextEdit" parent="PlayerEditor"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+placeholder_text = "感言输入框"
+wrap_mode = 1
+scroll_smooth = true
+
+[node name="SaveButton" type="Button" parent="PlayerEditor"]
+layout_mode = 2
+text = "保存信息"

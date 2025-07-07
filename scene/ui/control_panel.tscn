@@ -1,0 +1,53 @@
+[gd_scene load_steps=4 format=3 uid="uid://sm82abwla2ea"]
+
+[ext_resource type="Script" path="res://scripts/ui/editor_manager.gd" id="1_3rqdt"]
+[ext_resource type="Script" path="res://scripts/main/scene_manager.gd" id="2_2emu3"]
+[ext_resource type="PackedScene" uid="uid://dg276nokqdhia" path="res://scene/ui/streaming_manager.tscn" id="2_go8j5"]
+
+[node name="control_panel" type="Window"]
+position = Vector2i(0, 36)
+size = Vector2i(900, 900)
+
+[node name="EditorManager" type="VBoxContainer" parent="."]
+offset_left = 50.0
+offset_right = 154.0
+offset_bottom = 206.0
+alignment = 1
+script = ExtResource("1_3rqdt")
+
+[node name="PlayerButton" type="Button" parent="EditorManager"]
+layout_mode = 2
+text = "选手信息录入"
+
+[node name="TeamButton" type="Button" parent="EditorManager"]
+layout_mode = 2
+text = "队伍信息录入"
+
+[node name="AnnouncerButton" type="Button" parent="EditorManager"]
+layout_mode = 2
+text = "解说信息录入"
+
+[node name="EditorContainer" type="Node2D" parent="EditorManager"]
+position = Vector2(150, 50)
+
+[node name="SceneManager" type="VBoxContainer" parent="."]
+offset_left = 50.0
+offset_top = 300.0
+offset_right = 90.0
+offset_bottom = 340.0
+script = ExtResource("2_2emu3")
+
+[node name="ToMainVisionButton" type="Button" parent="SceneManager"]
+layout_mode = 2
+text = "转场至主视觉"
+
+[node name="ToStreamingArenaButton" type="Button" parent="SceneManager"]
+layout_mode = 2
+text = "转场至比赛场"
+
+[node name="ToWaitingSceneButton" type="Button" parent="SceneManager"]
+layout_mode = 2
+text = "转场至候场页"
+
+[node name="StreamingManager" parent="." instance=ExtResource("2_go8j5")]
+position = Vector2(650, 50)
