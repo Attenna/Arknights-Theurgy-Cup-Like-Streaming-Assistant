@@ -1,6 +1,9 @@
 # 演播室 - Arknights Theurgy Cup Like Streaming Assistant - A Godot-based rouge-like Streaming scene helper
 
 一个基于 Godot 4.3 开发的直播间管理工具，用于管理选手、队伍、解说员信息，并提供实时的界面显示功能。
+## 许可证
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE)
+本项目使用 [Apache License 2.0](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE) 许可证。
 
 ## 🎯 主要功能
 
@@ -181,10 +184,6 @@
 2. 克隆仓库
 3. 打开项目文件
 4. 开始开发
-
-## 📄 许可证
-
-本项目使用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 📞 联系方式
 
