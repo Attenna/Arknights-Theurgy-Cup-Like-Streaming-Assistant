@@ -1,0 +1,20 @@
+{
+    "id": "example_mod",
+    "name": "Example Mod",
+    "version": "1.0.0",
+    "author": "Framework Author",
+    "description": "An example mod demonstrating the mod structure for the Streaming Assistant Framework",
+    "dependencies": [],
+    "load_priority": 0,
+    "autoload": true,
+    "scenes": [
+        "scenes/main_menu.tscn",
+        "scenes/settings.tscn"
+    ],
+    "data_files": [
+        "data/mod_config.json"
+    ],
+    "asset_paths": [
+        "assets/"
+    ]
+}

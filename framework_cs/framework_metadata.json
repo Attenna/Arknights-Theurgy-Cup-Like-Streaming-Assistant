@@ -1,0 +1,9 @@
+{
+    "framework_name": "Streaming Assistant Framework",
+    "version": "1.0.0",
+    "description": "A generic, reusable template framework for streaming applications",
+    "content_version": "1.0.0",
+    "implementation": "csharp",
+    "default_content_dir": "user_content",
+    "schema_version": "1.0"
+}

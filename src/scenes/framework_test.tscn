@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bvxlh6xrafalq"]
+
+[ext_resource type="Script" path="res://scripts/framework_test.gd" id="1_3897a"]
+
+[node name="FrameworkTest" type="Node"]
+script = ExtResource("1_3897a")
+content_path = "framework/docs/examples/example_content"
+enable_debug_logging = true

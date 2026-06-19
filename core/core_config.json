@@ -1,0 +1,14 @@
+{
+    "mod_api_version": "1.0.0",
+    "core_version": "1.0.0",
+    "name": "Streaming Assistant Framework",
+    "description": "Core framework for loading and managing modular scene content",
+    "mods_directory": "mods",
+    "content_directory": "user_content",
+    "shared_resources": {
+        "fonts": "shared/fonts",
+        "shaders": "shared/shaders"
+    },
+    "default_mods": [],
+    "load_order": []
+}
