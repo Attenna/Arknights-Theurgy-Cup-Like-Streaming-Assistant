@@ -5,6 +5,7 @@ const STREAMING_ARENA_SCENE = preload("res://scene/streaming_arena.tscn")
 const WAITING_SCENE = preload("res://scene/waiting_scene.tscn")
 const ED_SCENE = preload("res://scene/ED.tscn")
 const PK_SCENE = preload("res://scene/PK.tscn")
+const TOURNAMENT_STATUS_SCENE = preload("res://scene/ui/tournament_status.tscn")
 
 @onready var main_content_root: Node2D = $MainContentRoot
 @onready var player_api_client: Node = $PlayerApiClient
@@ -14,6 +15,7 @@ const PK_SCENE = preload("res://scene/PK.tscn")
 var current_scene_instance: Node = null
 var current_scene_id: String = ""
 var control_panel_window: Window = null
+var tournament_status_window: Window = null
 var current_mode: String = "Red"
 var players_data: Dictionary = {}
 
@@ -64,6 +66,9 @@ func create_control_panel_window():
 
 	if control_panel_window.has_signal("stage_clear"):
 		control_panel_window.stage_clear.connect(_on_stage_clear)
+
+	if control_panel_window.has_signal("tournament_status_requested"):
+		control_panel_window.tournament_status_requested.connect(_on_tournament_status_requested)
 
 	var screen_size = DisplayServer.screen_get_size()
 	control_panel_window.position = (screen_size - Vector2i(420, 650)) / 2
@@ -136,6 +141,26 @@ func update_pattern_color(node: Node):
 
 func _on_control_panel_close():
 	get_tree().quit()
+
+func _on_tournament_status_requested():
+	if tournament_status_window != null and is_instance_valid(tournament_status_window):
+		tournament_status_window.show()
+		tournament_status_window.grab_focus()
+		return
+
+	var win = TOURNAMENT_STATUS_SCENE.instantiate()
+	win.set_script(load("res://scripts/ui/tournament_status.gd"))
+	get_tree().root.add_child(win)
+	tournament_status_window = win
+	win.close_requested.connect(_on_tournament_status_close)
+	var screen_size = DisplayServer.screen_get_size()
+	win.position = (screen_size - Vector2i(560, 840)) / 2
+	win.show()
+
+func _on_tournament_status_close():
+	if tournament_status_window and is_instance_valid(tournament_status_window):
+		tournament_status_window.queue_free()
+		tournament_status_window = null
 
 func setup_player_api():
 	if player_api_client and player_api_client.has_method("FetchPlayers"):

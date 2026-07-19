@@ -4,6 +4,7 @@ signal mode_changed(mode: String)
 signal scene_selected(scene_id: String)
 signal stage_player(player_id: int, side: String)
 signal stage_clear(side: String)
+signal tournament_status_requested
 
 # 红/蓝台上选手信息标签，在 _ready 里直接解析好，避免运行时查找实例化子场景节点
 # （Godot 对「跨实例边界的根节点」用 get_node / find_child 查找很脆弱，曾导致卡片不刷新）。
@@ -37,6 +38,11 @@ func _ready():
 		var btn = get_node_or_null(btn_paths[scene_id])
 		if btn:
 			btn.pressed.connect(_on_scene_pressed.bind(scene_id))
+
+	# 赛事状态（独立信号，打开赛事进度表格）
+	var tournament_btn = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/SceneSection/TournamentStatusBtn")
+	if tournament_btn:
+		tournament_btn.pressed.connect(_on_tournament_status_pressed)
 
 	# Stage clear buttons
 	var red_clear = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox/RedStageClearBtn")
@@ -108,3 +114,6 @@ func _on_exit_pressed():
 	emit_signal("stage_clear", "Red")
 	emit_signal("stage_clear", "Blue")
 	get_tree().quit()
+
+func _on_tournament_status_pressed():
+	emit_signal("tournament_status_requested")

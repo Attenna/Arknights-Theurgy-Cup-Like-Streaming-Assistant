@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://cicarousel1"]
+
+[ext_resource type="Script" path="res://scripts/ui/info_carousel.gd" id="1"]
+
+[node name="InfoCarousel" type="Control"]
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.07, 0.5)
+
+[node name="PagesContainer" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
