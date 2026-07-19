@@ -1,13 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://b9vsoverly0"]
+[gd_scene load_steps=3 format=3 uid="uid://b3jmfc6q1y12w"]
 
-[ext_resource type="PackedScene" uid="uid://b9strmcard0" path="res://scene/stream/StreamPlayerCard.tscn" id="1"]
-[ext_resource type="Script" uid="uid://b9vsoverly" path="res://scripts/stream/PlayerVSOverlay.cs" id="2"]
+[ext_resource type="PackedScene" uid="uid://castrmcard0" path="res://scene/stream/StreamPlayerCard.tscn" id="1"]
+[ext_resource type="Script" uid="uid://cavsoverly" path="res://scripts/stream/PlayerVSOverlay.cs" id="2"]
 
 [node name="PlayerVSOverlay" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("2")
 
 [node name="Layout" type="HBoxContainer" parent="."]
@@ -15,9 +17,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 24
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 24
 
 [node name="RedCard" parent="Layout" instance=ExtResource("1")]
 layout_mode = 2

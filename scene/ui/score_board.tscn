@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://byujp5h7shgle"]
+
+[node name="ScoreBoard" type="Node2D"]

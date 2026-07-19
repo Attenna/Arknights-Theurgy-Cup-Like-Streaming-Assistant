@@ -1,9 +1,48 @@
-[gd_scene load_steps=2 format=3 uid="uid://cyupng6c72b7d"]
+[gd_scene load_steps=5 format=3 uid="uid://cyupng6c72b7d"]
 
 [ext_resource type="Texture2D" uid="uid://c3w1ijiicmbtd" path="res://assets/pk.png" id="1_d6vqc"]
+[ext_resource type="PackedScene" uid="uid://xklg2sx3mry7" path="res://scene/ui/player_avatar.tscn" id="2_avatar"]
+[ext_resource type="FontFile" uid="uid://odfopky2ep06" path="res://assets/fonts/AlimamaDongFangDaKai-Regular.ttf" id="3_font"]
+[ext_resource type="Script" uid="uid://cootoig3q04xs" path="res://scripts/PlayerNickname.cs" id="4_nick"]
 
 [node name="PK" type="Node2D"]
 
 [node name="Pk" type="Sprite2D" parent="."]
 position = Vector2(960, 540)
 texture = ExtResource("1_d6vqc")
+
+[node name="BluePlayerAvatar" parent="." instance=ExtResource("2_avatar")]
+position = Vector2(338, 388)
+scale = Vector2(1.12, 1.12)
+
+[node name="BluePlayerNickname" type="Label" parent="."]
+offset_left = 338.0
+offset_top = 621.0
+offset_right = 562.0
+offset_bottom = 651.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1.0637023, 1.0637023, 1.0637023, 0.15686275)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 35
+text = "选手ID"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_nick")
+
+[node name="RedPlayerAvatar" parent="." instance=ExtResource("2_avatar")]
+position = Vector2(1359, 388)
+scale = Vector2(1.12, 1.12)
+
+[node name="RedPlayerNickname" type="Label" parent="."]
+offset_left = 1359.0
+offset_top = 621.0
+offset_right = 1583.0
+offset_bottom = 651.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1.0637023, 1.0637023, 1.0637023, 0.15686275)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 35
+text = "选手ID"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_nick")
