@@ -2,11 +2,11 @@
 
 [ext_resource type="Texture2D" uid="uid://f4rgmcsja347" path="res://assets/bgBlue.png" id="1_ekxnu"]
 [ext_resource type="Texture2D" uid="uid://b0ntp0l5glq8t" path="res://assets/bgRed.png" id="1_ir6mu"]
-[ext_resource type="Shader" path="res://shaders/方胜纹.gdshader" id="3_cfmst"]
+[ext_resource type="Shader" uid="uid://bgpru1rvsokfv" path="res://shaders/方胜纹.gdshader" id="3_cfmst"]
 [ext_resource type="Texture2D" uid="uid://boji7if10s5wj" path="res://assets/waitingSceneRedFront.png" id="3_ibc3u"]
 [ext_resource type="Texture2D" uid="uid://d2karmwo5isrm" path="res://assets/底部纹.png" id="4_a6t3u"]
 [ext_resource type="Texture2D" uid="uid://csteqq50vav28" path="res://assets/waitingSceneBlueFront.png" id="4_nbxxn"]
-[ext_resource type="PackedScene" uid="uid://cicarousel1" path="res://scene/ui/info_carousel.tscn" id="5_car"]
+[ext_resource type="PackedScene" path="res://scene/ui/info_carousel.tscn" id="5_car"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_y5prx"]
 shader = ExtResource("3_cfmst")
@@ -61,7 +61,9 @@ texture = ExtResource("4_nbxxn")
 layer = 5
 
 [node name="InfoCarousel" parent="CarouselLayer" instance=ExtResource("5_car")]
-offset_left = 580.0
-offset_top = 690.0
-offset_right = 1340.0
-offset_bottom = 1050.0
+layout_mode = 3
+anchors_preset = 0
+offset_left = 162.0
+offset_top = 105.0
+offset_right = 1773.0
+offset_bottom = 995.0

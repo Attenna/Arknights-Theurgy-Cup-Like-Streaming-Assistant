@@ -53,6 +53,6 @@ func _next():
 	tw.tween_property(new_page, "modulate:a", 1.0, 0.4)
 	tw.chain().tween_callback(_hide_old.bind(old_page))
 
-func _hide_old(old_page: Control):
+func _hide_old(old_page: Node):
 	if is_instance_valid(old_page):
 		old_page.visible = false

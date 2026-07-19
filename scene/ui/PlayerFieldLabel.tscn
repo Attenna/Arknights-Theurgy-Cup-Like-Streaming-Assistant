@@ -1,9 +1,21 @@
 [gd_scene load_steps=2 format=3]
 
+; 零散文本控件：只显示选手/队伍字典中的「某一个字段」。
+; 以 Node2D 为根（与 player_avatar.tscn 同结构），可自由拖入任意 2D 场景
+; 并摆放位置，每个实例独立配置要显示哪个字段，互不干扰。
+;
+; 数据来源：main.gd 自动把上台选手字典传给实现了 DisplayPlayer(dict) 的节点。
+; 节点名含 "red"/"blue" 即按红蓝方分流，否则按当前主题显示对应一方。
+;
+; 默认 Label 区域 600x36：足够装下大多数字段文本（如"宣言：一长串中文..."）。
+; 如果文本更长，可在使用时给 Label 单独设置 offset_right / autowrap_mode=2。
+
 [ext_resource type="Script" path="res://scripts/ui/PlayerFieldLabel.cs" id="1"]
 
 [node name="PlayerFieldLabel" type="Node2D"]
 script = ExtResource("1")
 
 [node name="Label" type="Label" parent="."]
+offset_right = 600.0
+offset_bottom = 36.0
 text = "-"

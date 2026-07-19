@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://rwsoeqgg7gqk"]
 
 [ext_resource type="Texture2D" uid="uid://gg81gg14tsnl" path="res://assets/主视觉背景.png" id="1_euyxc"]
-[ext_resource type="Shader" path="res://shaders/countdown.gdshader" id="2_i7uei"]
+[ext_resource type="Shader" uid="uid://cpy0p1fixjhnp" path="res://shaders/countdown.gdshader" id="2_i7uei"]
 [ext_resource type="FontFile" uid="uid://cfv513aflhwnn" path="res://assets/fonts/JetBrainsMono-Bold.ttf" id="2_j0fhi"]
-[ext_resource type="Script" path="res://scripts/label.gd" id="3_ww2oh"]
+[ext_resource type="Script" uid="uid://by3cw8fhyag14" path="res://scripts/label.gd" id="3_ww2oh"]
 [ext_resource type="Texture2D" uid="uid://bmgnb5em21r63" path="res://assets/主视觉前景.png" id="4_kgifb"]
 [ext_resource type="FontFile" uid="uid://odfopky2ep06" path="res://assets/fonts/AlimamaDongFangDaKai-Regular.ttf" id="5_ldntl"]
 

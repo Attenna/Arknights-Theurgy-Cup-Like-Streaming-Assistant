@@ -1,33 +1,181 @@
-[gd_scene load_steps=3 format=3 uid="uid://cplpage01"]
+[gd_scene load_steps=6 format=3 uid="uid://cplpage01"]
 
-[ext_resource type="Script" path="res://scripts/ui/carousel_player_page.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://castrmcard0" path="res://scene/stream/StreamPlayerCard.tscn" id="2"]
+; ============================================================================
+; 资源依赖
+; ============================================================================
+; 轮播页脚本（_ready() 自动给子节点加 Red/Blue 前缀做路由，见 scripts/ui/carousel_player_page.gd）
+[ext_resource type="Script" path="res://scripts/ui/carousel_player_page.gd" id="1_page"]
+; 单图零散控件（Node2D 根：PlayerAvatar / TeamLogo 都用它）
+[ext_resource type="PackedScene" path="res://scene/ui/PlayerImageField.tscn" id="2_img"]
+; 单字段零散控件（Node2D 根：所有"选手名/评分/开局干员/..."等文本标签都用它）
+[ext_resource type="PackedScene" path="res://scene/ui/PlayerFieldLabel.tscn" id="3_lbl"]
+; 干员头像（直接挂到 TextureRect 上的脚本）
+[ext_resource type="Script" path="res://scripts/OperatorAvatar.cs" id="4_op"]
+; 标题字体
+[ext_resource type="FontFile" uid="uid://odfopky2ep06" path="res://assets/fonts/AlimamaDongFangDaKai-Regular.ttf" id="5_font"]
 
-[node name="PlayerPage" type="Control"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = ExtResource("1")
+; ============================================================================
+; 轮播选手页（红/蓝方通用同一份 scene，通过 side 属性区分）
+; ============================================================================
+; 结构：根 Node2D 下挂"扁平 + 离散"的 UI 元素，全部以 position / offset_*
+;       显式定位，不依赖任何自动布局容器（HBox/VBox），程序员可以单独
+;       拖动任意一个节点，不需要改父容器或改本脚本。
+;
+; 路由协议：carousel_player_page.gd 的 _ready() 会把每个非元数据子节点
+;           改名为 "{Red|Blue}{原名}"，让 main.gd 的 _node_is_red_blue()
+;           能正确按红/蓝方分发数据。因此 .tscn 中节点名是"语义名"
+;           （如 PlayerUsername），不写前缀；编辑器里看到的就是程序员
+;           写的名字，方便二次排版。
+;
+; 元素分组（同一组内可随意重排；跨组也行，反正都是平级的）：
+;   标题 .................. TitleLabel（背景由外层 InfoCarousel 的 ColorRect 提供）
+;   选手身份（左列） ...... PlayerAvatar, PlayerUsername, PlayerNickname, PlayerSchool, PlayerRole
+;   战绩（中上） ........... PlayerRating, PlayerWins, PlayerLosses, PlayerDraws, PlayerWinRate
+;   干员（中下） ........... OperatorAvatar, OperatorName
+;   附加信息（中底） ....... Roguelike, Squad, FinalScore
+;   队伍（右列） ........... TeamLogo, TeamName
+;   宣言/开局（底部） ...... Declaration, Opening
+;
+; 排版建议：每个 Label 节点用 position = Vector2(x, y) 定位；TextureRect
+;           节点用 offset_left/top/right/bottom 定位。所有坐标相对于本
+;           Page 根的左上角（与 info_carousel 的 PagesContainer 一致）。
+; ============================================================================
+[node name="PlayerPage" type="Node2D"]
+script = ExtResource("1_page")
 
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.08, 0.08, 0.1, 0.72)
-
+; ---- 标题（背景由外层 InfoCarousel 的 ColorRect 提供，避免与外层叠加导致颜色不一致） ----
 [node name="TitleLabel" type="Label" parent="."]
-offset_left = 16.0
-offset_top = 10.0
-offset_right = 744.0
-offset_bottom = 44.0
-theme_override_font_sizes/font_size = 22
+offset_left = 24.0
+offset_top = 14.0
+offset_right = 800.0
+offset_bottom = 58.0
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 34
 text = "红方当前选手"
 
-[node name="PlayerCard" parent="." instance=ExtResource("2")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 50.0
-offset_right = -16.0
-offset_bottom = -16.0
+; ---- 选手身份（左列 x≈40-440） ----
+[node name="PlayerAvatar" parent="." instance=ExtResource("2_img")]
+position = Vector2(40, 80)
+Kind = 0
+TargetWidth = 200
+TargetHeight = 200
+
+[node name="PlayerUsername" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 300)
+Field = 2
+AutoColor = true
+theme_override_font_sizes/font_size = 30
+
+[node name="PlayerNickname" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 344)
+Field = 3
+theme_override_font_sizes/font_size = 20
+
+[node name="PlayerSchool" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 380)
+Field = 4
+theme_override_font_sizes/font_size = 20
+
+[node name="PlayerRole" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 416)
+Field = 13
+StaticLabel = "角色："
+theme_override_font_sizes/font_size = 20
+
+; ---- 战绩（中上 x≈480） ----
+[node name="PlayerRating" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 80)
+Field = 8
+StaticLabel = "评分："
+AutoColor = true
+theme_override_font_sizes/font_size = 34
+
+[node name="PlayerWins" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 132)
+Field = 9
+StaticLabel = "胜 "
+theme_override_colors/font_color = Color(0.5, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="PlayerLosses" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(560, 132)
+Field = 10
+StaticLabel = "负 "
+theme_override_colors/font_color = Color(0.9, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="PlayerDraws" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(640, 132)
+Field = 11
+StaticLabel = "平 "
+theme_override_colors/font_color = Color(0.9, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="PlayerWinRate" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 168)
+Field = 12
+StaticLabel = "胜率："
+AutoColor = true
+theme_override_font_sizes/font_size = 24
+
+; ---- 干员（中下） ----
+[node name="OperatorAvatar" type="TextureRect" parent="."]
+offset_left = 480.0
+offset_top = 220.0
+offset_right = 680.0
+offset_bottom = 420.0
+expand_mode = 4
+stretch_mode = 5
+script = ExtResource("4_op")
+
+[node name="OperatorName" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 440)
+Field = 15
+StaticLabel = "开局干员："
+theme_override_font_sizes/font_size = 22
+
+[node name="Roguelike" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 478)
+Field = 16
+StaticLabel = "肉鸽："
+theme_override_font_sizes/font_size = 20
+
+[node name="Squad" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 512)
+Field = 5
+StaticLabel = "分队："
+theme_override_font_sizes/font_size = 20
+
+[node name="FinalScore" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(480, 548)
+Field = 18
+StaticLabel = "最终分："
+AutoColor = true
+theme_override_font_sizes/font_size = 26
+
+; ---- 队伍（右列 x≈1380） ----
+[node name="TeamLogo" parent="." instance=ExtResource("2_img")]
+position = Vector2(1380, 80)
+Kind = 1
+TargetWidth = 180
+TargetHeight = 180
+
+[node name="TeamName" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(1380, 280)
+Field = 7
+StaticLabel = "队伍："
+theme_override_font_sizes/font_size = 24
+
+; ---- 宣言/开局（底部 y≈620） ----
+[node name="Declaration" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 620)
+Field = 19
+StaticLabel = "宣言："
+theme_override_font_sizes/font_size = 20
+
+[node name="Opening" parent="." instance=ExtResource("3_lbl")]
+position = Vector2(40, 656)
+Field = 20
+StaticLabel = "开局："
+theme_override_font_sizes/font_size = 20
