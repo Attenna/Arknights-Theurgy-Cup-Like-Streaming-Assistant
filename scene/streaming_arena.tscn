@@ -1,0 +1,84 @@
+[gd_scene load_steps=10 format=3 uid="uid://cg1oks5yxt01o"]
+
+[ext_resource type="Texture2D" uid="uid://dcmavhhu47mxx" path="res://assets/Streaming Arena blue.png" id="1_anfgg"]
+[ext_resource type="PackedScene" uid="uid://xklg2sx3mry7" path="res://scene/ui/player_avatar.tscn" id="1_t5fv5"]
+[ext_resource type="Texture2D" uid="uid://b6o7ok2vupb23" path="res://assets/Streaming Arena red.png" id="2_he7fl"]
+[ext_resource type="FontFile" uid="uid://odfopky2ep06" path="res://assets/fonts/AlimamaDongFangDaKai-Regular.ttf" id="4_kvtdh"]
+[ext_resource type="Script" uid="uid://cootoig3q04xs" path="res://scripts/PlayerNickname.cs" id="5_6836t"]
+[ext_resource type="Script" uid="uid://d4gbsnpgkr7sn" path="res://scripts/TeamAvatar.cs" id="6_6836t"]
+[ext_resource type="Script" uid="uid://b0cxf622sk710" path="res://scripts/TeamName.cs" id="7_4vpaa"]
+[ext_resource type="Script" uid="uid://1q73tjedkvw7" path="res://scripts/OperatorAvatar.cs" id="8_gryj2"]
+[ext_resource type="Script" uid="uid://o46pn53jiqas" path="res://scripts/OperatorName.cs" id="9"]
+
+[node name="StreamingArena" type="Node2D"]
+
+[node name="StreamingArenaBlue" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_anfgg")
+
+[node name="StreamingArenaRed" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("2_he7fl")
+
+[node name="PlayerAvatar" parent="." instance=ExtResource("1_t5fv5")]
+position = Vector2(1765, 57)
+scale = Vector2(0.7, 0.7)
+
+[node name="PlayerNickname" type="Label" parent="."]
+offset_left = 1747.0
+offset_top = 204.0
+offset_right = 1920.0
+offset_bottom = 234.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_kvtdh")
+theme_override_font_sizes/font_size = 22
+text = "选手ID"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("5_6836t")
+
+[node name="TeamAvatar" type="TextureRect" parent="."]
+offset_left = 1765.0001
+offset_top = 245.00002
+offset_right = 1965.0001
+offset_bottom = 445.0
+scale = Vector2(0.7, 0.7)
+expand_mode = 2
+script = ExtResource("6_6836t")
+
+[node name="TeamName" type="Label" parent="."]
+offset_left = 1747.0
+offset_top = 388.0
+offset_right = 1920.0
+offset_bottom = 427.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_kvtdh")
+theme_override_font_sizes/font_size = 19
+text = "队伍名称"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("7_4vpaa")
+
+[node name="OperatorAvatar" type="TextureRect" parent="."]
+offset_left = 1765.0001
+offset_top = 434.00003
+offset_right = 1965.0001
+offset_bottom = 634.0
+scale = Vector2(0.7, 0.7)
+expand_mode = 2
+script = ExtResource("8_gryj2")
+
+[node name="OperatorName" type="Label" parent="."]
+offset_left = 1747.0
+offset_top = 589.0
+offset_right = 1963.25
+offset_bottom = 624.0
+scale = Vector2(0.8, 0.8)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_kvtdh")
+theme_override_font_sizes/font_size = 24
+text = "干员名称"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("9")

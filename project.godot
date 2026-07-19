@@ -1,0 +1,38 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+"ï»¿config_version"=5
+
+[application]
+
+config/name="冷水坑_3"
+run/main_scene="res://scene/Main.tscn"
+config/features=PackedStringArray("4.5", "C#", "Forward Plus")
+run/max_fps=60
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/resizable=false
+window/size/transparent=true
+window/subwindows/embed_subwindows=false
+window/per_pixel_transparency/allowed=true
+window/gui/embed_subwindows=false
+
+[dotnet]
+
+project/assembly_name="冷水坑_3"
+
+[rendering]
+
+viewport/transparent_background=true
+environment/default_environment="res://default_env.tres"

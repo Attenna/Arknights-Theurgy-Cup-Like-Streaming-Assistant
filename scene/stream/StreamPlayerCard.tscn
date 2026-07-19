@@ -1,0 +1,125 @@
+[gd_scene load_steps=2 format=3 uid="uid://castrmcard0"]
+
+[ext_resource type="Script" uid="uid://castrmcard" path="res://scripts/stream/StreamPlayerCard.cs" id="1"]
+[ext_resource type="Script" uid="uid://1q73tjedkvw7" path="res://scripts/OperatorAvatar.cs" id="2"]
+
+[node name="StreamPlayerCard" type="Control"]
+custom_minimum_size = Vector2(380, 250)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Layout" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="AvatarRect" type="TextureRect" parent="Layout"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+expand_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="Layout"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="NameLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Name"
+
+[node name="NicknameLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Nickname"
+
+[node name="TeamLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Team"
+
+[node name="RatingLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rating: -"
+
+[node name="RecordLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0 - 0 - 0"
+
+[node name="WinRateLabel" type="Label" parent="Layout/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0.0%"
+
+[node name="Details" type="VBoxContainer" parent="Layout/Info"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="RoleLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="OperatorAvatarRect" type="TextureRect" parent="Layout/Info/Details"]
+visible = false
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+script = ExtResource("2")
+
+[node name="OperatorLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="RoguelikeLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="SquadLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="FinalScoreLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="DeclarationLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="OpeningLabel" type="Label" parent="Layout/Info/Details"]
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "-"
+
+[node name="TeamLogoRect" type="TextureRect" parent="Layout"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+expand_mode = 2

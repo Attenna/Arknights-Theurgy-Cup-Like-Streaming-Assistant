@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://b67lnkds6pqd7"]
+
+[ext_resource type="Texture2D" uid="uid://b0ntp0l5glq8t" path="res://assets/bgRed.png" id="1_f7u68"]
+[ext_resource type="Texture2D" uid="uid://f4rgmcsja347" path="res://assets/bgBlue.png" id="2_x2xu7"]
+[ext_resource type="Shader" path="res://shaders/方胜纹.gdshader" id="3_kvtlc"]
+[ext_resource type="Texture2D" uid="uid://d2karmwo5isrm" path="res://assets/底部纹.png" id="4_4iu0c"]
+[ext_resource type="Texture2D" uid="uid://5b1rla0c11j8" path="res://assets/EDWhite.png" id="5_rkt6y"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w4iwh"]
+shader = ExtResource("3_kvtlc")
+shader_parameter/scroll_speed = 0.01
+shader_parameter/alpha = 0.2
+shader_parameter/line_tint = Color(0.223034, 0.57082, 0.770943, 1)
+shader_parameter/line_threshold = 0.5
+
+[node name="Ed" type="Node2D"]
+
+[node name="BgRed" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_f7u68")
+
+[node name="BgBlue" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("2_x2xu7")
+
+[node name="Control2" type="Control" parent="."]
+self_modulate = Color(1, 0.0392157, 1, 0.12549)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1.77494
+offset_top = 0.632029
+offset_right = 41.7749
+offset_bottom = 40.632
+rotation = 0.684169
+
+[node name="方胜纹" type="TextureRect" parent="Control2"]
+modulate = Color(0.871134, 0.871378, 1, 1)
+self_modulate = Color(1, 1, 1, 0.0313726)
+material = SubResource("ShaderMaterial_w4iwh")
+layout_mode = 0
+offset_left = -138.682
+offset_top = -314.021
+offset_right = 1781.32
+offset_bottom = 702.979
+rotation = -0.500419
+texture = ExtResource("4_4iu0c")
+stretch_mode = 1
+
+[node name="Control" type="Control" parent="."]
+self_modulate = Color(1, 0.0392157, 1, 0.12549)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1.0
+offset_right = 41.0
+offset_bottom = 40.0
+rotation = 0.684169
+
+[node name="方胜纹" type="TextureRect" parent="Control"]
+modulate = Color(0.871134, 0.871378, 1, 1)
+self_modulate = Color(1, 1, 1, 0.0313726)
+material = SubResource("ShaderMaterial_w4iwh")
+layout_mode = 0
+offset_left = -138.682
+offset_top = -314.021
+offset_right = 1781.32
+offset_bottom = 702.979
+rotation = -0.500419
+texture = ExtResource("4_4iu0c")
+stretch_mode = 1
+
+[node name="EdWhite" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("5_rkt6y")

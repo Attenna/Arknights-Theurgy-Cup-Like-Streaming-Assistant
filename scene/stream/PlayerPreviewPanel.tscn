@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://caprevpanel"]
+
+[ext_resource type="Script" uid="uid://b9prevpanel0" path="res://scripts/stream/PlayerPreviewPanel.cs" id="1"]
+[ext_resource type="PackedScene" uid="uid://b9strmcard0" path="res://scene/stream/StreamPlayerCard.tscn" id="2"]
+
+[node name="PlayerPreviewPanel" type="Window"]
+title = "Player Preview"
+size = Vector2i(420, 280)
+always_on_top = true
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.13, 0.13, 0.15, 1)
+
+[node name="StreamPlayerCard" parent="." instance=ExtResource("2")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0

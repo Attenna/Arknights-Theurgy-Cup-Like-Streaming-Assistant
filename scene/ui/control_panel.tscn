@@ -1,0 +1,362 @@
+[gd_scene load_steps=4 format=3 uid="uid://m6gljhc6d82m"]
+
+[ext_resource type="Script" uid="uid://cyli4mxguqwld" path="res://scripts/scene_manager.gd" id="1"]
+[ext_resource type="Script" uid="uid://cq1o2gupvlvva" path="res://scripts/control_panel.gd" id="2"]
+[ext_resource type="Script" uid="uid://b1l8ip3kaj5gg" path="res://scripts/PlayerSelector.cs" id="3"]
+
+[node name="CtrlPanel" type="Window"]
+oversampling_override = 1.0
+title = "Control Panel"
+size = Vector2i(480, 1100)
+always_on_top = true
+script = ExtResource("2")
+
+[node name="SceneManager" type="Node" parent="."]
+script = ExtResource("1")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="StatusSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StatusSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "System Status"
+
+[node name="CurrentSceneLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StatusSection"]
+layout_mode = 2
+text = "Current: None"
+
+[node name="HSeparator1" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LoginSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="LoginLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "API Login"
+
+[node name="UsernameInput" type="LineEdit" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Username"
+
+[node name="PasswordInput" type="LineEdit" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Password"
+
+[node name="LoginBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Login"
+
+[node name="LoadCacheBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Load from Cache"
+
+[node name="LoginStatusLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/LoginSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Not logged in"
+horizontal_alignment = 2
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ModeSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ModeLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/ModeSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Team Mode"
+
+[node name="ModeButtons" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/ModeSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RedBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/ModeSection/ModeButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Red"
+
+[node name="BlueBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/ModeSection/ModeButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Blue"
+
+[node name="HSeparator3" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SceneSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="SceneLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Scene Selection"
+
+[node name="SceneButtons" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainVisionBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection/SceneButtons"]
+layout_mode = 2
+text = "MainVision"
+
+[node name="StreamingBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection/SceneButtons"]
+layout_mode = 2
+text = "StreamingArena"
+
+[node name="WaitingBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection/SceneButtons"]
+layout_mode = 2
+text = "WaitingScene"
+
+[node name="EDBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection/SceneButtons"]
+layout_mode = 2
+text = "ED"
+
+[node name="PKBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/SceneSection/SceneButtons"]
+layout_mode = 2
+text = "PK"
+
+[node name="HSeparator4" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StageSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="StageLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Stage Players"
+
+[node name="StagePanels" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="RedStagePanel" type="PanelContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RedStageVBox" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="RedStageTitle" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+text = "Red Stage"
+horizontal_alignment = 1
+
+[node name="RedStageNameLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+
+[node name="RedStageNickLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="RedStageTeamLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="RedStageRatingLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="RedStageClearBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/RedStagePanel/RedStageVBox"]
+layout_mode = 2
+text = "Clear"
+
+[node name="BlueStagePanel" type="PanelContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BlueStageVBox" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BlueStageTitle" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.57, 0.77, 1)
+text = "Blue Stage"
+horizontal_alignment = 1
+
+[node name="BlueStageNameLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+
+[node name="BlueStageNickLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BlueStageTeamLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="BlueStageRatingLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="BlueStageClearBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/StageSection/StagePanels/BlueStagePanel/BlueStageVBox"]
+layout_mode = 2
+text = "Clear"
+
+[node name="HSeparator5" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayerSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayerSelector" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("3")
+
+[node name="SearchInput" type="LineEdit" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search players..."
+
+[node name="ModeButtons" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectPlayerBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/ModeButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Player"
+
+[node name="SelectCommentatorBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/ModeButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Commentator"
+
+[node name="PlayerListContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="PlayerListLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerListContainer"]
+layout_mode = 2
+text = "Players"
+
+[node name="PlayerList" type="ItemList" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerListContainer"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayerInfoContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 3
+
+[node name="PlayerInfoLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Player Info"
+
+[node name="AvatarRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer"]
+visible = false
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 4
+
+[node name="PlayerDetailLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select a player to view details"
+autowrap_mode = 2
+
+[node name="StageButtons" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="RedStageBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer/StageButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+disabled = true
+text = "上台 Red"
+
+[node name="BlueStageBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer/StageButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.22, 0.57, 0.77, 1)
+disabled = true
+text = "上台 Blue"
+
+[node name="SelectBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/PlayerSection/PlayerSelector/PlayerInfoContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Select as Active Player"
+
+[node name="HSeparator6" type="HSeparator" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ControlSection" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ControlLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/ControlSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Controls"
+
+[node name="ExitBtn" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer/ControlSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Exit"

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://xklg2sx3mry7"]
+
+[ext_resource type="Script" uid="uid://dpavatardsp1" path="res://scripts/stream/PlayerAvatarDisplay.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://dxfsgtubcy03t" path="res://assets/头像占位符.png" id="2_gdgqb"]
+
+[node name="PlayerAvatar" type="Node2D"]
+script = ExtResource("1")
+
+[node name="PlaceHolder" type="TextureRect" parent="."]
+offset_right = 200.0
+offset_bottom = 200.0
+texture = ExtResource("2_gdgqb")
+expand_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="."]
+offset_right = 200.0
+offset_bottom = 200.0
+expand_mode = 4

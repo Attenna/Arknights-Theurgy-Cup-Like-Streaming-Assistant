@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://htfguxw8xidj"]
+
+[ext_resource type="Texture2D" uid="uid://f4rgmcsja347" path="res://assets/bgBlue.png" id="1_ekxnu"]
+[ext_resource type="Texture2D" uid="uid://b0ntp0l5glq8t" path="res://assets/bgRed.png" id="1_ir6mu"]
+[ext_resource type="Shader" path="res://shaders/方胜纹.gdshader" id="3_cfmst"]
+[ext_resource type="Texture2D" uid="uid://boji7if10s5wj" path="res://assets/waitingSceneRedFront.png" id="3_ibc3u"]
+[ext_resource type="Texture2D" uid="uid://d2karmwo5isrm" path="res://assets/底部纹.png" id="4_a6t3u"]
+[ext_resource type="Texture2D" uid="uid://csteqq50vav28" path="res://assets/waitingSceneBlueFront.png" id="4_nbxxn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y5prx"]
+shader = ExtResource("3_cfmst")
+shader_parameter/scroll_speed = 0.01
+shader_parameter/alpha = 0.2
+shader_parameter/line_tint = Color(1, 0, 0, 1)
+shader_parameter/line_threshold = 0.308
+
+[node name="WaitingScene" type="Node2D"]
+
+[node name="BgRed" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(960, 540)
+texture = ExtResource("1_ir6mu")
+
+[node name="BgBlue" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_ekxnu")
+
+[node name="Control" type="Control" parent="."]
+self_modulate = Color(1, 0.0392157, 1, 0.12549)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1.0
+offset_right = 41.0
+offset_bottom = 40.0
+rotation = 0.684169
+
+[node name="方胜纹" type="TextureRect" parent="Control"]
+modulate = Color(0.871134, 0.871378, 1, 1)
+self_modulate = Color(1, 1, 1, 0.0313726)
+material = SubResource("ShaderMaterial_y5prx")
+layout_mode = 0
+offset_left = -138.682
+offset_top = -314.021
+offset_right = 1781.32
+offset_bottom = 702.979
+rotation = -0.500419
+texture = ExtResource("4_a6t3u")
+stretch_mode = 1
+
+[node name="WaitingSceneRedFront" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(960, 540)
+texture = ExtResource("3_ibc3u")
+
+[node name="WaitingSceneBlueFront" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("4_nbxxn")
