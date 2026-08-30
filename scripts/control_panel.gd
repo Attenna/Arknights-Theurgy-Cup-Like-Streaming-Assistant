@@ -5,16 +5,13 @@ signal scene_selected(scene_id: String)
 signal stage_player(player_id: int, side: String)
 signal stage_clear(side: String)
 signal tournament_status_requested
+signal countdown_started
 
 # 红/蓝台上选手信息标签，在 _ready 里直接解析好，避免运行时查找实例化子场景节点
 # （Godot 对「跨实例边界的根节点」用 get_node / find_child 查找很脆弱，曾导致卡片不刷新）。
 var _stage_labels: Dictionary = {}  # side -> {name, nick, team, rating}
 
 func _ready():
-	var scene_manager = get_node_or_null("SceneManager")
-	if scene_manager:
-		print("SceneManager found")
-
 	# Mode buttons
 	var red_btn = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/ModeSection/ModeButtons/RedBtn")
 	var blue_btn = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/ModeSection/ModeButtons/BlueBtn")
@@ -56,6 +53,11 @@ func _ready():
 	var exit_btn = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/ControlSection/ExitBtn")
 	if exit_btn:
 		exit_btn.pressed.connect(_on_exit_pressed)
+
+	# Countdown
+	var countdown_btn = get_node_or_null("MarginContainer/ScrollContainer/VBoxContainer/CountdownSection/StartCountdownBtn")
+	if countdown_btn:
+		countdown_btn.pressed.connect(_on_countdown_pressed)
 
 	_resolve_stage_labels()
 
@@ -117,3 +119,6 @@ func _on_exit_pressed():
 
 func _on_tournament_status_pressed():
 	emit_signal("tournament_status_requested")
+
+func _on_countdown_pressed():
+	emit_signal("countdown_started")

@@ -34,5 +34,6 @@ project/assembly_name="冷水坑_3"
 
 [rendering]
 
+renderer/rendering_method="gl_compatibility"
 viewport/transparent_background=true
 environment/default_environment="res://default_env.tres"

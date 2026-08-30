@@ -15,12 +15,14 @@ namespace PlayerStatistics
         [Export] public bool UseTeamLogoAsFallback = true;
 
         private TextureRect _avatar;
+        private TextureRect _placeHolder;
         private AvatarLoader _avatarLoader;
         private int _currentId = -1;
 
         public override void _Ready()
         {
             _avatar = FindChild("Avatar", true, false) as TextureRect;
+            _placeHolder = FindChild("PlaceHolder", true, false) as TextureRect;
             EnsureAvatarLoader();
             Clear();
         }
@@ -75,10 +77,15 @@ namespace PlayerStatistics
 
             if (!string.IsNullOrEmpty(playerUrl))
             {
+                if (_placeHolder != null)
+                    _placeHolder.Visible = true;
+
                 _avatarLoader.LoadAvatar(id, playerUrl,
                     (loadedId, tex) =>
                     {
                         if (loadedId != _currentId || _avatar == null) return;
+                        if (_placeHolder != null)
+                            _placeHolder.Visible = false;
                         _avatar.Texture = tex;
                         _avatar.Visible = true;
                     },
@@ -88,6 +95,8 @@ namespace PlayerStatistics
                         var local = _avatarLoader.GetLocalAvatar(id);
                         if (local != null && _avatar != null)
                         {
+                            if (_placeHolder != null)
+                                _placeHolder.Visible = false;
                             _avatar.Texture = local;
                             _avatar.Visible = true;
                         }
@@ -98,8 +107,14 @@ namespace PlayerStatistics
                 var local = _avatarLoader.GetLocalAvatar(id);
                 if (local != null)
                 {
+                    if (_placeHolder != null)
+                        _placeHolder.Visible = false;
                     _avatar.Texture = local;
                     _avatar.Visible = true;
+                }
+                else if (_placeHolder != null)
+                {
+                    _placeHolder.Visible = true;
                 }
             }
         }
@@ -120,6 +135,10 @@ namespace PlayerStatistics
             {
                 _avatar.Texture = null;
                 _avatar.Visible = false;
+            }
+            if (_placeHolder != null)
+            {
+                _placeHolder.Visible = false;
             }
         }
     }

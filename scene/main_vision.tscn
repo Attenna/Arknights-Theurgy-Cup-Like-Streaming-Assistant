@@ -1,5 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://rwsoeqgg7gqk"]
+[gd_scene load_steps=9 format=3 uid="uid://rwsoeqgg7gqk"]
 
+[ext_resource type="Script" path="res://scripts/main_vision.gd" id="1_mvscr"]
 [ext_resource type="Texture2D" uid="uid://gg81gg14tsnl" path="res://assets/主视觉背景.png" id="1_euyxc"]
 [ext_resource type="Shader" uid="uid://cpy0p1fixjhnp" path="res://shaders/countdown.gdshader" id="2_i7uei"]
 [ext_resource type="FontFile" uid="uid://cfv513aflhwnn" path="res://assets/fonts/JetBrainsMono-Bold.ttf" id="2_j0fhi"]
@@ -17,6 +18,7 @@ shader_parameter/glow_radius = 2.338
 shader_parameter/pulse_speed = 0.806
 
 [node name="MainScene" type="Node2D"]
+script = ExtResource("1_mvscr")
 
 [node name="主视觉背景" type="Sprite2D" parent="."]
 position = Vector2(960, 560)

@@ -1,3 +1,6 @@
-[gd_scene load_steps=1 format=3 uid="uid://ctournament01"]
+[gd_scene load_steps=2 format=3 uid="uid://ctournament01"]
+
+[ext_resource type="Script" path="res://scripts/ui/tournament_status.gd" id="1_ts"]
 
 [node name="TournamentStatus" type="Window"]
+script = ExtResource("1_ts")

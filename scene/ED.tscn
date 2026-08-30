@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://b67lnkds6pqd7"]
+[gd_scene load_steps=8 format=3 uid="uid://b67lnkds6pqd7"]
 
 [ext_resource type="Texture2D" uid="uid://b0ntp0l5glq8t" path="res://assets/bgRed.png" id="1_f7u68"]
 [ext_resource type="Texture2D" uid="uid://f4rgmcsja347" path="res://assets/bgBlue.png" id="2_x2xu7"]
-[ext_resource type="Shader" path="res://shaders/方胜纹.gdshader" id="3_kvtlc"]
+[ext_resource type="Shader" uid="uid://bgpru1rvsokfv" path="res://shaders/方胜纹.gdshader" id="3_kvtlc"]
 [ext_resource type="Texture2D" uid="uid://d2karmwo5isrm" path="res://assets/底部纹.png" id="4_4iu0c"]
 [ext_resource type="Texture2D" uid="uid://5b1rla0c11j8" path="res://assets/EDWhite.png" id="5_rkt6y"]
+[ext_resource type="Script" uid="uid://db15l5mqih310" path="res://scripts/ed.gd" id="6_edscr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_w4iwh"]
 shader = ExtResource("3_kvtlc")
@@ -14,6 +15,7 @@ shader_parameter/line_tint = Color(0.223034, 0.57082, 0.770943, 1)
 shader_parameter/line_threshold = 0.5
 
 [node name="Ed" type="Node2D"]
+script = ExtResource("6_edscr")
 
 [node name="BgRed" type="Sprite2D" parent="."]
 position = Vector2(960, 540)
@@ -68,6 +70,20 @@ rotation = -0.500419
 texture = ExtResource("4_4iu0c")
 stretch_mode = 1
 
-[node name="EdWhite" type="Sprite2D" parent="."]
+[node name="CreditsLayer" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="CreditsContent" type="VBoxContainer" parent="CreditsLayer"]
+custom_minimum_size = Vector2(1920, 0)
+offset_left = 301.0
+offset_top = 1080.0
+offset_right = 2221.0
+offset_bottom = 1080.0
+theme_override_constants/separation = 6
+
+[node name="LogoLayer" type="CanvasLayer" parent="."]
+layer = 21
+
+[node name="EdWhite" type="Sprite2D" parent="LogoLayer"]
 position = Vector2(960, 540)
 texture = ExtResource("5_rkt6y")

@@ -11,6 +11,7 @@ const TOURNAMENT_STATUS_SCENE = preload("res://scene/ui/tournament_status.tscn")
 @onready var player_api_client: Node = $PlayerApiClient
 @onready var player_manager: Node = $PlayerManager
 @onready var commentator_manager: Node = $CommentatorManager
+@onready var fade_rect: ColorRect = $FadeLayer/FadeRect
 
 var current_scene_instance: Node = null
 var current_scene_id: String = ""
@@ -70,6 +71,9 @@ func create_control_panel_window():
 	if control_panel_window.has_signal("tournament_status_requested"):
 		control_panel_window.tournament_status_requested.connect(_on_tournament_status_requested)
 
+	if control_panel_window.has_signal("countdown_started"):
+		control_panel_window.countdown_started.connect(_on_countdown_started)
+
 	var screen_size = DisplayServer.screen_get_size()
 	control_panel_window.position = (screen_size - Vector2i(420, 650)) / 2
 	control_panel_window.show()
@@ -101,6 +105,30 @@ func _on_mode_changed(mode: String):
 
 	if current_scene_instance and is_instance_valid(current_scene_instance):
 		apply_mode_to_scene(current_scene_instance)
+
+# --- 倒计时控制（由控制面板按钮触发） ---
+
+func _on_countdown_started():
+	if current_scene_id != "MainVision":
+		return
+	if current_scene_instance and current_scene_instance.has_method("start_countdown"):
+		if not current_scene_instance.countdown_finished.is_connected(_on_countdown_finished):
+			current_scene_instance.countdown_finished.connect(_on_countdown_finished)
+		current_scene_instance.start_countdown()
+
+func _on_countdown_finished():
+	fade_transition_to("WaitingScene")
+
+# 渐变过渡：先淡出再切换场景，最后淡入
+func fade_transition_to(scene_id: String):
+	if fade_rect == null:
+		_on_transition_requested(scene_id)
+		return
+	var tween := create_tween()
+	tween.tween_property(fade_rect, "modulate:a", 1.0, 0.6)
+	tween.tween_callback(_on_transition_requested.bind(scene_id))
+	tween.tween_interval(0.15)
+	tween.tween_property(fade_rect, "modulate:a", 0.0, 0.6)
 
 func apply_mode_to_scene(scene_node: Node):
 	_apply_mode_recursive(scene_node)
@@ -149,7 +177,6 @@ func _on_tournament_status_requested():
 		return
 
 	var win = TOURNAMENT_STATUS_SCENE.instantiate()
-	win.set_script(load("res://scripts/ui/tournament_status.gd"))
 	get_tree().root.add_child(win)
 	tournament_status_window = win
 	win.close_requested.connect(_on_tournament_status_close)
