@@ -23,18 +23,22 @@
 
 ## 🧩 插件系统（一切皆插件 · 支持热重载）
 
-程序采用 **「一切皆插件」** 架构：主核心（`core/`）只提供服务与场景调度，内置直播场景、
-控制面板、编辑器本身就是插件，任何人都可以开发自己的**直播场景 / 面板**并一键切换，
-无需改动核心代码。
+程序采用 **「一切皆插件」** 架构：主核心（`core/`）只提供服务与场景调度，所有直播场景、
+控制面板、编辑器都以**插件**形式存在（置于 `mods/`），任何人都可以开发自己的
+**直播场景 / 面板**并一键切换，无需改动核心代码。
 
-- 内置插件位于 `plugins/`（随程序分发），第三方插件位于 `mods/`，二者**同构**
+- **本仓库为纯核心**：原内置插件（`plugins/`）与示例插件已全部移出，核心零插件也可启动（优雅降级）；
+  所有插件均以外部插件形式放于 `mods/`：**开发时**放项目内 `mods/`；**导出后**放**可执行文件同级的 `mods/`**
+  （该目录已被导出预设排除，不会被打包进程序，用户可直接增删插件文件夹）
 - 在 `plugin.json` 的 `provides.scenes` 中声明直播场景（`id` / `name` / `scene` / `type=live`）
 - 场景根脚本继承 `PluginScene`，即可读取当前选手、队伍、解说数据并响应实时变化
 - 提供 `type=live` 场景的插件会自动出现在控制面板导航区，点击即可切换
+- **依赖解析**：`plugin.json` 的 `dependencies` 强制解析，缺失 / 环形依赖的插件阻塞不加载
 - **热重载**：修改插件场景 / 数据 / 脚本后无需重启即可生效；`F5` 重载全部插件，
   控制面板提供单插件「重载」按钮（详见开发指南）
 
-示例插件见 `mods/example_mod/`，完整开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
+完整开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)，
+示例插件随项目备份包归档（`Arknights-Streaming-Assistant_backup_2026-10-13.zip`）。
 
 ## 🏗️ 项目结构
 
@@ -44,12 +48,11 @@
 │   ├── kernel.gd              # autoload 入口
 │   ├── plugin.gd              # 插件契约基类
 │   ├── plugin_scene.gd        # 场景插件基类
-│   ├── plugin_manager.gd      # 插件加载 / 生命周期 / 热重载
+│   ├── plugin_manager.gd      # 插件加载 / 依赖解析 / 生命周期 / 热重载
 │   └── services/              # EventBus / DataService / SceneDirector / FileWatcher / PluginRegistry
-├── plugins/                   # 内置插件（随包分发，与 mods/ 同构）
-├── mods/                      # 第三方插件（用户安装）
-├── src/                       # 引导壳与遗留辅助脚本（main.tscn / main.gd 等）
-├── shared/                    # 共享资源（字体、图标、纹理）
+├── mods/                      # 插件根目录（开发时把插件放这里，不会被打包进程序）
+├── src/                       # 引导壳（main.tscn / main.gd 等）
+├── shared/                    # 共享资源（仅应用图标）
 ├── content/                   # 内容数据包
 ├── userdata/                  # 用户数据（选手 / 队伍 / 解说等）
 └── framework/docs/            # 文档
@@ -74,6 +77,7 @@
 	 ├── data/                    # 游戏数据，包含干员和分队信息
 	 │    ├── operators/          # 干员数据目录
 	 │    └── squads/             # 分队数据目录
+	 ├── mods/                    # 第三方插件（用户自行增删，不会被打包进程序）
 	 └── userdata/                # 用户数据
    	```
 8. 运行可执行文件并开始使用
@@ -102,7 +106,7 @@
 - **路径**: `data/operators/{星级}/头像_{干员名}.png`
 - **格式**: PNG
 - **分类**: 按星级(5-6)分目录存放
-- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/operators/{星级}_star_name_list.json`
+- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/operators/{星级}_star_namelist.json`
 
 ### 分队图标
 - **路径**: `data/squads/{分队名}.png`
