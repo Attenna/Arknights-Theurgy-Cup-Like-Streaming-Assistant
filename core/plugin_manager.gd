@@ -2,8 +2,8 @@
 # 插件管理器：发现 / 加载 / 启用 / 禁用 / 卸载插件，并把插件声明的能力注册到内核服务。
 # 内置插件位于 res://plugins，第三方插件位于 res://mods，二者同构（同一套清单与生命周期）。
 #
-# P1 阶段仅扫描 res://plugins（内置插件目录，尚为空）；mods/ 仍由旧 ModLoader 处理，
-# 待 P2 / P3 完成契约统一后再整体接管。
+# 自 P3 起，本管理器同时扫描 plugins/ 与 mods/，成为唯一加载入口；
+# 旧 ModLoader 退化为转发本管理器 / SceneDirector 的兼容别名（见 core/mod_loader.gd）。
 
 class_name PluginManager
 extends Node
@@ -30,6 +30,7 @@ var _plugins: Dictionary = {}
 func setup(kernel: Node) -> void:
 	_kernel = kernel
 	discover_and_load(BUILTIN_ROOT)
+	discover_and_load(THIRD_PARTY_ROOT)
 	all_plugins_ready.emit()
 
 ## 扫描指定根目录下的所有插件并加载。
@@ -56,6 +57,18 @@ func get_plugin_ids() -> Array:
 
 func is_loaded(plugin_id: String) -> bool:
 	return _plugins.has(plugin_id)
+
+## 返回插件入口节点实例（未加载返回 null）。供兼容别名 / 调试使用。
+func get_plugin_instance(plugin_id: String) -> Node:
+	if _plugins.has(plugin_id):
+		return _plugins[plugin_id].instance
+	return null
+
+## 返回插件归一化后的能力声明。
+func get_provides(plugin_id: String) -> Dictionary:
+	if _plugins.has(plugin_id):
+		return _plugins[plugin_id].provides
+	return {}
 
 # ── 加载 ─────────────────────────────────────────────────────────────────────
 
@@ -177,7 +190,26 @@ func _register_scenes(plugin_id: String, res_dir: String, provides: Dictionary) 
 func _register_provides(plugin_id: String, res_dir: String, manifest: Dictionary, provides: Dictionary) -> void:
 	if _kernel == null or _kernel.plugin_registry == null:
 		return
-	_kernel.plugin_registry.register_plugin(plugin_id, provides, {
+	# 面板场景路径需相对插件目录解析为 res:// 绝对路径，并预加载 PackedScene，
+	# 这样控制面板 / 导航面板可直接按 slot 取用，无需再认识插件目录结构。
+	var resolved: Dictionary = provides.duplicate(true)
+	var panels: Array = []
+	for panel in resolved.get("panels", []):
+		if not (panel is Dictionary):
+			continue
+		var entry: Dictionary = panel.duplicate()
+		var rel := str(entry.get("scene", ""))
+		if not rel.is_empty():
+			var full_path := res_dir.path_join(rel)
+			entry["res_path"] = full_path
+			if FileAccess.file_exists(full_path):
+				entry["packed"] = load(full_path)
+			else:
+				push_error("[PluginManager] 面板场景不存在: %s" % full_path)
+		entry["plugin_id"] = plugin_id
+		panels.append(entry)
+	resolved["panels"] = panels
+	_kernel.plugin_registry.register_plugin(plugin_id, resolved, {
 		"name": manifest.get("name", plugin_id),
 		"path": res_dir,
 	})

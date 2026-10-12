@@ -41,13 +41,12 @@ func _ready() -> void:
 	director.set_host(main_content_root)
 
 	_register_builtin_scenes(director) # TODO(P3) 改为内置插件
-	_register_mod_scenes(director)     # 过渡：第三方模组的直播场景仍由 ModLoader 提供
 
 	_load_control_panel()
 
 # ── 过渡期场景注册 ────────────────────────────────────────────────────────────
-# 说明：P1/P2 阶段内置场景与模组场景仍分别由本文件与 ModLoader 提供，
-# 但它们统一注册进 SceneDirector，从而走同一条切换路径。P3 完成后本段可整体删除。
+# 说明：P3 阶段内置场景正陆续迁入 plugins/，迁移完成前暂由本文件注册；
+# 它们与插件场景统一注册进 SceneDirector，从而走同一条切换路径。
 
 func _register_builtin_scenes(director: SceneDirector) -> void:
 	director.register_scene({
@@ -62,24 +61,6 @@ func _register_builtin_scenes(director: SceneDirector) -> void:
 		"id": "WaitingScene", "name": "候场页", "type": "live",
 		"description": "候场页直播场景", "plugin_id": "builtin", "scene": WAITING_SCENE,
 	})
-
-func _register_mod_scenes(director: SceneDirector) -> void:
-	var mod_loader := get_node_or_null("/root/ModLoader")
-	if mod_loader == null:
-		return
-	for entry in mod_loader.get_streaming_scenes():
-		var info: Dictionary = entry
-		var full: Dictionary = mod_loader.get_streaming_scene(str(info.get("id", "")))
-		if full.is_empty():
-			continue
-		director.register_scene({
-			"id": full.id,
-			"name": full.name,
-			"type": "live",
-			"description": full.description,
-			"plugin_id": full.mod_id,
-			"scene": full.scene,
-		})
 
 # ── 控制面板 ─────────────────────────────────────────────────────────────────
 
