@@ -17,7 +17,8 @@ func get_loaded_mods() -> Array:
 	var kernel := _kernel()
 	if kernel == null or kernel.plugin_manager == null:
 		return []
-	return kernel.plugin_manager.get_plugin_ids()
+	# 仅返回第三方根目录 mods/ 下的插件，保持"模组"语义（内置 plugins/ 不计入）。
+	return kernel.plugin_manager.get_plugin_ids_by_root("res://mods")
 
 func get_mod(mod_id: String) -> Node:
 	var kernel := _kernel()

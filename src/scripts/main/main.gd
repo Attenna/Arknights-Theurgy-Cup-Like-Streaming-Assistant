@@ -1,15 +1,16 @@
 # main.gd
 # 引导壳（Bootstrap Shell）。
 # 职责：设置窗口、把 MainContentRoot 交给内核 SceneDirector、挂载控制面板。
-# 它不再认识任何具体场景 —— 场景的注册与切换全部由内核 SceneDirector 负责。
+# 它不再认识任何具体场景 —— 场景的注册与切换全部由内核 SceneDirector 负责，
+# 控制面板本身也由内置插件 builtin_control_panel 以 slot="main_window" 面板能力提供。
 
 extends Node
 
 # MainContentRoot 节点路径：所有动态场景的挂载父节点。
 @export var main_content_root_path: NodePath = "MainContentRoot"
 
-# 控制面板场景路径（由内置插件 builtin_control_panel 以 panels 能力提供）。
-@export var control_panel_scene_path: String = "res://src/scenes/ui/control_panel.tscn"
+# 主窗口面板要装载的 slot 名（由插件系统提供）。
+const MAIN_WINDOW_SLOT := "main_window"
 
 var control_panel_instance: Window = null
 
@@ -41,13 +42,26 @@ func _ready() -> void:
 # ── 控制面板 ─────────────────────────────────────────────────────────────────
 
 func _load_control_panel() -> void:
-	if control_panel_scene_path.is_empty():
-		print("Warning: control_panel_scene_path is empty. Control panel will not be loaded.")
+	# 从插件系统按 slot 取主窗口面板（内置 builtin_control_panel 提供）。
+	var kernel := get_node_or_null("/root/Kernel")
+	if kernel == null or kernel.plugin_registry == null:
+		print("Error: Kernel/PluginRegistry unavailable. Control panel will not be loaded.")
 		return
 
-	var control_panel_scene = load(control_panel_scene_path)
+	var panels: Array = kernel.plugin_registry.get_panels_by_slot(MAIN_WINDOW_SLOT)
+	if panels.is_empty():
+		print("Warning: No panel declared for slot '%s'. Control panel will not be loaded." % MAIN_WINDOW_SLOT)
+		return
+
+	# 取 order 最小者作为主窗口面板。
+	var panel: Dictionary = panels[0]
+	var control_panel_scene = panel.get("packed")
 	if control_panel_scene == null:
-		print("Error: Failed to load control_panel scene from path: " + control_panel_scene_path)
+		var res_path := str(panel.get("res_path", ""))
+		if not res_path.is_empty():
+			control_panel_scene = load(res_path)
+	if control_panel_scene == null:
+		print("Error: Failed to load control panel panel: ", panel)
 		return
 
 	control_panel_instance = control_panel_scene.instantiate()

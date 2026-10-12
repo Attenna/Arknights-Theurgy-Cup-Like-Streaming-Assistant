@@ -1,0 +1,23 @@
+{
+    "id": "builtin_control_panel",
+    "name": "控制面板",
+    "version": "1.0.0",
+    "author": "演播室2",
+    "description": "内置控制面板插件：主窗口控制面板（导航面板 / 录入编辑器入口 / 直播管理 / 模组管理）",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": -100,
+    "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
+    "watch": ["panels/", "scripts/"],
+    "provides": {
+        "panels": [
+            {
+                "id": "control_panel",
+                "slot": "main_window",
+                "order": 0,
+                "name": "控制面板",
+                "scene": "panels/control_panel.tscn"
+            }
+        ]
+    }
+}

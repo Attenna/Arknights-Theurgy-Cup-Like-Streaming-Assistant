@@ -48,7 +48,7 @@ func discover_and_load(root_path: String) -> void:
 			if manifest.is_empty():
 				print("[PluginManager] 未找到清单，跳过: %s" % res_dir)
 			else:
-				_load_plugin(res_dir, manifest)
+				_load_plugin(res_dir, manifest, root_path)
 		entry = dir.get_next()
 	dir.list_dir_end()
 
@@ -70,9 +70,17 @@ func get_provides(plugin_id: String) -> Dictionary:
 		return _plugins[plugin_id].provides
 	return {}
 
+## 返回指定根目录下加载的插件 id（用于区分内置 plugins/ 与第三方 mods/）。
+func get_plugin_ids_by_root(root_path: String) -> Array:
+	var result: Array = []
+	for plugin_id in _plugins.keys():
+		if str(_plugins[plugin_id].get("origin", "")) == root_path:
+			result.append(plugin_id)
+	return result
+
 # ── 加载 ─────────────────────────────────────────────────────────────────────
 
-func _load_plugin(res_dir: String, manifest: Dictionary) -> bool:
+func _load_plugin(res_dir: String, manifest: Dictionary, origin: String = "") -> bool:
 	var plugin_id := str(manifest.get("id", ""))
 	if plugin_id.is_empty():
 		plugin_id = res_dir.get_file()
@@ -103,6 +111,7 @@ func _load_plugin(res_dir: String, manifest: Dictionary) -> bool:
 	_plugins[plugin_id] = {
 		"manifest": manifest,
 		"res_path": res_dir,
+		"origin": origin,
 		"provides": provides,
 		"instance": instance,
 		"state": "enabled",

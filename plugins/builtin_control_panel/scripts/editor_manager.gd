@@ -13,14 +13,10 @@ extends Control # Or Node, depending on your EditorManager node type.
 @export var team_button_path: NodePath = "TeamButton"
 @export var announcer_button_path: NodePath = "AnnouncerButton"
 
-# Scene paths for dynamic loading
-# Please replace these paths with your actual scene file paths.
-var editor_scene_paths = {
-	"PlayerEditor": "res://src/scenes/ui/player_editor.tscn",
-	"TeamEditor": "res://src/scenes/ui/team_editor.tscn", 
-	"AnnouncerEditor": "res://src/scenes/ui/announcer_editor.tscn",
-	# Add more editor scenes here if you have them.
-}
+# Scene paths for dynamic loading.
+# 由插件系统填充：遍历 PluginRegistry 中 slot = "editor" 的面板能力，
+# 以 panel["id"] -> panel["res_path"] 建立映射。内置与第三方编辑器同构。
+var editor_scene_paths: Dictionary = {}
 
 var current_editor_scene_instance: Node = null # Current loaded editor scene instance.
 var current_editor_scene_id: String = ""      # Identifier of the currently loaded editor scene.
@@ -36,6 +32,9 @@ func _ready():
 	if not editor_container:
 		print("Error: EditorContainer node not found. Please check 'editor_container_path' setting.")
 		return
+
+	# 从插件系统收集编辑器面板（slot = "editor"）。
+	_populate_editor_paths()
 
 	# Connect button 'pressed' signals to their respective handler functions.
 	if player_button:
@@ -79,6 +78,21 @@ func _on_announcer_button_pressed():
 	"""
 	print("AnnouncerButton pressed. Requesting to load AnnouncerEditor scene.")
 	_load_editor_scene("AnnouncerEditor")
+
+func _populate_editor_paths():
+	"""从 PluginRegistry 收集 slot = "editor" 的面板，填充 id -> res_path。"""
+	editor_scene_paths.clear()
+	var kernel := get_node_or_null("/root/Kernel")
+	if kernel == null or kernel.plugin_registry == null:
+		print("Warning: Kernel/PluginRegistry unavailable. No editor panels discovered.")
+		return
+	for panel in kernel.plugin_registry.get_panels_by_slot("editor"):
+		var panel_id := str(panel.get("id", ""))
+		var res_path := str(panel.get("res_path", ""))
+		if panel_id.is_empty() or res_path.is_empty():
+			continue
+		editor_scene_paths[panel_id] = res_path
+	print("Discovered %d editor panel(s) from plugins: %s" % [editor_scene_paths.size(), editor_scene_paths.keys()])
 
 func _load_editor_scene(target_editor_scene_id: String):
 	"""

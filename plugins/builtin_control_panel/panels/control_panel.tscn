@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://sm82abwla2ea"]
 
-[ext_resource type="Script" path="res://src/scripts/ui/editor_manager.gd" id="1_3rqdt"]
-[ext_resource type="Script" path="res://src/scripts/main/scene_manager.gd" id="2_2emu3"]
-[ext_resource type="PackedScene" uid="uid://dg276nokqdhia" path="res://src/scenes/ui/streaming_manager.tscn" id="2_go8j5"]
-[ext_resource type="PackedScene" path="res://src/scenes/ui/mod_manager.tscn" id="3_modmgr"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/editor_manager.gd" id="1_3rqdt"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/navigation_panel.gd" id="2_2emu3"]
+[ext_resource type="PackedScene" uid="uid://dg276nokqdhia" path="res://plugins/builtin_control_panel/panels/streaming_manager.tscn" id="2_go8j5"]
+[ext_resource type="PackedScene" path="res://plugins/builtin_control_panel/panels/mod_manager.tscn" id="3_modmgr"]
 
 [node name="control_panel" type="Window"]
 position = Vector2i(0, 36)
@@ -31,24 +31,12 @@ text = "解说信息录入"
 [node name="EditorContainer" type="Node2D" parent="EditorManager"]
 position = Vector2(150, 50)
 
-[node name="SceneManager" type="VBoxContainer" parent="."]
+[node name="NavigationPanel" type="VBoxContainer" parent="."]
 offset_left = 50.0
 offset_top = 300.0
 offset_right = 90.0
 offset_bottom = 340.0
 script = ExtResource("2_2emu3")
-
-[node name="ToMainVisionButton" type="Button" parent="SceneManager"]
-layout_mode = 2
-text = "转场至主视觉"
-
-[node name="ToStreamingArenaButton" type="Button" parent="SceneManager"]
-layout_mode = 2
-text = "转场至比赛场"
-
-[node name="ToWaitingSceneButton" type="Button" parent="SceneManager"]
-layout_mode = 2
-text = "转场至候场页"
 
 [node name="StreamingManager" parent="." instance=ExtResource("2_go8j5")]
 position = Vector2(650, 50)

@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://dg276nokqdhia"]
 
-[ext_resource type="Script" path="res://src/scripts/ui/date.gd" id="1_p0uj0"]
-[ext_resource type="Script" path="res://src/scripts/ui/now_player.gd" id="2_1ec14"]
-[ext_resource type="Script" path="res://src/scripts/ui/now_announcer.gd" id="3_017sb"]
-[ext_resource type="Script" path="res://src/scripts/ui/now_team.gd" id="4_now_team"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/date.gd" id="1_p0uj0"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/now_player.gd" id="2_1ec14"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/now_announcer.gd" id="3_017sb"]
+[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/now_team.gd" id="4_now_team"]
 
 [node name="StreamingManager" type="Node2D"]
 

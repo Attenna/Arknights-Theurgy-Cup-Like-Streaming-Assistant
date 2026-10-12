@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://caj57tdkqhqaw"]
 
-[ext_resource type="Script" path="res://src/scripts/data/team_editor.gd" id="1_cf7k4"]
+[ext_resource type="Script" path="res://plugins/builtin_editors/scripts/team_editor.gd" id="1_cf7k4"]
 
 [node name="Panel" type="Node2D"]
 
