@@ -12,7 +12,6 @@ extends Node
 @export var control_panel_scene_path: String = "res://src/scenes/ui/control_panel.tscn"
 
 # TODO(P3): 三个内置场景迁入 plugins/ 后，删除以下常量与 _register_builtin_scenes()。
-const MAIN_VISION_SCENE = preload("res://src/scenes/main_vision.tscn")
 const STREAMING_ARENA_SCENE = preload("res://src/scenes/streaming_arena.tscn")
 const WAITING_SCENE = preload("res://src/scenes/waiting_scene.tscn")
 
@@ -49,10 +48,6 @@ func _ready() -> void:
 # 它们与插件场景统一注册进 SceneDirector，从而走同一条切换路径。
 
 func _register_builtin_scenes(director: SceneDirector) -> void:
-	director.register_scene({
-		"id": "MainVision", "name": "主视觉", "type": "live",
-		"description": "主视觉直播场景", "plugin_id": "builtin", "scene": MAIN_VISION_SCENE,
-	})
 	director.register_scene({
 		"id": "StreamingArena", "name": "比赛场", "type": "live",
 		"description": "比赛场直播场景", "plugin_id": "builtin", "scene": STREAMING_ARENA_SCENE,
