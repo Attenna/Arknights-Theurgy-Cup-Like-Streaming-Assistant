@@ -1,9 +1,9 @@
 # live_scene.gd
-# Example mod streaming (live) scene.
-# Demonstrates how a mod builds a live scene on top of the ModScene base class:
+# Example plugin streaming (live) scene.
+# Demonstrates how a plugin builds a live scene on top of the PluginScene base class:
 # it reads the current show data and reacts to player changes in real time.
 
-extends ModScene
+extends PluginScene
 
 @onready var title_label: Label = $Title
 @onready var subtitle_label: Label = $Subtitle
@@ -12,9 +12,9 @@ extends ModScene
 @onready var score_label: Label = $ScoreLabel
 @onready var opening_label: Label = $OpeningLabel
 
-func _on_mod_scene_ready() -> void:
-	title_label.text = scene_name if not scene_name.is_empty() else "模组直播场景"
-	subtitle_label.text = "由 %s 提供 · 演示模组直播场景开发" % mod_id
+func _on_scene_enter() -> void:
+	title_label.text = scene_name if not scene_name.is_empty() else "插件直播场景"
+	subtitle_label.text = "由 %s 提供 · 演示插件直播场景开发" % plugin_id
 	_refresh(get_current_player())
 	print("[ExampleMod] Live scene ready: %s (%s)" % [scene_name, scene_id])
 

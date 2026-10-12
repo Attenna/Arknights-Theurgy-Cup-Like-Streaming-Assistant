@@ -1,6 +1,6 @@
 # 演播室 - Arknights Theurgy Cup Like Streaming Assistant - A Godot-based rouge-like Streaming scene helper
 
-一个基于 Godot 4.3 开发的直播间管理工具，用于管理选手、队伍、解说员信息，并提供实时的界面显示功能。
+一个基于 Godot 4.6 开发的直播间管理工具，用于管理选手、队伍、解说员信息，并提供实时的界面显示功能。
 ## 许可证
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE)
 本项目使用 [Apache License 2.0](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE) 许可证。
@@ -21,36 +21,38 @@
 - **实时显示**: 左侧ID栏实时显示当前选手信息
 - **图像管理**: 支持选手头像、队伍图标、干员头像、分队图标
 
-## 🧩 模组系统（自定义直播场景）
+## 🧩 插件系统（一切皆插件 · 支持热重载）
 
-程序内置模组系统，任何人都可以开发自己的**直播场景**并一键切换，无需改动核心代码。
+程序采用 **「一切皆插件」** 架构：主核心（`core/`）只提供服务与场景调度，内置直播场景、
+控制面板、编辑器本身就是插件，任何人都可以开发自己的**直播场景 / 面板**并一键切换，
+无需改动核心代码。
 
-- 模组放在 `mods/` 目录，通过 `mods/mods.json` 启用
-- 在 `mod.json` 的 `streaming_scenes` 中声明直播场景（`id` / `name` / `scene`）
-- 场景根脚本继承 `ModScene`，即可读取当前选手、队伍、解说数据并响应实时变化
-- 已启用模组的直播场景会自动出现在控制面板的「模组直播场景」区域，点击即可切换
+- 内置插件位于 `plugins/`（随程序分发），第三方插件位于 `mods/`，二者**同构**
+- 在 `plugin.json` 的 `provides.scenes` 中声明直播场景（`id` / `name` / `scene` / `type=live`）
+- 场景根脚本继承 `PluginScene`，即可读取当前选手、队伍、解说数据并响应实时变化
+- 提供 `type=live` 场景的插件会自动出现在控制面板导航区，点击即可切换
+- **热重载**：修改插件场景 / 数据 / 脚本后无需重启即可生效；`F5` 重载全部插件，
+  控制面板提供单插件「重载」按钮（详见开发指南）
 
-示例模组见 `mods/example_mod/`，完整开发说明见 [`framework/docs/模组开发指南.md`](framework/docs/模组开发指南.md)。
+示例插件见 `mods/example_mod/`，完整开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
 
 ## 🏗️ 项目结构
 
 ```
 演播室2/
-├── assets/                    # 资源文件
-│   ├── audio/                # 音频资源
-│   ├── fonts/                # 字体文件
-│   ├── icons/                # 图标资源
-│   └── textures/             # 纹理资源
-├── scripts/                 # 脚本文件
-│   data/                # 数据管理脚本
-│   ├── main/                # 主要逻辑脚本
-│   ├── prefabs/             # 预制件脚本
-│   └── ui/                  # UI相关脚本
-├── scene/                   # 场景文件
-│   ├── main/                # 主场景
-│   ├── prefabs/             # 预制件场景
-│   └── ui/                  # UI场景
-└── markdown/                # 文档目录
+├── core/                      # 主核心（唯一保留）：Kernel + 服务 + 插件契约
+│   ├── kernel.gd              # autoload 入口
+│   ├── plugin.gd              # 插件契约基类
+│   ├── plugin_scene.gd        # 场景插件基类
+│   ├── plugin_manager.gd      # 插件加载 / 生命周期 / 热重载
+│   └── services/              # EventBus / DataService / SceneDirector / FileWatcher / PluginRegistry
+├── plugins/                   # 内置插件（随包分发，与 mods/ 同构）
+├── mods/                      # 第三方插件（用户安装）
+├── src/                       # 引导壳与遗留辅助脚本（main.tscn / main.gd 等）
+├── shared/                    # 共享资源（字体、图标、纹理）
+├── content/                   # 内容数据包
+├── userdata/                  # 用户数据（选手 / 队伍 / 解说等）
+└── framework/docs/            # 文档
 ```
 
 ## 🚀 快速开始
@@ -204,7 +206,7 @@
 
 ## 未来开发计划
 1. 文件路径软编码，可以任意修改
-2. 直播场景软编码，提供默认资源下载，用户可自定义场景（已实现：见「模组系统」）
+2. 直播场景软编码，提供默认资源下载，用户可自定义场景（已实现：见「插件系统」，内置场景已插件化）
 3. 可自由编辑的选手，队伍，解说数据结构
 4. 实现 A to C to B 转场等更丰富的转场方式
 

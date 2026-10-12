@@ -55,11 +55,12 @@
 ├── content/               # 用户内容包
 │   └── data/              # 游戏数据文件
 ├── userdata/              # 用户数据（新增）
-├── core/                  # 核心框架（保留）
+├── core/                  # 主核心（唯一保留）：Kernel + 服务 + 插件契约
+├── plugins/               # 内置插件（随包分发，与 mods/ 同构）
 ├── framework/             # 框架文档
 │   └── docs/              # 所有文档（含原 markdown/）
 ├── framework_cs/          # C# 框架模块（保留）
-├── mods/                  # 模组目录（保留）
+├── mods/                  # 第三方插件目录（旧称模组）
 └── project.godot
 ```
 
@@ -139,13 +140,34 @@ userdata/
 └── logs/                 # 日志文件
 ```
 
-### `core/` - 核心框架
+### `core/` - 主核心（一切皆插件）
+
+主核心只保留服务与契约，**不含任何业务场景**。所有直播场景 / 控制面板 / 编辑器均为插件。
 
 ```
 core/
 ├── core_config.json      # 核心配置
-├── mod_interface.gd      # 模组接口定义
-└── mod_loader.gd         # 模组加载系统
+├── kernel.gd             # autoload 入口：初始化服务、扫描并启动插件
+├── plugin.gd             # 插件契约基类（Plugin）
+├── plugin_scene.gd       # 场景插件基类（PluginScene）
+├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载
+├── mod_interface.gd      # 【兼容别名】ModInterface -> Plugin
+├── mod_scene.gd          # 【兼容别名】ModScene -> PluginScene
+├── mod_loader.gd         # 【兼容别名】旧 ModLoader autoload，转发 Kernel
+└── services/             # EventBus / DataService / SceneDirector / FileWatcher / PluginRegistry
+```
+
+### `plugins/` - 内置插件
+
+随程序分发，与 `mods/` **同构**（同一份 `plugin.json`、同一套生命周期与热重载管线）。
+
+```
+plugins/
+├── builtin_main_vision/      # 主视觉直播场景
+├── builtin_streaming_arena/  # 比赛场直播场景
+├── builtin_waiting_scene/    # 候场页直播场景
+├── builtin_control_panel/    # 控制面板（导航面板 / 直播管理 / 模组管理）
+└── builtin_editors/          # 选手 / 队伍 / 解说录入编辑器
 ```
 
 ### `framework_cs/` - C# 框架模块
@@ -160,20 +182,21 @@ framework_cs/
 └── framework_metadata.json
 ```
 
-### `mods/` - 模组目录
+### `mods/` - 第三方插件目录
 
 ```
 mods/
-├── mods.json             # 模组注册表
-├── mod_template.gd       # 模组模板
-└── example_mod/          # 示例模组
-    ├── mod.json          # 模组元数据
-    ├── mod.gd            # 模组脚本
-    ├── scenes/           # 模组场景
-    ├── scripts/          # 模组脚本
-    ├── assets/           # 模组资源
-    └── data/             # 模组数据
+└── example_mod/          # 示例插件（可直接复制作为起点）
+    ├── plugin.json       # 插件清单（声明 provides.scenes）
+    ├── plugin.gd         # 入口脚本：extends Plugin
+    ├── scenes/           # 场景（live_scene.tscn 等）
+    ├── scripts/          # 插件脚本
+    ├── assets/           # 插件资源
+    └── data/             # 插件数据
 ```
+
+> 插件无需注册表：`PluginManager` 自动扫描 `plugins/` 与 `mods/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
+> 开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
 
 ---
 
