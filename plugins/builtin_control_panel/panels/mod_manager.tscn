@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://plugins/builtin_control_panel/scripts/mod_manager.gd" id="1_modmgr"]
-
-[node name="ModManager" type="VBoxContainer"]
-script = ExtResource("1_modmgr")

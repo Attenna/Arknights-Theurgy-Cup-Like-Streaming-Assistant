@@ -1,7 +1,9 @@
 # Godot-specific ignores
 .godot/
 .import/
-export_presets.cfg
+
+# Trae workspace artifacts
+.trae/
 
 # Exported executables
 *.exe
@@ -13,6 +15,7 @@ export_presets.cfg
 
 # Build output
 build/
+builds/
 export/
 
 # Python files (if any)
