@@ -142,6 +142,26 @@ func clear_current() -> void:
 	_current_instance = null
 	_current_id = ""
 
+## 原位重建当前场景（热重载使用）：重新实例化同一个 scene_id 并替换旧实例。
+## 若该场景已被注销（插件重载后不再提供），则退化为 clear_current。
+func rebuild_current() -> bool:
+	if _current_id.is_empty():
+		return false
+	if not _scenes.has(_current_id) or _host == null:
+		clear_current()
+		return false
+	var new_instance := instantiate_scene(_current_id)
+	if new_instance == null:
+		push_error("[SceneDirector] 场景重建失败，保留当前实例: %s" % _current_id)
+		return false
+	var old_instance := _current_instance
+	_host.add_child(new_instance)
+	_current_instance = new_instance
+	if old_instance and is_instance_valid(old_instance):
+		old_instance.queue_free()
+	print("[SceneDirector] 场景已重建: %s" % _current_id)
+	return true
+
 # 为场景实例注入身份信息（兼容 PluginScene.setup_plugin_scene 与 ModScene.setup_mod_scene）。
 func _pump_identity(instance: Node, info: Dictionary) -> void:
 	if instance == null:

@@ -17,6 +17,13 @@ func _build() -> void:
 	header.text = "模组直播场景"
 	add_child(header)
 
+	# 热重载：全局按钮
+	var reload_all_button := Button.new()
+	reload_all_button.text = "重载全部插件 (F5)"
+	reload_all_button.tooltip_text = "重新加载所有插件（脚本 / 场景 / 数据）"
+	reload_all_button.pressed.connect(_on_reload_all_pressed)
+	add_child(reload_all_button)
+
 	var mod_loader = get_node_or_null("/root/ModLoader")
 	if mod_loader == null:
 		_add_info("模组系统未加载")
@@ -33,9 +40,19 @@ func _build() -> void:
 		var title := str(mod_id)
 		if metadata != null:
 			title = "%s v%s" % [metadata.name, metadata.version]
+
+		var row := HBoxContainer.new()
 		var mod_label := Label.new()
 		mod_label.text = "◆ " + title
-		add_child(mod_label)
+		mod_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(mod_label)
+
+		var reload_button := Button.new()
+		reload_button.text = "重载"
+		reload_button.tooltip_text = "热重载该模组"
+		reload_button.pressed.connect(_on_reload_mod_pressed.bind(str(mod_id)))
+		row.add_child(reload_button)
+		add_child(row)
 
 		var scenes: Array = _scenes_for_mod(mod_loader.get_streaming_scenes(), str(mod_id))
 		if scenes.is_empty():
@@ -52,6 +69,16 @@ func _build() -> void:
 
 	if not has_any:
 		_add_info("已加载模组未提供直播场景")
+
+func _on_reload_all_pressed() -> void:
+	var kernel := get_node_or_null("/root/Kernel")
+	if kernel and kernel.plugin_manager:
+		kernel.plugin_manager.reload_all()
+
+func _on_reload_mod_pressed(mod_id: String) -> void:
+	var kernel := get_node_or_null("/root/Kernel")
+	if kernel and kernel.plugin_manager:
+		kernel.plugin_manager.reload_plugin(mod_id)
 
 func _scenes_for_mod(all_scenes: Array, mod_id: String) -> Array:
 	var result: Array = []

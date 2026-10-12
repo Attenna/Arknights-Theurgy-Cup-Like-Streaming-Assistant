@@ -43,6 +43,19 @@ func get_mod_metadata(mod_id: String) -> Plugin.PluginMetadata:
 func get_active_mod() -> String:
 	return ""
 
+# ── 热重载转发 ───────────────────────────────────────────────────────────────
+
+func reload_mod(mod_id: String) -> bool:
+	var kernel := _kernel()
+	if kernel == null or kernel.plugin_manager == null:
+		return false
+	return kernel.plugin_manager.reload_plugin(mod_id)
+
+func reload_all() -> void:
+	var kernel := _kernel()
+	if kernel != null and kernel.plugin_manager != null:
+		kernel.plugin_manager.reload_all()
+
 # ── 直播场景（旧名 streaming_scenes）转发到 SceneDirector ──────────────────────
 
 func get_streaming_scenes() -> Array:

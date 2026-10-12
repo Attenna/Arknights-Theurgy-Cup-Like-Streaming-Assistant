@@ -50,3 +50,10 @@ func _create_plugin_manager() -> void:
 	plugin_manager.name = "PluginManager"
 	add_child(plugin_manager)
 	plugin_manager.setup(self)
+
+## 全局快捷键：F5 重载全部插件（热重载手动触发）。
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F5:
+		if plugin_manager:
+			plugin_manager.reload_all()
+			get_viewport().set_input_as_handled()
