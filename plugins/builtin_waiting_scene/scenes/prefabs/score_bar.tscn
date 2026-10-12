@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://ctpiu0qfw4hlj"]
 
-[ext_resource type="Script" path="res://src/scripts/prefabs/score_bar.gd" id="1_ekhri"]
+[ext_resource type="Script" path="res://plugins/builtin_waiting_scene/scripts/prefabs/score_bar.gd" id="1_ekhri"]
 [ext_resource type="Texture2D" uid="uid://wgkgj81r83ga" path="res://texture/ui/scorebar.png" id="2_gq7rc"]
 [ext_resource type="FontFile" uid="uid://b5cl8dsbvrd6i" path="res://shared/fonts/SourceHanSerifSC-Bold.otf" id="3_417xv"]
 [ext_resource type="FontFile" uid="uid://cg1ivxg8ilb2w" path="res://shared/fonts/SourceHanSerifSC-Medium.otf" id="4_0v3ma"]

@@ -8,11 +8,8 @@ extends Node
 # MainContentRoot 节点路径：所有动态场景的挂载父节点。
 @export var main_content_root_path: NodePath = "MainContentRoot"
 
-# 控制面板场景路径（P3 将改为由内置插件以 panels 能力注入）。
+# 控制面板场景路径（由内置插件 builtin_control_panel 以 panels 能力提供）。
 @export var control_panel_scene_path: String = "res://src/scenes/ui/control_panel.tscn"
-
-# TODO(P3): 三个内置场景迁入 plugins/ 后，删除以下常量与 _register_builtin_scenes()。
-const WAITING_SCENE = preload("res://src/scenes/waiting_scene.tscn")
 
 var control_panel_instance: Window = null
 
@@ -36,21 +33,10 @@ func _ready() -> void:
 		return
 
 	# 把挂载点交给内核；此后所有场景切换都通过 SceneDirector 完成。
+	# 所有直播场景（内置与第三方）均由插件系统注册，本壳不再认识任何具体场景。
 	director.set_host(main_content_root)
 
-	_register_builtin_scenes(director) # TODO(P3) 改为内置插件
-
 	_load_control_panel()
-
-# ── 过渡期场景注册 ────────────────────────────────────────────────────────────
-# 说明：P3 阶段内置场景正陆续迁入 plugins/，迁移完成前暂由本文件注册；
-# 它们与插件场景统一注册进 SceneDirector，从而走同一条切换路径。
-
-func _register_builtin_scenes(director: SceneDirector) -> void:
-	director.register_scene({
-		"id": "WaitingScene", "name": "候场页", "type": "live",
-		"description": "候场页直播场景", "plugin_id": "builtin", "scene": WAITING_SCENE,
-	})
 
 # ── 控制面板 ─────────────────────────────────────────────────────────────────
 

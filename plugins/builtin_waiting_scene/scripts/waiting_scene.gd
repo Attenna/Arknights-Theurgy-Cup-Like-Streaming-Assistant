@@ -1,10 +1,10 @@
-extends Node2D
+extends PluginScene
 
 # 子场景引用
 @onready var info_container: Control = get_node_or_null("InfoContainer")
-var score_board_scene: PackedScene = preload("res://src/scenes/ui/score_board.tscn")
-var player_info_scene: PackedScene = preload("res://src/scenes/ui/player_info.tscn")
-var announcer_info_scene: PackedScene = preload("res://src/scenes/ui/announcer_info.tscn")
+var score_board_scene: PackedScene = preload("res://plugins/builtin_waiting_scene/scenes/score_board.tscn")
+var player_info_scene: PackedScene = preload("res://plugins/builtin_waiting_scene/scenes/player_info.tscn")
+var announcer_info_scene: PackedScene = preload("res://plugins/builtin_waiting_scene/scenes/announcer_info.tscn")
 
 # 轮播控制
 var current_scene_index: int = 0
@@ -19,6 +19,7 @@ const SWITCH_INTERVAL: float = 6.0
 const FADE_DURATION: float = 0.5
 
 func _ready() -> void:
+	super._ready()
 	print("WaitingScene: 初始化候场轮播系统")
 
 	# 设置场景数组（包含解说信息）

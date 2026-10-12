@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dk6d6u0lh6y7f"]
 
-[ext_resource type="Script" path="res://src/scripts/ui/score_board.gd" id="1_p762f"]
+[ext_resource type="Script" path="res://plugins/builtin_waiting_scene/scripts/score_board.gd" id="1_p762f"]
 [ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="2_72m24"]
 [ext_resource type="FontFile" uid="uid://dt6f5hjiy3xve" path="res://shared/fonts/SourceHanSansCN-VF.otf" id="3_584ry"]
 

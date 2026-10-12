@@ -1,7 +1,7 @@
 [gd_scene load_steps=21 format=3 uid="uid://gyinhbmm8c4o"]
 
 [ext_resource type="Texture2D" uid="uid://bk5mgsfy2s4kk" path="res://texture/prefabs/候场.png" id="1_5gfqk"]
-[ext_resource type="Script" path="res://src/scripts/waiting_scene.gd" id="1_5yeky"]
+[ext_resource type="Script" path="res://plugins/builtin_waiting_scene/scripts/waiting_scene.gd" id="1_5yeky"]
 [ext_resource type="Texture2D" uid="uid://biolkgdtimixb" path="res://texture/ui/lengshuikeng_bar.png" id="2_eyxet"]
 [ext_resource type="Texture2D" uid="uid://b1a3bvhkyjbcl" path="res://texture/prefabs/string0.png" id="2_inmlf"]
 [ext_resource type="Texture2D" uid="uid://cj7ufqlvt5ndj" path="res://texture/prefabs/string1.png" id="3_6hv1l"]
@@ -11,11 +11,11 @@
 [ext_resource type="Texture2D" uid="uid://qs72naw64p51" path="res://texture/prefabs/civilight_eterna.png" id="5_mmw5u"]
 [ext_resource type="Texture2D" uid="uid://c6kkpn4w5x5dq" path="res://texture/prefabs/frontbuilding.png" id="5_x5tqn"]
 [ext_resource type="Shader" path="res://shaders/DecoBar.gdshader" id="7_v542x"]
-[ext_resource type="PackedScene" uid="uid://cmjs5mnnv7b2t" path="res://src/scenes/prefabs/Ring.tscn" id="8_uub71"]
+[ext_resource type="PackedScene" uid="uid://cmjs5mnnv7b2t" path="res://plugins/builtin_waiting_scene/scenes/prefabs/Ring.tscn" id="8_uub71"]
 [ext_resource type="Texture2D" uid="uid://p4qnldvxdla3" path="res://texture/ui/waitingframe0.png" id="11_kcbdp"]
 [ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="12_dunpg"]
 [ext_resource type="Texture2D" uid="uid://cd62xld2pgy8c" path="res://texture/ui/titlebar.png" id="13_7jwoo"]
-[ext_resource type="Script" path="res://src/scripts/ui/title_date.gd" id="15_deiyl"]
+[ext_resource type="Script" path="res://plugins/builtin_waiting_scene/scripts/title_date.gd" id="15_deiyl"]
 [ext_resource type="FontFile" uid="uid://d1e0vtsvng0bl" path="res://shared/fonts/SourceHanSerifSC-SemiBold.otf" id="15_meaim"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_w1g5l"]

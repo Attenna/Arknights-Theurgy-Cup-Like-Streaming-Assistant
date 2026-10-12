@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bcfho4uj52t7p"]
 
-[ext_resource type="Script" path="res://src/scripts/ui/announcer_info.gd" id="1_yyeam"]
+[ext_resource type="Script" path="res://plugins/builtin_waiting_scene/scripts/announcer_info.gd" id="1_yyeam"]
 [ext_resource type="Texture2D" uid="uid://duylq7jvuhx2i" path="res://texture/ui/waitingframe1.png" id="2_u8nfq"]
 [ext_resource type="FontFile" uid="uid://ckdin4yib0r60" path="res://shared/fonts/SourceHanSerifSC-Heavy.otf" id="3_b57mc"]
 [ext_resource type="Texture2D" uid="uid://caocsscnu12co" path="res://texture/ui/icon_frame.png" id="4_nkixi"]
