@@ -4,8 +4,8 @@
 extends ModInterface
 
 # Override to provide mod metadata
-func get_metadata() -> ModMetadata:
-	var metadata = ModMetadata.new()
+func get_metadata() -> ModInterface.ModMetadata:
+	var metadata = ModInterface.ModMetadata.new()
 	metadata.id = "example_mod"
 	metadata.name = "Example Mod"
 	metadata.version = "1.0.0"
@@ -15,6 +15,12 @@ func get_metadata() -> ModMetadata:
 	metadata.load_priority = 0
 	metadata.autoload = true
 	metadata.scenes = ["scenes/main_menu.tscn", "scenes/settings.tscn"]
+	metadata.streaming_scenes = [{
+		"id": "example_live_scene",
+		"name": "示例直播场景",
+		"scene": "scenes/live_scene.tscn",
+		"description": "演示模组直播场景：实时显示当前选手、队伍、分数与开局选择"
+	}]
 	metadata.data_files = ["data/mod_config.json"]
 	metadata.asset_paths = ["assets/"]
 	return metadata

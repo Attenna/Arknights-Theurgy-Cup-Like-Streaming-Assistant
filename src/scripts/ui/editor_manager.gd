@@ -16,9 +16,9 @@ extends Control # Or Node, depending on your EditorManager node type.
 # Scene paths for dynamic loading
 # Please replace these paths with your actual scene file paths.
 var editor_scene_paths = {
-	"PlayerEditor": "res://scene/ui/player_editor.tscn",
-	"TeamEditor": "res://scene/ui/team_editor.tscn", 
-	"AnnouncerEditor": "res://scene/ui/announcer_editor.tscn",
+	"PlayerEditor": "res://src/scenes/ui/player_editor.tscn",
+	"TeamEditor": "res://src/scenes/ui/team_editor.tscn", 
+	"AnnouncerEditor": "res://src/scenes/ui/announcer_editor.tscn",
 	# Add more editor scenes here if you have them.
 }
 

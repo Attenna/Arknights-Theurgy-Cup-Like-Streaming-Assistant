@@ -28,6 +28,7 @@ class ModMetadata:
 	var load_priority: int = 0
 	var autoload: bool = false
 	var scenes: Array = []
+	var streaming_scenes: Array = []
 	var data_files: Array = []
 	var asset_paths: Array = []
 
@@ -109,8 +110,8 @@ func get_mod_id() -> String:
 
 func get_core() -> Node:
 	var root = get_tree().get_root()
-	if root.has_node("CoreLoader"):
-		return root.get_node("CoreLoader")
+	if root.has_node("ModLoader"):
+		return root.get_node("ModLoader")
 	return null
 
 func get_content_registry():

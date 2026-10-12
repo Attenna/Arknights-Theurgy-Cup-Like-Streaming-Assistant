@@ -67,7 +67,7 @@ func _test_manual_update() -> void:
 	var test_player_data = {
 		"id": "测试选手",
 		"team_id": "测试队伍",
-		"icon_path": "res://assets/textures/default_avatar.png",
+		"icon_path": "res://shared/assets/textures/default_avatar.png",
 		"starting_operator_choice": "阿米娅",
 		"starting_squad_choice": "先锋分队",
 		"starting_relic_choice": "测试藏品"

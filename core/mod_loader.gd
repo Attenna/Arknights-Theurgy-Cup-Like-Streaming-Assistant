@@ -14,9 +14,14 @@ signal core_ready()
 
 signal content_load_requested(path: String)
 signal scene_change_requested(scene_id: String)
+signal streaming_scenes_updated(scenes: Array)
 
 const MOD_CONFIG_FILE = "mods.json"
 const MOD_METADATA_FILE = "mod.json"
+const MODS_RES_DIR = "res://mods"
+
+# scene_id -> { id, name, description, mod_id, scene (PackedScene) }
+var _streaming_scenes: Dictionary = {}
 
 var _loaded_mods: Dictionary = {}
 var _mod_scenes: Dictionary = {}
@@ -49,6 +54,7 @@ func _initialize_mod_system() -> void:
 	_initialize_mods()
 	
 	print("[ModLoader] Core ready!")
+	emit_signal("streaming_scenes_updated", get_streaming_scenes())
 	emit_signal("core_ready")
 
 func _create_mod_directories() -> void:
@@ -97,6 +103,7 @@ func _scan_for_mods() -> Dictionary:
 			if metadata != null:
 				discovered[metadata.id] = {
 					"path": mod_path,
+					"res_path": MODS_RES_DIR.path_join(entry),
 					"metadata": metadata
 				}
 				print("[ModLoader] Discovered mod: %s (v%s)" % [metadata.name, metadata.version])
@@ -129,6 +136,7 @@ func _load_mod_metadata(mod_path: String) -> ModInterface.ModMetadata:
 		metadata.load_priority = data.get("load_priority", 0)
 		metadata.autoload = data.get("autoload", false)
 		metadata.scenes = data.get("scenes", [])
+		metadata.streaming_scenes = data.get("streaming_scenes", [])
 		metadata.data_files = data.get("data_files", [])
 		metadata.asset_paths = data.get("asset_paths", [])
 		return metadata
@@ -137,6 +145,7 @@ func _load_mod_metadata(mod_path: String) -> ModInterface.ModMetadata:
 
 func _load_mod(mod_info: Dictionary) -> bool:
 	var mod_path = mod_info.path
+	var mod_res_path = mod_info.get("res_path", mod_path)
 	var metadata = mod_info.metadata
 	
 	emit_signal("mod_load_started", metadata.id)
@@ -148,22 +157,24 @@ func _load_mod(mod_info: Dictionary) -> bool:
 		return false
 	
 	# Load mod scripts
-	var mod_script = _load_mod_script(mod_path, metadata.id)
+	var mod_script = _load_mod_script(mod_res_path, metadata.id)
 	if mod_script == null:
 		push_error("[ModLoader] Failed to load mod script for: %s" % metadata.id)
 		emit_signal("mod_load_completed", metadata.id, false)
 		return false
 	
-	# Create mod instance
+	# Create mod instance and attach it to the tree so mods can use get_tree()
 	var mod_instance = Node.new()
 	mod_instance.set_script(mod_script)
 	mod_instance.name = metadata.id
+	add_child(mod_instance)
 	
 	# Call mod's on_load
 	if mod_instance.has_method("on_load"):
 		var result = mod_instance.on_load()
 		if not result:
 			push_error("[ModLoader] Mod %s on_load() returned false" % metadata.id)
+			remove_child(mod_instance)
 			mod_instance.queue_free()
 			emit_signal("mod_load_completed", metadata.id, false)
 			return false
@@ -176,18 +187,21 @@ func _load_mod(mod_info: Dictionary) -> bool:
 	}
 	
 	# Preload mod scenes
-	_mod_scenes[metadata.id] = _preload_mod_scenes(mod_path, metadata.scenes)
+	_mod_scenes[metadata.id] = _preload_mod_scenes(mod_res_path, metadata.scenes)
+	
+	# Register this mod's streaming (live) scenes
+	_register_streaming_scenes(metadata.id, mod_res_path, metadata.streaming_scenes)
 	
 	print("[ModLoader] Mod loaded successfully: %s" % metadata.id)
 	emit_signal("mod_load_completed", metadata.id, true)
 	return true
 
-func _load_mod_script(mod_path: String, mod_id: String) -> GDScript:
+func _load_mod_script(mod_res_path: String, mod_id: String) -> GDScript:
 	# Look for main script
 	var script_paths = [
-		mod_path.path_join("mod.gd"),
-		mod_path.path_join("%s.gd" % mod_id),
-		mod_path.path_join("main.gd")
+		mod_res_path.path_join("mod.gd"),
+		mod_res_path.path_join("%s.gd" % mod_id),
+		mod_res_path.path_join("main.gd")
 	]
 	
 	for script_path in script_paths:
@@ -198,14 +212,49 @@ func _load_mod_script(mod_path: String, mod_id: String) -> GDScript:
 	
 	return null
 
-func _preload_mod_scenes(mod_path: String, scene_list: Array) -> Dictionary:
+func _preload_mod_scenes(mod_res_path: String, scene_list: Array) -> Dictionary:
 	var preloaded = {}
 	for scene_path in scene_list:
-		var full_path = mod_path.path_join(scene_path)
+		var full_path = mod_res_path.path_join(scene_path)
 		if FileAccess.file_exists(full_path):
 			preloaded[scene_path] = load(full_path)
 			print("[ModLoader] Preloaded scene: %s" % scene_path)
 	return preloaded
+
+func _register_streaming_scenes(mod_id: String, mod_res_path: String, scene_list: Array) -> void:
+	for entry in scene_list:
+		if not (entry is Dictionary):
+			push_warning("[ModLoader] Invalid streaming_scenes entry in mod %s" % mod_id)
+			continue
+		
+		var scene_id: String = entry.get("id", "")
+		var rel_path: String = entry.get("scene", "")
+		if scene_id.is_empty() or rel_path.is_empty():
+			push_warning("[ModLoader] streaming_scene missing id/scene in mod %s" % mod_id)
+			continue
+		
+		if _streaming_scenes.has(scene_id):
+			push_warning("[ModLoader] Duplicate streaming scene id '%s' (mod %s), skipped" % [scene_id, mod_id])
+			continue
+		
+		var full_path = mod_res_path.path_join(rel_path)
+		if not FileAccess.file_exists(full_path):
+			push_error("[ModLoader] Streaming scene file not found: %s" % full_path)
+			continue
+		
+		var packed = load(full_path)
+		if not (packed is PackedScene):
+			push_error("[ModLoader] Streaming scene is not a PackedScene: %s" % full_path)
+			continue
+		
+		_streaming_scenes[scene_id] = {
+			"id": scene_id,
+			"name": entry.get("name", scene_id),
+			"description": entry.get("description", ""),
+			"mod_id": mod_id,
+			"scene": packed
+		}
+		print("[ModLoader] Registered streaming scene '%s' from mod %s" % [scene_id, mod_id])
 
 func _check_dependencies(metadata: ModInterface.ModMetadata) -> bool:
 	for dep_id in metadata.dependencies:
@@ -342,6 +391,41 @@ func instantiate_mod_scene(mod_id: String, scene_path: String) -> Node:
 	if scene:
 		return scene.instantiate()
 	return null
+
+# ─── Streaming (live) scenes provided by mods ────────────────────────────────
+
+func get_streaming_scenes() -> Array:
+	var result: Array = []
+	for scene_id in _streaming_scenes.keys():
+		var info: Dictionary = _streaming_scenes[scene_id]
+		result.append({
+			"id": info.id,
+			"name": info.name,
+			"description": info.description,
+			"mod_id": info.mod_id
+		})
+	return result
+
+func get_streaming_scene(scene_id: String) -> Dictionary:
+	if _streaming_scenes.has(scene_id):
+		return _streaming_scenes[scene_id]
+	return {}
+
+func has_streaming_scene(scene_id: String) -> bool:
+	return _streaming_scenes.has(scene_id)
+
+func instantiate_streaming_scene(scene_id: String) -> Node:
+	var info = get_streaming_scene(scene_id)
+	if info.is_empty():
+		push_error("[ModLoader] Streaming scene not found: %s" % scene_id)
+		return null
+	var packed: PackedScene = info.scene
+	var instance = packed.instantiate()
+	# Hand the mod scene its identity so it can query data / report back.
+	# Scenes that extend ModScene expose this hook automatically.
+	if instance.has_method("setup_mod_scene"):
+		instance.setup_mod_scene(info.mod_id, scene_id, info.name)
+	return instance
 
 func set_content_registry(registry):
 	_content_registry = registry

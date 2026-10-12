@@ -9,14 +9,14 @@ extends Node
 
 # New: Export variable to set the path of the control_panel scene.
 # Please set this path to your control_panel.tscn file path.
-@export var control_panel_scene_path: String = "res://scene/ui/control_panel.tscn" # Example path
+@export var control_panel_scene_path: String = "res://src/scenes/ui/control_panel.tscn" # Example path
 
 # Preload all mutually exclusive child scene resources.
 # Please replace these paths with your actual scene file paths.
 # For example: res://scenes/MainVisionScene.tscn, res://scenes/StreamingArenaScene.tscn, res://scenes/WaitingScene.tscn
-const MAIN_VISION_SCENE = preload("res://scene/main_vision.tscn")
-const STREAMING_ARENA_SCENE = preload("res://scene/streaming_arena.tscn")
-const WAITING_SCENE = preload("res://scene/waiting_scene.tscn")
+const MAIN_VISION_SCENE = preload("res://src/scenes/main_vision.tscn")
+const STREAMING_ARENA_SCENE = preload("res://src/scenes/streaming_arena.tscn")
+const WAITING_SCENE = preload("res://src/scenes/waiting_scene.tscn")
 
 # Preload the control_panel scene resource.
 var CONTROL_PANEL_SCENE = null # Will be loaded in the _ready function.
@@ -64,18 +64,10 @@ func _ready():
 			
 			print("Control panel loaded and added as child.")
 
-			# Connect to the SceneManager's signal from the instantiated control_panel.
-			# Assuming SceneManager is a child (or deeper descendant) of control_panel_instance.
-			# find_child(name, recursive, owned_by_scene) is used to find child nodes.
-			var scene_manager = control_panel_instance.find_child("SceneManager", true, false)
-			if scene_manager:
-				if scene_manager.has_signal("transition_requested"):
-					scene_manager.transition_requested.connect(_on_transition_requested)
-					print("Successfully connected to SceneManager's 'transition_requested' signal.")
-				else:
-					print("Error: SceneManager node in control_panel does not have a 'transition_requested' signal.")
-			else:
-				print("Error: SceneManager node not found within the instantiated control_panel. Please check its path.")
+			# Connect every node in the control panel that requests scene transitions.
+			# The built-in SceneManager and the mod ModManager both expose
+			# a 'transition_requested' signal, so we discover them generically.
+			_connect_transition_sources(control_panel_instance)
 			
 			# Connect the close_requested signal of the control_panel_instance
 			if control_panel_instance is Window:
@@ -91,20 +83,44 @@ func _ready():
 	# Optionally, load a default scene initially.
 	# _on_transition_requested("MainVision") # For example, load MainVision scene by default.
 
+func _connect_transition_sources(root: Node) -> void:
+	"""Recursively connect any descendant exposing a 'transition_requested' signal."""
+	var found := 0
+	for node in _find_nodes_with_signal(root, "transition_requested"):
+		if not node.transition_requested.is_connected(_on_transition_requested):
+			node.transition_requested.connect(_on_transition_requested)
+			found += 1
+	if found > 0:
+		print("Connected %d scene transition source(s)." % found)
+	else:
+		print("Warning: No node with a 'transition_requested' signal found in the control panel.")
+
+func _find_nodes_with_signal(node: Node, signal_name: String) -> Array:
+	var result: Array = []
+	if node.has_signal(signal_name):
+		result.append(node)
+	for child in node.get_children():
+		result.append_array(_find_nodes_with_signal(child, signal_name))
+	return result
+
 func _on_transition_requested(target_scene_id: String):
 	"""
-	This function is called when the SceneManager emits the 'transition_requested' signal.
-	It loads and displays the corresponding child scene based on the provided target scene ID.
+	Loads and displays the requested child scene. Built-in scenes come from scene_map,
+	mod-provided streaming scenes are resolved through the ModLoader autoload.
 	"""
-	print("Received scene transition request for: {target_scene_id}")
+	print("Received scene transition request for: %s" % target_scene_id)
 
 	# If the target scene ID is the same as the current scene ID, do nothing.
 	if current_scene_id == target_scene_id:
-		print("Scene '{target_scene_id}' is already loaded. No transition needed.")
+		print("Scene '%s' is already loaded. No transition needed." % target_scene_id)
 		return
 
-	if not scene_map.has(target_scene_id):
-		print("Error: Unknown scene ID '{target_scene_id}'.")
+	var is_builtin := scene_map.has(target_scene_id)
+	var mod_loader := _get_mod_loader()
+	var is_mod_scene: bool = mod_loader != null and mod_loader.has_streaming_scene(target_scene_id)
+
+	if not is_builtin and not is_mod_scene:
+		print("Error: Unknown scene ID '%s'." % target_scene_id)
 		return
 
 	# Remove the currently loaded scene instance (if it exists).
@@ -115,14 +131,21 @@ func _on_transition_requested(target_scene_id: String):
 		print("Removed old scene.")
 
 	# Instantiate the new scene.
-	var new_scene_resource = scene_map[target_scene_id]
-	if new_scene_resource:
+	if is_mod_scene:
+		current_scene_instance = mod_loader.instantiate_streaming_scene(target_scene_id)
+	elif is_builtin:
+		var new_scene_resource = scene_map[target_scene_id]
 		current_scene_instance = new_scene_resource.instantiate()
+
+	if current_scene_instance:
 		main_content_root.add_child(current_scene_instance)
 		current_scene_id = target_scene_id
-		print("Loaded and added new scene: {target_scene_id}")
+		print("Loaded and added new scene: %s" % target_scene_id)
 	else:
-		print("Error: Failed to instantiate scene resource for '{target_scene_id}'.")
+		print("Error: Failed to instantiate scene resource for '%s'." % target_scene_id)
+
+func _get_mod_loader() -> Node:
+	return get_node_or_null("/root/ModLoader")
 
 func _on_control_panel_close_requested():
 	"""

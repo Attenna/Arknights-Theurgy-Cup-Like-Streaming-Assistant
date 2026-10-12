@@ -17,7 +17,7 @@ var current_player_data: Dictionary = {}
 # 文件路径
 var players_data_path: String
 var current_player_data_path: String
-const DEFAULT_AVATAR_PATH = "res://assets/textures/default_avatar.png"
+const DEFAULT_AVATAR_PATH = "res://shared/assets/textures/default_avatar.png"
 
 func _ready() -> void:
 	# 初始化路径变量

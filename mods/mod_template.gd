@@ -14,6 +14,11 @@ var _dependencies: Array = []
 var _load_priority: int = 0
 var _autoload: bool = false
 
+# Streaming (live) scenes this mod provides, shown in the control panel.
+# Each entry: { "id": String, "name": String, "scene": "scenes/xxx.tscn", "description": String }
+# The scene's root script should `extends ModScene`.
+var _streaming_scenes: Array = []
+
 func get_metadata() -> ModInterface.ModMetadata:
 	var metadata = ModInterface.ModMetadata.new()
 	metadata.id = _mod_id
@@ -24,6 +29,7 @@ func get_metadata() -> ModInterface.ModMetadata:
 	metadata.dependencies = _dependencies
 	metadata.load_priority = _load_priority
 	metadata.autoload = _autoload
+	metadata.streaming_scenes = _streaming_scenes
 	return metadata
 
 # Called when mod is being loaded

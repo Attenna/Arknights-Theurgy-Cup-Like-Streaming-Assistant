@@ -144,7 +144,7 @@ func load_announcer_avatar(icon_node: Control, avatar_path: String) -> void:
 	
 	if avatar_path.is_empty():
 		# 使用默认头像
-		var default_avatar = load("res://assets/textures/default_avatar.png")
+		var default_avatar = load("res://shared/assets/textures/default_avatar.png")
 		if default_avatar:
 			icon_texture.texture = default_avatar
 		return
@@ -155,7 +155,7 @@ func load_announcer_avatar(icon_node: Control, avatar_path: String) -> void:
 		icon_texture.texture = texture
 	else:
 		# 加载失败，使用默认头像
-		var default_avatar = load("res://assets/textures/default_avatar.png")
+		var default_avatar = load("res://shared/assets/textures/default_avatar.png")
 		if default_avatar:
 			icon_texture.texture = default_avatar
 

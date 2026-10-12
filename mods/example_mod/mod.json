@@ -11,6 +11,14 @@
         "scenes/main_menu.tscn",
         "scenes/settings.tscn"
     ],
+    "streaming_scenes": [
+        {
+            "id": "example_live_scene",
+            "name": "示例直播场景",
+            "scene": "scenes/live_scene.tscn",
+            "description": "演示模组直播场景：实时显示当前选手、队伍、分数与开局选择"
+        }
+    ],
     "data_files": [
         "data/mod_config.json"
     ],

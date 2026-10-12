@@ -25,6 +25,9 @@ func _ready() -> void:
 	ANNOUNCER_DATA_PATH = AppData.get_exe_dir() + "/userdata/announcers/announcers.json"
 	CURRENT_ANNOUNCER_DATA_PATH = AppData.get_exe_dir() + "/userdata/announcers/current_announcer.json"
 	
+	# 添加到组中，便于模组直播场景等节点找到并连接信号
+	add_to_group("now_announcer")
+	
 	# 连接UI信号
 	_connect_ui_signals()
 	

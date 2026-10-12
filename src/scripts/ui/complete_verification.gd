@@ -1,7 +1,7 @@
 extends Node
 # 左侧ID栏完整功能验证脚本
 
-@onready var left_id_bar_scene = preload("res://scene/streaming_arena.tscn")
+@onready var left_id_bar_scene = preload("res://src/scenes/streaming_arena.tscn")
 
 func _ready() -> void:
 	print("🔍 左侧ID栏完整功能验证开始...")

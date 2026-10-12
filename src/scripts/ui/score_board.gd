@@ -1,7 +1,7 @@
 extends Node2D
 
 var teams_data_path: String
-const SCORE_BAR_SCENE = preload("res://scene/prefabs/score_bar.tscn")
+const SCORE_BAR_SCENE = preload("res://src/scenes/prefabs/score_bar.tscn")
 
 # 在编辑器中将你的 TeamEditor 节点拖放到这里
 @export var team_editor_node: Node

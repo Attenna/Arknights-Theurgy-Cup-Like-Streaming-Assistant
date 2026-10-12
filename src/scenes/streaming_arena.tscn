@@ -2,13 +2,13 @@
 
 [ext_resource type="Texture2D" uid="uid://b2vhf06lgt6f7" path="res://texture/ui/streaming_arena.png" id="1_s1sc2"]
 [ext_resource type="Texture2D" uid="uid://v4d6r2h7i3cs" path="res://texture/ui/underbar1.png" id="2_5tisw"]
-[ext_resource type="Script" path="res://scripts/ui/counter.gd" id="3_hnaac"]
+[ext_resource type="Script" path="res://src/scripts/ui/counter.gd" id="3_hnaac"]
 [ext_resource type="Texture2D" uid="uid://88gia1e16y5d" path="res://texture/ui/star.png" id="3_rgr3i"]
-[ext_resource type="Script" path="res://scripts/ui/opening_relic.gd" id="4_irvj6"]
+[ext_resource type="Script" path="res://src/scripts/ui/opening_relic.gd" id="4_irvj6"]
 [ext_resource type="Texture2D" uid="uid://ckqigj1dcvdn3" path="res://texture/ui/underbar2.png" id="4_x3a5y"]
 [ext_resource type="Texture2D" uid="uid://qs72naw64p51" path="res://texture/prefabs/civilight_eterna.png" id="5_jaymb"]
-[ext_resource type="Script" path="res://scripts/ui/under_bar_2.gd" id="5_l2kkk"]
-[ext_resource type="Script" path="res://scripts/ui/left_id_bar.gd" id="6_6fyvv"]
+[ext_resource type="Script" path="res://src/scripts/ui/under_bar_2.gd" id="5_l2kkk"]
+[ext_resource type="Script" path="res://src/scripts/ui/left_id_bar.gd" id="6_6fyvv"]
 
 [node name="StreamingArena" type="Node2D"]
 
