@@ -1,11 +1,14 @@
 # mod_interface.gd
-# Defines the interface contract between core loader and mods
-# All mods should extend this base class
+# 【兼容别名】旧版模组契约，现等价于 Plugin（由 Plugin 演进而来）。
+#
+# 说明：新代码请直接 `extends Plugin`。本文件仅为兼容既有第三方模组而保留一版，
+# 它把旧的生命周期方法（on_initialize / on_activate / on_pause / on_resume 等）
+# 映射到新的 Plugin 契约之上。后续版本将移除。
 
 class_name ModInterface
-extends Node
+extends Plugin
 
-# Mod lifecycle states
+# 旧版模组生命周期状态（保留以兼容 ModLoader）
 enum ModState {
 	UNLOADED,
 	LOADING,
@@ -17,109 +20,83 @@ enum ModState {
 	ERROR
 }
 
-# Mod metadata structure
-class ModMetadata:
-	var id: String = ""
-	var name: String = ""
-	var version: String = ""
-	var author: String = ""
-	var description: String = ""
-	var dependencies: Array = []
-	var load_priority: int = 0
+# 旧版元数据结构：在 PluginMetadata 基础上追加模组专有字段。
+class ModMetadata extends Plugin.PluginMetadata:
 	var autoload: bool = false
 	var scenes: Array = []
 	var streaming_scenes: Array = []
 	var data_files: Array = []
 	var asset_paths: Array = []
 
-# Signals that mods emit to core
+# 模组 -> 内核 的旧版信号
 signal mod_loaded(mod_id: String)
 signal mod_unloaded(mod_id: String)
 signal mod_initialized(mod_id: String)
 signal mod_error(mod_id: String, error_message: String)
 signal mod_event(mod_id: String, event_name: String, event_data: Dictionary)
 
-# Signals that core sends to mods
+# 内核 -> 模组 的旧版信号
 signal core_content_loaded(content_type: String, count: int)
 signal core_scene_requested(scene_id: String)
 signal core_shutdown_requested()
 
-# Methods that mods MUST implement
 func get_metadata() -> ModMetadata:
-	# Override in your mod to return metadata
-	var metadata = ModMetadata.new()
+	var metadata := ModMetadata.new()
 	metadata.id = get_script().get_global_name()
 	metadata.name = "Unnamed Mod"
 	return metadata
 
-func on_load() -> bool:
-	# Called when mod is being loaded
-	# Return true to proceed, false to abort
-	return true
+# ── 旧版生命周期（在 Plugin 契约上兼容保留） ────────────────────────────────
 
+## 等价于 Plugin.on_enable()
 func on_initialize() -> bool:
-	# Called after all mods are loaded and content is ready
-	# Return true to proceed, false to abort
 	return true
 
 func on_activate() -> void:
-	# Called when mod becomes active
 	pass
 
 func on_pause() -> void:
-	# Called when mod is paused
 	pass
 
 func on_resume() -> void:
-	# Called when mod resumes from pause
 	pass
 
-func on_unload() -> void:
-	# Called when mod is being unloaded
-	pass
+# ── 旧版能力查询 ─────────────────────────────────────────────────────────────
 
-# Methods that mods CAN override
 func get_mod_scenes() -> Array:
-	# Return list of scene paths this mod provides
 	return []
 
 func get_data_files() -> Array:
-	# Return list of data file paths this mod provides
 	return []
 
 func get_asset_paths() -> Array:
-	# Return list of asset paths this mod provides
 	return []
 
-func on_content_loaded(players: Array, teams: Array, selections: Array) -> void:
-	# Called when core content is loaded
-	# Override to react to content changes
+func on_content_loaded(_players: Array, _teams: Array, _selections: Array) -> void:
 	pass
 
-func on_scene_change(from_scene: String, to_scene: String) -> void:
-	# Called when scene is about to change
+func on_scene_change(_from_scene: String, _to_scene: String) -> void:
 	pass
 
-func on_custom_signal(signal_name: String, args: Array) -> void:
-	# Called when a custom signal is emitted
+func on_custom_signal(_signal_name: String, _args: Array) -> void:
 	pass
 
-# Utility methods provided by base class
+# ── 旧版工具方法 ─────────────────────────────────────────────────────────────
+
 func get_mod_id() -> String:
 	return get_metadata().id
 
 func get_core() -> Node:
-	var root = get_tree().get_root()
+	var root := get_tree().get_root()
 	if root.has_node("ModLoader"):
 		return root.get_node("ModLoader")
 	return null
 
 func get_content_registry():
-	# Get content registry from core
-	var core = get_core()
+	var core := get_core()
 	if core and core.has_method("get_content_registry"):
 		return core.get_content_registry()
 	return null
 
 func emit_mod_signal(signal_name: String, data: Dictionary = {}) -> void:
-	emit_signal("mod_event", get_mod_id(), signal_name, data)
+	mod_event.emit(get_mod_id(), signal_name, data)
