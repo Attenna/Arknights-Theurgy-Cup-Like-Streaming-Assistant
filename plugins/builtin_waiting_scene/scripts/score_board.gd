@@ -21,7 +21,7 @@ const MOVE_DISTANCE: float = 100.0
 
 func _ready() -> void:
     # 初始化路径变量
-    teams_data_path = AppData.get_exe_dir() + "/userdata/teams/teams.json"
+    teams_data_path = AppData.get_user_dir() + "/userdata/teams/teams.json"
     
     # 游戏开始时，立即更新一次排名并显示排行榜
     update_ranks_and_display()

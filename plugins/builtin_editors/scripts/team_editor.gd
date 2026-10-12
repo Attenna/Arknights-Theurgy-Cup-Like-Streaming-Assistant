@@ -6,7 +6,7 @@ extends Control
 # This signal is emitted after the teams.json file has been successfully saved.
 signal teams_data_saved
 
-var user_data_path = AppData.get_exe_dir()
+var user_data_path = AppData.get_user_dir()
 
 # UI Node Paths
 @export var id_input_path: NodePath = "IDInput"

@@ -23,8 +23,8 @@ var selected_icon_path: String = ""
 
 func _ready():
 	# 初始化路径变量
-	announcer_icons_dir = AppData.get_exe_dir() + "/userdata/announcers/announcer_icons/"
-	announcers_data_path = AppData.get_exe_dir() + "/userdata/announcers/announcers.json"
+	announcer_icons_dir = AppData.get_user_dir() + "/userdata/announcers/announcer_icons/"
+	announcers_data_path = AppData.get_user_dir() + "/userdata/announcers/announcers.json"
 	
 	# 添加到解说员编辑器组
 	add_to_group("announcer_editors")
@@ -73,7 +73,7 @@ func _setup_file_dialog():
 
 func _ensure_directories():
 	"""确保必要的目录存在"""
-	var base_userdata_dir = AppData.get_exe_dir() + "/userdata/announcers/"
+	var base_userdata_dir = AppData.get_user_dir() + "/userdata/announcers/"
 	if not DirAccess.dir_exists_absolute(base_userdata_dir):
 		DirAccess.make_dir_recursive_absolute(base_userdata_dir)
 	

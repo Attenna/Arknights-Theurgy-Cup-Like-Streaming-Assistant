@@ -4,7 +4,7 @@ var settings_path: String
 
 func _ready() -> void:
 	# 初始化路径变量
-	settings_path = AppData.get_exe_dir() + "/userdata/settings.json"
+	settings_path = AppData.get_user_dir() + "/userdata/settings.json"
 	
 	# Load and display initial game date
 	_load_and_display_game_date()

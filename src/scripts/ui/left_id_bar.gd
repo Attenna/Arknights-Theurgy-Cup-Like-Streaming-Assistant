@@ -1,6 +1,6 @@
 extends Control
 
-var user_data_path: String = AppData.get_exe_dir()
+var user_data_path: String = AppData.get_user_dir()
 
 # 文件路径
 var CURRENT_PLAYER_DATA_PATH = user_data_path + "/userdata/players/current_player.json"
@@ -184,7 +184,7 @@ func _update_player_info() -> void:
 	# 更新选手头像 - 按照新规范：/userdata/players/player_icons/{选手名字}.jpg
 	if player_icon:
 		if not player_name_str.is_empty():
-			var player_icon_path = AppData.get_exe_dir() + "/userdata/players/player_icons/" + player_name_str + ".jpg"
+			var player_icon_path = AppData.get_user_dir() + "/userdata/players/player_icons/" + player_name_str + ".jpg"
 			print("Attempting to load player icon from: " + player_icon_path)
 			
 			# 检查文件是否存在
@@ -217,7 +217,7 @@ func _update_team_info() -> void:
 	
 	# 加载队伍图标 - 按照新规范：/userdata/teams/team_icons/{队伍ID}.jpg
 	if team_icon and not team_id_str.is_empty():
-		var team_icon_path = AppData.get_exe_dir() + "/userdata/teams/team_icons/" + team_id_str + ".jpg"
+		var team_icon_path = AppData.get_user_dir() + "/userdata/teams/team_icons/" + team_id_str + ".jpg"
 		print("Attempting to load team icon from: " + team_icon_path)
 		
 		var texture = _load_texture_from_path(team_icon_path)

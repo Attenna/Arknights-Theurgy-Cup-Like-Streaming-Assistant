@@ -14,7 +14,7 @@ var current_confirmed_announcers: Array = []
 
 func _ready() -> void:
 	# 初始化路径变量
-	current_announcer_data_path = AppData.get_exe_dir() + "/userdata/announcers/current_announcer.json"
+	current_announcer_data_path = AppData.get_user_dir() + "/userdata/announcers/current_announcer.json"
 	
 	# 连接到解说员确认信号
 	_connect_to_announcer_signals()

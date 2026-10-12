@@ -33,8 +33,8 @@ signal team_data_changed # 当队伍数据（如余额）发生变化时发送
 
 func _ready() -> void:
 	# 初始化路径变量
-	players_data_path = AppData.get_exe_dir() + "/userdata/players/players.json"
-	current_player_data_path = AppData.get_exe_dir() + "/userdata/players/current_player.json"
+	players_data_path = AppData.get_user_dir() + "/userdata/players/players.json"
+	current_player_data_path = AppData.get_user_dir() + "/userdata/players/current_player.json"
 	
 	# 调试信息：输出文件路径
 	print("=== NowPlayer 调试信息 ===")
@@ -214,9 +214,9 @@ func _save_current_player() -> void:
 	print("📝 尝试写入 current_player.json 路径: " + current_player_data_path)
 	
 	# 确保目录存在
-	if not DirAccess.dir_exists_absolute(AppData.get_exe_dir() + "/userdata/players/"):
-		print("📁 创建目录: " + AppData.get_exe_dir() + "/userdata/players/")
-		DirAccess.make_dir_recursive_absolute(AppData.get_exe_dir() + "/userdata/players/")
+	if not DirAccess.dir_exists_absolute(AppData.get_user_dir() + "/userdata/players/"):
+		print("📁 创建目录: " + AppData.get_user_dir() + "/userdata/players/")
+		DirAccess.make_dir_recursive_absolute(AppData.get_user_dir() + "/userdata/players/")
 	
 	var file = FileAccess.open(current_player_data_path, FileAccess.WRITE)
 	if file:
@@ -475,7 +475,7 @@ func _save_all_players_to_file(players_data: Array):
 func _load_all_teams_from_file() -> Array:
 	var teams = []
 	# 注意：这里需要teams.json 的正确路径
-	var teams_data_path = AppData.get_exe_dir() + "/userdata/teams/teams.json"
+	var teams_data_path = AppData.get_user_dir() + "/userdata/teams/teams.json"
 	if not FileAccess.file_exists(teams_data_path):
 		return teams
 	var file = FileAccess.open(teams_data_path, FileAccess.READ)
@@ -488,7 +488,7 @@ func _load_all_teams_from_file() -> Array:
 	return teams
 
 func _save_all_teams_to_file(teams_data: Array):
-	var teams_data_path = AppData.get_exe_dir() + "/userdata/teams/teams.json"
+	var teams_data_path = AppData.get_user_dir() + "/userdata/teams/teams.json"
 	var file = FileAccess.open(teams_data_path, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(teams_data, "\t"))

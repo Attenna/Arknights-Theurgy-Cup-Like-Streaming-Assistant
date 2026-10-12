@@ -1,6 +1,6 @@
 extends Node2D
 
-var user_data_path: String = AppData.get_exe_dir()
+var user_data_path: String = AppData.get_user_dir()
 
 var CURRENT_ANNOUNCERS_PATH = user_data_path + "/userdata/announcers/current_announcer.json"
 

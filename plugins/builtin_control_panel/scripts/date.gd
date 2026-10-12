@@ -4,7 +4,7 @@ extends VBoxContainer
 @onready var date_input_button: Button = $DateInputButton
 @onready var date_label: Label = $DateInputLabel
 
-var user_data_path: String = AppData.get_exe_dir()
+var user_data_path: String = AppData.get_user_dir()
 
 var settings_path: String = user_data_path + "/userdata/settings.json"
 var current_settings: Dictionary = {}

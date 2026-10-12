@@ -73,7 +73,7 @@ func get_userdata_dir() -> String:
 	var data_service := _get_data_service()
 	if data_service:
 		return data_service.get_userdata_dir()
-	return OS.get_executable_path().get_base_dir()
+	return OS.get_user_data_dir()
 
 func get_current_player() -> Dictionary:
 	var data_service := _get_data_service()

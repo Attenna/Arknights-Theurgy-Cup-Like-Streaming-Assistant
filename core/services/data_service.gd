@@ -1,19 +1,19 @@
 # data_service.gd
 # 统一数据访问服务：集中封装 userdata 路径与 JSON 读写。
 # 所有插件（内置 / 第三方）都通过本服务读写数据，避免各自拼接路径。
-# 路径约定与既有代码保持一致：可执行文件目录 + /userdata/...
+# 路径约定与既有代码保持一致：用户数据目录（user://） + /userdata/...
 
 class_name DataService
 extends Node
 
 var event_bus: EventBus = null
 
-## userdata 根目录（可执行文件所在目录）
+## userdata 根目录（用户数据目录 user://）
 func get_userdata_dir() -> String:
 	var app_data := get_node_or_null("/root/AppData")
-	if app_data and app_data.has_method("get_exe_dir"):
-		return app_data.get_exe_dir()
-	return OS.get_executable_path().get_base_dir()
+	if app_data and app_data.has_method("get_user_dir"):
+		return app_data.get_user_dir()
+	return OS.get_user_data_dir()
 
 ## 读取 JSON。文件不存在或解析失败时返回 null。
 func read_json(rel_path: String) -> Variant:

@@ -51,10 +51,10 @@ var all_operators_by_star: Dictionary = {}
 
 func _ready():
 	# 初始化路径变量
-	players_data_path = AppData.get_exe_dir() + "/userdata/players/players.json"
-	player_icons_dir = AppData.get_exe_dir() + "/userdata/players/player_icons/"
-	last_player_icon_path_file = AppData.get_exe_dir() + "/userdata/players/last_player_icon_path.json"
-	last_file_dialog_path_file = AppData.get_exe_dir() + "/data/last_file_dialog_path.json"
+	players_data_path = AppData.get_user_dir() + "/userdata/players/players.json"
+	player_icons_dir = AppData.get_user_dir() + "/userdata/players/player_icons/"
+	last_player_icon_path_file = AppData.get_user_dir() + "/userdata/players/last_player_icon_path.json"
+	last_file_dialog_path_file = AppData.get_user_dir() + "/userdata/misc/last_file_dialog_path.json"
 	relics_data_path = AppData.get_exe_dir() + "/data/relics.json"
 	squads_data_path = AppData.get_exe_dir() + "/data/squads.json"
 	operators_base_dir = AppData.get_exe_dir() + "/data/operators/"
@@ -121,8 +121,8 @@ func _ready():
 func _ensure_user_data_directories():
 	print("确保用户数据目录存在...")
 	# 确保选手数据目录存在
-	if not DirAccess.dir_exists_absolute(AppData.get_exe_dir() + "/userdata/players/"):
-		var error = DirAccess.make_dir_recursive_absolute(AppData.get_exe_dir() + "/userdata/players/")
+	if not DirAccess.dir_exists_absolute(AppData.get_user_dir() + "/userdata/players/"):
+		var error = DirAccess.make_dir_recursive_absolute(AppData.get_user_dir() + "/userdata/players/")
 		if error != OK: print("创建选手数据目录失败: " + str(error))
 		else: print("创建了选手数据目录")
 
@@ -132,11 +132,11 @@ func _ensure_user_data_directories():
 		if error != OK: print("创建选手头像目录失败: " + str(error))
 		else: print("创建了选手头像目录: " + player_icons_dir)
 
-	# 确保游戏数据目录存在
-	if not DirAccess.dir_exists_absolute(AppData.get_exe_dir() + "/data/"):
-		var error = DirAccess.make_dir_recursive_absolute(AppData.get_exe_dir() + "/data/")
-		if error != OK: print("创建游戏数据目录失败: " + str(error))
-		else: print("创建了游戏数据目录")
+	# 确保缓存数据目录存在
+	if not DirAccess.dir_exists_absolute(AppData.get_user_dir() + "/userdata/misc/"):
+		var error = DirAccess.make_dir_recursive_absolute(AppData.get_user_dir() + "/userdata/misc/")
+		if error != OK: print("创建缓存数据目录失败: " + str(error))
+		else: print("创建了缓存数据目录")
 
 	# 确保干员数据目录存在
 	if not DirAccess.dir_exists_absolute(operators_base_dir):
@@ -544,7 +544,7 @@ func _update_team_members_and_captain(player_data: Dictionary):
 		print("警告: 选手没有队伍ID，无法更新队伍数据")
 		return
 	
-	var teams_data_path = AppData.get_exe_dir() + "/userdata/teams/teams.json"
+	var teams_data_path = AppData.get_user_dir() + "/userdata/teams/teams.json"
 	
 	# 读取所有队伍数据
 	var teams = []

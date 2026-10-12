@@ -19,8 +19,8 @@ signal team_data_changed
 
 func _ready() -> void:
 	# 初始化路径变量
-	teams_data_path = AppData.get_exe_dir() + "/userdata/teams/teams.json"
-	players_data_path = AppData.get_exe_dir() + "/userdata/players/players.json"
+	teams_data_path = AppData.get_user_dir() + "/userdata/teams/teams.json"
+	players_data_path = AppData.get_user_dir() + "/userdata/players/players.json"
 	
 	# 初始化显示
 	update_team_display()

@@ -7,7 +7,7 @@ var relics_data: Dictionary = {}
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# 初始化路径变量
-	current_player_data_path = AppData.get_exe_dir() + "/userdata/players/current_player.json"
+	current_player_data_path = AppData.get_user_dir() + "/userdata/players/current_player.json"
 	relics_data_path = AppData.get_exe_dir() + "/data/relics.json"
 	
 	# 加载藏品数据

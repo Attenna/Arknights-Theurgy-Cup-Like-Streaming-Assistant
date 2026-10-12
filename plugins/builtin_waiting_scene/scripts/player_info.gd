@@ -21,8 +21,8 @@ const DEFAULT_AVATAR_PATH = "res://shared/assets/textures/default_avatar.png"
 
 func _ready() -> void:
 	# 初始化路径变量
-	players_data_path = AppData.get_exe_dir() + "/userdata/players/players.json"
-	current_player_data_path = AppData.get_exe_dir() + "/userdata/players/current_player.json"
+	players_data_path = AppData.get_user_dir() + "/userdata/players/players.json"
+	current_player_data_path = AppData.get_user_dir() + "/userdata/players/current_player.json"
 	
 	print("PlayerInfo: 初始化候场选手信息显示")
 	

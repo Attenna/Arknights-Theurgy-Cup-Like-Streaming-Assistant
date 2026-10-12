@@ -22,8 +22,8 @@ var selected_announcers: Array = [{}] # 最多3个解说员的选择
 
 func _ready() -> void:
 	# 初始化路径变量
-	ANNOUNCER_DATA_PATH = AppData.get_exe_dir() + "/userdata/announcers/announcers.json"
-	CURRENT_ANNOUNCER_DATA_PATH = AppData.get_exe_dir() + "/userdata/announcers/current_announcer.json"
+	ANNOUNCER_DATA_PATH = AppData.get_user_dir() + "/userdata/announcers/announcers.json"
+	CURRENT_ANNOUNCER_DATA_PATH = AppData.get_user_dir() + "/userdata/announcers/current_announcer.json"
 	
 	# 添加到组中，便于模组直播场景等节点找到并连接信号
 	add_to_group("now_announcer")
@@ -246,8 +246,8 @@ func _on_confirm_pressed() -> void:
 func _save_current_announcers() -> void:
 	"""保存当前解说员到current_announcer.json"""
 	# 确保目录存在
-	if not DirAccess.dir_exists_absolute(AppData.get_exe_dir() + "/userdata/announcers/"):
-		DirAccess.make_dir_recursive_absolute(AppData.get_exe_dir() + "/userdata/announcers/")
+	if not DirAccess.dir_exists_absolute(AppData.get_user_dir() + "/userdata/announcers/"):
+		DirAccess.make_dir_recursive_absolute(AppData.get_user_dir() + "/userdata/announcers/")
 	
 	var file = FileAccess.open(CURRENT_ANNOUNCER_DATA_PATH, FileAccess.WRITE)
 	if file:
