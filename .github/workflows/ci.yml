@@ -65,3 +65,21 @@ jobs:
             exit 1
           fi
           echo "附加检查 通过"
+
+  contract-tests:
+    name: 契约测试（无头）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Godot 4.5.1
+        run: |
+          curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip godot.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
+
+      - name: 导入项目资源（生成全局类缓存）
+        run: ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --import
+
+      - name: 运行契约测试（tests/，ADR-0003）
+        run: ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . res://tests/test_main.tscn
