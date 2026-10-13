@@ -23,16 +23,29 @@ signal data_reloaded(scope: String)                          # 数据重载（�
 var _subs: Dictionary = {}
 
 ## 发布一个通用事件。
-## debug 构建校验事件名已登记（未登记 push_warning），release 构建跳过校验。
+## debug 构建校验事件名已登记 + payload 契约（问题 push_warning，不阻断分发）；
+## release 构建跳过全部校验（性能）。
 func emit_event(event_name: String, payload: Dictionary = {}) -> void:
-	if OS.is_debug_build() and not EventCatalog.is_registered(StringName(event_name)):
-		push_warning("[EventBus] 事件名未登记（请登记 EventCatalog.gd）: %s" % event_name)
+	if OS.is_debug_build():
+		for issue in validate_payload(event_name, payload):
+			push_warning("[EventBus] " + issue)
 	bus_event.emit(event_name, payload)
 	# 封装订阅分发：仅通知订阅了该事件名的回调（回调只收 payload 字典）
 	for sub in _subs.get(event_name, []):
 		var cb: Callable = sub["cb"]
 		if cb.is_valid():
 			cb.call(payload)
+
+## 校验事件 payload 契约，返回问题列表（空列表 = 通过）。
+## 事件名未登记 / 未登记 payload schema 也会在此报出；测试与 debug 分发共用（issue #5）。
+func validate_payload(event_name: String, payload: Dictionary) -> Array[String]:
+	var sn := StringName(event_name)
+	if not EventCatalog.is_registered(sn):
+		return ["事件名未登记（请登记 event_catalog.gd）: %s" % event_name]
+	var schema: Dictionary = EventCatalog.PAYLOAD_SCHEMAS.get(sn, {})
+	if schema.is_empty():
+		return []
+	return DataSchema.validate_item(payload, schema, event_name)
 
 ## 带 owner 的封装订阅：callback 收到该事件的 payload 字典；owner 为插件 id。
 ## 同一回调重复订阅同一事件将被拒绝（防止清理错位）。
