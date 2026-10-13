@@ -82,3 +82,23 @@ D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe --h
 - 大规模删除/重构前：先打备份 zip 到 `d:\Projects\`（命名
   `Arknights-Streaming-Assistant_backup_<日期>.zip`，排除 `.godot/` 与 `builds/`）。
 - 提交与推送规范见 [`framework/docs/Git工作规范.md`](framework/docs/Git工作规范.md)。
+
+## 8. 仓库与分发结构（核心认知）
+
+**核心与插件是「运行时拼装」关系，不是打包关系**：
+
+```
+仓库（开发时）                 部署目录（运行时，如用户的"大集合"）
+core/ + src/ ──导出──▶         演播室2.exe + .pck   ← 纯核心（mods 永不进 pck）
+mods/<插件>/ ──拷贝/解压──▶    mods/<插件>/         ← 文件夹即安装
+```
+
+- 「插件」=「模组」：同一份 plugin.json 契约、同一个 mods/ 根目录，仅来源不同。
+- **纯核心导出**：`export_filter="all_resources"` + `exclude_filter="mods/*, framework_cs/*"`
+  已固化在 `export_presets.cfg`，勿改动；核心零插件可启动（优雅降级）是设计行为。
+- **插件打包**：`.\export_mods.ps1`（可 `-Name <id>` 指定单个）→ `builds/mods/<id>_<version>.zip`，
+  zip 内顶层即插件目录，解压到 `{exe}/mods/` 即完成安装。`.import` 随插件走，`.godot` 缓存不带走。
+- **部署目录（大集合）不进 git**：它是拼装产物，不是仓库。更新 = 重新导出核心覆盖 exe/pck、
+  替换对应 mods/<id>/ 文件夹；试验性插件直接丢进部署目录的 mods/ 试，不污染仓库。
+- **分支管时间，不管模块**：禁止用分支隔离 core / 插件。仓库演进（何时拆分、怎么拆）
+  见 [`framework/docs/Git工作规范.md`](framework/docs/Git工作规范.md) 第 7 节。

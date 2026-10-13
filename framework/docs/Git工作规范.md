@@ -22,6 +22,7 @@
 
 > 远程：`origin = https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant.git`。
 > 开始工作前先 `git pull`（尤其当多台机器 / 多个 Agent 轮流操作时）。
+> 原则：**分支管时间（功能/修复的生命周期），不管模块**——禁止用分支隔离 core 与插件（见第 7 节）。
 
 ## 2. 提交信息规范
 
@@ -76,5 +77,38 @@
   必须评估兼容性并升级策略，同步 [插件开发指南.md](插件开发指南.md)。
 - **备份 zip**：重大删除/重构前打包到 `d:\Projects\Arknights-Streaming-Assistant_backup_<日期>.zip`
   （排除 `.godot/`、`builds/`）。备份是设计源的最终兜底（仓库内的 `.afphoto` 只保留必要份）。
-- **发布**：按 [导出指南.md](导出指南.md) 导出 exe+pck，插件目录随 `{exe}/mods/` 分发，
-  导出产物永不入库。
+- **发布**：按 [导出指南.md](导出指南.md) 导出 exe+pck（纯核心，mods 永不进 pck）；
+  插件用 `export_mods.ps1` 打成 zip 随 `{exe}/mods/` 分发，导出产物永不入库。
+
+---
+
+## 7. 仓库演进路线（拆分预案）
+
+**核心与插件是「运行时拼装」关系**（仓库管源，部署目录管运行，见 AGENTS.md 第 8 节）。
+仓库结构随插件生态演进，分两个阶段：
+
+### 现在：单仓库单 main（现状保持）
+
+- core、mods、docs 同仓库演进，原子提交保证契约一致。
+- 用 `feature/*` 分支处理大改动，用完即删。
+
+### 将来拆分（满足任一条件时启动）
+
+| 触发条件 | 说明 |
+|---|---|
+| 插件开放第三方/社区开发 | 外部作者不应 clone 整个核心仓库 |
+| 插件 >10 个且需独立发版 | 各插件版本节奏与核心脱钩 |
+| 仓库因资源膨胀影响 clone | 主仓库应只含内核与文档 |
+
+**拆法**：
+1. 主仓库保留 `core/ src/ framework/docs/` + `mods/` 内 1-2 个官方示例；
+2. 其余插件迁入新仓库 `plugins-official`（按插件目录拆出，保留各自 git 历史
+   可用 `git filter-repo --subdirectory-filter mods/<id>`）；
+3. `plugins-official` 以 **git submodule** 挂在主仓库 `mods/` 下；
+4. 第三方插件不走 submodule，只以 zip / 文件夹分发（部署目录解压即装）。
+
+### 永久禁止
+
+- ❌ **用分支隔离模块**（core 一个分支、插件一个分支）——分支是隔离时间线的工具，
+  模块分支永远无法合并回 main，必然产生合并地狱；
+- ❌ 部署目录（大集合）初始化为 git 仓库——它是拼装产物，版本由仓库源 + 发布物承担。
