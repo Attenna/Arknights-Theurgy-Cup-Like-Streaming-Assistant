@@ -1,0 +1,23 @@
+{
+    "id": "streaming_arena",
+    "name": "比赛场（模板示例）",
+    "version": "1.0.0",
+    "author": "演播室2",
+    "description": "实例模板插件：比赛场直播场景（计时器 / 开局藏品 / 解说名单 / 左侧 ID 栏），演示素材 / 字体 / 着色器全自携带",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": 0,
+    "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
+    "watch": ["scenes/", "scripts/", "assets/"],
+    "provides": {
+        "scenes": [
+            {
+                "id": "streaming_arena",
+                "name": "比赛场",
+                "type": "live",
+                "scene": "scenes/streaming_arena.tscn",
+                "description": "比赛场直播场景（模板示例）"
+            }
+        ]
+    }
+}

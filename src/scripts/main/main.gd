@@ -39,6 +39,26 @@ func _ready() -> void:
 
 	_load_control_panel()
 
+	# ── 启动参数直连场景（调试 / 演示 / 无控制面板时检验插件）──
+	# 用法：在程序参数 `--` 之后传 `--scene <场景id>` 或 `--scene=<场景id>`，
+	# 例如：godot --path . -- --scene streaming_arena
+	# 场景 id 由插件的 plugin.json provides.scenes[].id 声明。
+	var auto_scene := _resolve_auto_scene()
+	if not auto_scene.is_empty():
+		print("[main] 启动参数请求直连场景: %s" % auto_scene)
+		director.switch_to.call_deferred(auto_scene)
+
+# 解析 --scene <id> / --scene=<id>（仅识别 `--` 之后的用户参数）。
+func _resolve_auto_scene() -> String:
+	var args := OS.get_cmdline_user_args()
+	for i in args.size():
+		var arg := str(args[i])
+		if arg.begins_with("--scene="):
+			return arg.substr(8)
+		if arg == "--scene" and i + 1 < args.size():
+			return str(args[i + 1])
+	return ""
+
 # ── 控制面板 ─────────────────────────────────────────────────────────────────
 
 func _load_control_panel() -> void:
