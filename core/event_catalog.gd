@@ -29,12 +29,24 @@ const SCENE_CHANGED := &"scene_changed"
 # 通用通道 payload：{ "scope": String }
 const DATA_RELOADED := &"data_reloaded"
 
+# ── 测试协作事件（issue #6 集成测试，插件对 mods/_test_pair_*） ────────────────
+# 测试插件对纯 EventBus 协作闭环（铁律 1 活教材）：发布方发 ping，订阅方回 pong。
+# 供集成测试断言协作收发与热重载订阅守恒。
+
+# 测试协作 ping。payload：{ "seq": int }
+const TEST_PAIR_PINGED := &"test_pair_pinged"
+
+# 测试协作 pong。payload：{ "seq": int, "by": String }
+const TEST_PAIR_PONGED := &"test_pair_ponged"
+
 # ── 已登记事件名全集（emit_event 的 debug 校验依据） ─────────────────────────
 const REGISTERED: Array[StringName] = [
 	PLAYER_CHANGED,
 	ANNOUNCER_CHANGED,
 	SCENE_CHANGED,
 	DATA_RELOADED,
+	TEST_PAIR_PINGED,
+	TEST_PAIR_PONGED,
 ]
 
 ## 事件名是否已登记（EventBus debug 构建校验用）。
@@ -56,5 +68,12 @@ const PAYLOAD_SCHEMAS := {
 	},
 	DATA_RELOADED: {
 		&"scope": {"type": TYPE_STRING, "required": true},
+	},
+	TEST_PAIR_PINGED: {
+		&"seq": {"type": TYPE_INT, "required": true},
+	},
+	TEST_PAIR_PONGED: {
+		&"seq": {"type": TYPE_INT, "required": true},
+		&"by": {"type": TYPE_STRING, "required": true},
 	},
 }

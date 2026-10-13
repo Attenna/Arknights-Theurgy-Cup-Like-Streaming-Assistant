@@ -1,0 +1,12 @@
+{
+    "id": "test_pair_a",
+    "name": "协作测试插件 A（发布方）",
+    "version": "1.0.0",
+    "author": "核心仓库",
+    "description": "issue #6 集成测试：纯 EventBus 协作闭环的发布方。目录名 _ 前缀，打包脚本排除，不进分发 zip。",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": 0,
+    "hot_reload": { "enabled": false },
+    "provides": { "scenes": [], "panels": [] }
+}

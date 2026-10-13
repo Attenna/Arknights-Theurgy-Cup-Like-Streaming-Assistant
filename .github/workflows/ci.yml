@@ -57,7 +57,7 @@ jobs:
         run: |
           # 内核零插件可启动：core/ 代码不得出现任何具体插件 id 字符串。
           # 新增插件 id 时在此追加（维护点；仅限真实存在的 mods/ 插件目录名）。
-          ids='streaming_arena|control_panel_base|scene_manager_panel'
+          ids='streaming_arena|control_panel_base|scene_manager_panel|test_pair_a|test_pair_b'
           hits=$(grep -rnE "$ids" core --include='*.gd' || true)
           if [ -n "$hits" ]; then
             echo "::error::附加违例：core/ 内出现具体插件 id 字符串（内核不得认识任何具体插件）"

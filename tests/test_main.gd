@@ -12,6 +12,7 @@ const TEST_SCRIPTS: Array[String] = [
 	"res://tests/test_data_contract.gd",
 	"res://tests/test_event_catalog.gd",
 	"res://tests/test_event_bus.gd",
+	"res://tests/test_integration.gd",
 ]
 
 func _ready() -> void:
@@ -24,7 +25,9 @@ func _ready() -> void:
 			print("[FAIL] 测试脚本加载失败: " + path)
 			continue
 		var case: TestCase = script.new()
-		all_pass = case.run() and all_pass
+		# 统一 await：兼容同步用例与含 await 的异步用例（集成测试需等帧 flush deferred）
+		var passed: bool = await case.run()
+		all_pass = passed and all_pass
 	print("----------")
 	if all_pass:
 		print("[run_tests] 全部通过")
