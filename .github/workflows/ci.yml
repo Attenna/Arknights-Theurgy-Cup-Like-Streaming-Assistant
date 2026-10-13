@@ -1,0 +1,67 @@
+# CI 门禁：模组协作 grep 禁令（issue #3）
+# 规则来源：framework/docs/架构演进路线.md 第 6 节、AGENTS.md 铁律 1/2。
+# 禁令 3（/root/Kernel 硬编码）已随 PluginContext 访问层（ADR-0001 / issue #2）落地转 error。
+name: CI 门禁
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  grep-bans:
+    name: grep 禁令（跨插件引用 / 内核硬编码）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 禁令1 mods/ 内禁止 preload/load 其它插件脚本
+        run: |
+          # 铁律1：插件不引用插件。插件脚本相对加载一律走
+          # get_script().resource_path.get_base_dir().path_join(...)；
+          # 硬编码 res://mods/ 或 res://plugins/ 路径即判违例。
+          hits=$(grep -rnE "(preload|load)[[:space:]]*\([[:space:]]*[\"']res://(mods|plugins)/" mods --include='*.gd' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::禁令1 违例：mods/ 内出现硬编码 res://mods|plugins 路径的 preload/load（铁律1：插件不引用插件）"
+            echo "$hits"
+            exit 1
+          fi
+          echo "禁令1 通过"
+
+      - name: 禁令2 mods/ 内禁止跨插件相对路径 get_node
+        run: |
+          # 铁律1：禁止 get_node("../xxx") / $"../xxx" 跨插件访问节点。
+          hits=$(grep -rnE "get_node(_or_null)?[[:space:]]*\([[:space:]]*[\"'][^\"']*\.\./" mods --include='*.gd' || true)
+          hits2=$(grep -rnE '\$"[^"]*\.\./' mods --include='*.gd' || true)
+          if [ -n "$hits" ] || [ -n "$hits2" ]; then
+            echo "::error::禁令2 违例：mods/ 内出现跨插件相对路径节点访问（铁律1：插件不引用插件）"
+            echo "$hits"
+            echo "$hits2"
+            exit 1
+          fi
+          echo "禁令2 通过"
+
+      - name: 禁令3 mods/ 与 core/ 内禁止硬编码 /root/Kernel
+        run: |
+          # 铁律2：服务只从访问层获取（PluginContext，ADR-0001）。
+          # 白名单：src/ 引导壳（main.gd 负责装配内核本体，属基础设施而非插件代码）。
+          hits=$(grep -rn "/root/Kernel" mods core --include='*.gd' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::禁令3 违例：mods/ 或 core/ 内硬编码 /root/Kernel（铁律2：服务只从访问层获取）"
+            echo "$hits"
+            exit 1
+          fi
+          echo "禁令3 通过"
+
+      - name: 附加检查 core/ 不得认识具体插件
+        run: |
+          # 内核零插件可启动：core/ 代码不得出现任何具体插件 id 字符串。
+          # 新增插件 id 时在此追加（维护点；仅限真实存在的 mods/ 插件目录名）。
+          ids='streaming_arena|control_panel_base|scene_manager_panel'
+          hits=$(grep -rnE "$ids" core --include='*.gd' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::附加违例：core/ 内出现具体插件 id 字符串（内核不得认识任何具体插件）"
+            echo "$hits"
+            exit 1
+          fi
+          echo "附加检查 通过"
