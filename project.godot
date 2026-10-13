@@ -21,6 +21,7 @@ config/icon="res://shared/icons/icon.svg"
 
 [autoload]
 
+EventCatalog="*res://core/event_catalog.gd"
 AppData="*res://src/scripts/data/app_data.gd"
 Kernel="*res://core/kernel.gd"
 ModLoader="*res://core/mod_loader.gd"

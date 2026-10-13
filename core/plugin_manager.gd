@@ -291,6 +291,8 @@ func _load_plugin(res_dir: String, manifest: Dictionary, origin: String = "", fr
 		var ok: bool = instance.on_load()
 		if not ok:
 			push_error("[PluginManager] 插件 on_load 失败: %s" % plugin_id)
+			if _kernel and _kernel.event_bus:
+				_kernel.event_bus.unsubscribe_all(StringName(plugin_id))
 			instance.queue_free()
 			plugin_loaded.emit(plugin_id, false)
 			return false
@@ -491,7 +493,9 @@ func _reload_single(plugin_id: String) -> bool:
 	if _kernel and _kernel.plugin_registry:
 		_kernel.plugin_registry.unregister_plugin(plugin_id)
 
-	# 5) 卸载旧实例
+	# 5) 卸载旧实例；事件订阅按 owner 批量清理，杜绝热重载悬空订阅（ADR-0002）
+	if _kernel and _kernel.event_bus:
+		_kernel.event_bus.unsubscribe_all(StringName(plugin_id))
 	if instance and is_instance_valid(instance):
 		if instance.has_method("on_disable"):
 			instance.on_disable()

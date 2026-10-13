@@ -32,8 +32,10 @@
 2. **服务只从访问层获取**：禁止硬编码 `/root/Kernel` 直连内核。⚠️ 过渡期注记：
    `PluginContext` 访问层落地前（见 issues），现有代码的 `get_node_or_null("/root/Kernel")`
    暂允许，**新插件代码一律封装访问入口**；落地并迁移后 CI 禁令全量生效。
-3. **事件名 / 数据字段名必须常量化**：统一进 `EventCatalog.gd` / `DataKeys.gd`
-   （未建立前先集中登记，禁新增裸字符串事件名）；新事件必须登记目录并写明 payload 字段契约。
+3. **事件名 / 数据字段名必须常量化**：事件名统一进 `EventCatalog.gd`（autoload，已建立），
+   数据字段常量待 `DataKeys.gd`（先集中登记，禁新增裸字符串事件名）；新事件必须登记目录
+   并写明 payload 字段契约；订阅一律走 `event_bus.subscribe(事件名, 回调, 插件id)`，
+   插件卸载 / 热重载自动清理订阅。
 
 **决策顺序**（新增功能时从上到下，禁止跳级）：EventBus 通知 → `provides` 声明 →
 PluginRegistry 只读查询 → mount_panel 挂载 → DataService 共享 →
