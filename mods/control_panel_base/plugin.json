@@ -1,0 +1,23 @@
+{
+    "id": "control_panel_base",
+    "name": "控制面板基底",
+    "version": "1.0.0",
+    "author": "演播室2",
+    "description": "控制面板基底插件（slot=main_window）：只提供面板骨架，装载 slot=control_panel 的二级面板",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": 0,
+    "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
+    "watch": ["panels/"],
+    "provides": {
+        "panels": [
+            {
+                "id": "control_panel_base",
+                "name": "控制面板",
+                "slot": "main_window",
+                "order": 0,
+                "scene": "panels/control_panel.tscn"
+            }
+        ]
+    }
+}

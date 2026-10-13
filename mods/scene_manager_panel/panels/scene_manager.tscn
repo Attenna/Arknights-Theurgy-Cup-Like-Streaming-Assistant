@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="scene_manager_panel.gd" id="1_sm"]
+
+[node name="SceneManagerPanel" type="VBoxContainer"]
+script = ExtResource("1_sm")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "直播场景"
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+layout_mode = 2
