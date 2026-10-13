@@ -19,62 +19,17 @@ var current_player_data: Dictionary = {}
 @onready var squad_name: Label = get_node_or_null("OpeningSquad/SquadName")
 
 func _ready() -> void:
-	# 连接到选手数据更新信号
-	_connect_to_player_signals()
-	
+	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
+	var ctx := PluginContext.for_node(self)
+	if ctx.event_bus:
+		ctx.event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
+		ctx.event_bus.subscribe(EventCatalog.DATA_RELOADED, func(_p: Dictionary) -> void: _on_player_data_updated(), &"streaming_arena")
+
 	# 初始加载当前选手数据
 	_load_current_player_data()
-	
+
 	# 更新UI显示
 	_update_ui_display()
-
-func _connect_to_player_signals() -> void:
-	"""连接到选手相关的信号"""
-	# 延迟连接，确保所有节点都已准备好
-	call_deferred("_delayed_connect_to_signals")
-
-func _delayed_connect_to_signals() -> void:
-	"""延迟连接到相关信号"""
-	var connected_count = 0
-	
-	# 查找 now_player 节点并连接其信号
-	var now_player_nodes = _find_nodes_with_script("now_player.gd")
-	for node in now_player_nodes:
-		if node.has_signal("player_selected"):
-			if not node.player_selected.is_connected(_on_player_selected):
-				node.player_selected.connect(_on_player_selected)
-				print("Connected to player_selected signal from: " + node.name)
-				connected_count += 1
-	
-	# 也可以连接到编辑器的更新信号
-	var editor_nodes = get_tree().get_nodes_in_group("player_editors")
-	for editor in editor_nodes:
-		if editor.has_signal("player_data_updated"):
-			if not editor.player_data_updated.is_connected(_on_player_data_updated):
-				editor.player_data_updated.connect(_on_player_data_updated)
-				print("Connected to player_data_updated signal from: " + editor.name)
-				connected_count += 1
-	
-	if connected_count > 0:
-		print("Successfully connected to " + str(connected_count) + " player signal(s)")
-	else:
-		print("Warning: Could not find player-related signals to connect")
-
-func _find_nodes_with_script(script_name: String) -> Array:
-	"""查找具有指定脚本的节点"""
-	var result = []
-	_search_nodes_recursive(get_tree().root, script_name, result)
-	return result
-
-func _search_nodes_recursive(node: Node, script_name: String, result: Array) -> void:
-	"""递归搜索节点"""
-	if node.get_script():
-		var script_path = node.get_script().resource_path
-		if script_path.ends_with(script_name):
-			result.append(node)
-	
-	for child in node.get_children():
-		_search_nodes_recursive(child, script_name, result)
 
 func _on_player_selected(player_data: Dictionary) -> void:
 	"""处理选手选择信号"""

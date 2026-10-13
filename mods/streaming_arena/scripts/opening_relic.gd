@@ -12,48 +12,16 @@ func _ready() -> void:
 	
 	# 加载藏品数据
 	_load_relics_data()
-	
-	# Connect to signals that indicate player data has changed.
-	_connect_to_player_signals()
-	
+
+	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
+	var ctx := PluginContext.for_node(self)
+	if ctx.event_bus:
+		ctx.event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
+		ctx.event_bus.subscribe(EventCatalog.DATA_RELOADED, func(_p: Dictionary) -> void: _on_player_data_updated(), &"streaming_arena")
+
 	# Initial load of the current player's data to set the display.
 	var initial_player_data = _load_current_player_data()
 	_update_relic_display(initial_player_data)
-
-
-# --- Signal Connection ---
-
-func _connect_to_player_signals() -> void:
-	"""Connects to player-related signals after a short delay."""
-	call_deferred("_delayed_connect_to_signals")
-
-func _delayed_connect_to_signals() -> void:
-	"""
-	Waits for the scene tree to be ready, then connects to signals from
-	the player selection UI and player editors.
-	"""
-	var connected_count = 0
-	
-	# Find the 'now_player.gd' node and connect to its 'player_selected' signal.
-	var now_player_nodes = _find_nodes_with_script("now_player.gd")
-	for node in now_player_nodes:
-		if node.has_signal("player_selected"):
-			if not node.player_selected.is_connected(_on_player_selected):
-				node.player_selected.connect(_on_player_selected)
-				print("Relic Label: Connected to player_selected signal from: " + node.name)
-				connected_count += 1
-	
-	# Connect to the 'player_data_updated' signal from editors.
-	var editor_nodes = get_tree().get_nodes_in_group("player_editors")
-	for editor in editor_nodes:
-		if editor.has_signal("player_data_updated"):
-			if not editor.player_data_updated.is_connected(_on_player_data_updated):
-				editor.player_data_updated.connect(_on_player_data_updated)
-				print("Relic Label: Connected to player_data_updated signal from: " + editor.name)
-				connected_count += 1
-	
-	if connected_count == 0:
-		print("Relic Label Warning: Could not find any player-related signals to connect.")
 
 
 # --- Signal Handlers ---
@@ -185,17 +153,3 @@ func _debug_relic_info(player_data: Dictionary) -> void:
 	
 	if relics_data.size() > 0:
 		print("  Available Relics: " + str(relics_data.keys()))
-
-func _find_nodes_with_script(script_name: String) -> Array:
-	"""Finds all nodes in the scene tree with a specific script attached."""
-	var result = []
-	_search_nodes_recursive(get_tree().root, script_name, result)
-	return result
-
-func _search_nodes_recursive(node: Node, script_name: String, result: Array) -> void:
-	"""Recursively searches the scene tree for nodes with the specified script."""
-	if node.get_script() and node.get_script().resource_path.ends_with(script_name):
-		result.append(node)
-	
-	for child in node.get_children():
-		_search_nodes_recursive(child, script_name, result)

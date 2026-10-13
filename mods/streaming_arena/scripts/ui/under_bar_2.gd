@@ -15,54 +15,17 @@ var current_confirmed_announcers: Array = []
 func _ready() -> void:
 	# 初始化路径变量
 	current_announcer_data_path = AppData.get_user_dir() + "/userdata/announcers/current_announcer.json"
-	
-	# 连接到解说员确认信号
-	_connect_to_announcer_signals()
-	
+
+	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
+	var ctx := PluginContext.for_node(self)
+	if ctx.event_bus:
+		ctx.event_bus.subscribe(EventCatalog.ANNOUNCER_CHANGED, _on_announcer_confirmed, &"streaming_arena")
+
 	# 初始加载当前解说员数据
 	_load_current_announcer_data()
-	
+
 	# 更新显示
 	_update_announcers_display()
-
-func _connect_to_announcer_signals() -> void:
-	# 连接到解说员相关信号
-	# 延迟连接，确保所有节点都已准备好
-	call_deferred("_delayed_connect_to_signals")
-
-func _delayed_connect_to_signals() -> void:
-	# 延迟连接到解说员确认信号
-	var connected_count = 0
-	
-	# 查找 StreamingManager 中的 NowAnnouncer 节点
-	var now_announcer_nodes = _find_nodes_with_script("now_announcer.gd")
-	for node in now_announcer_nodes:
-		if node.has_signal("announcer_selected"):
-			if not node.announcer_selected.is_connected(_on_announcer_confirmed):
-				node.announcer_selected.connect(_on_announcer_confirmed)
-				print("Connected to announcer_selected signal from: " + node.name)
-				connected_count += 1
-	
-	if connected_count > 0:
-		print("Successfully connected to " + str(connected_count) + " announcer confirmation signal(s)")
-	else:
-		print("Warning: Could not find announcer confirmation signals to connect")
-
-func _find_nodes_with_script(script_name: String) -> Array:
-	# 查找具有指定脚本的节点
-	var result = []
-	_search_nodes_recursive(get_tree().root, script_name, result)
-	return result
-
-func _search_nodes_recursive(node: Node, script_name: String, result: Array) -> void:
-	# 递归搜索节点
-	if node.get_script():
-		var script_path = node.get_script().resource_path
-		if script_path.ends_with(script_name):
-			result.append(node)
-	
-	for child in node.get_children():
-		_search_nodes_recursive(child, script_name, result)
 
 func _on_announcer_confirmed(announcer_data: Dictionary) -> void:
 	# 处理解说员确认信号
@@ -182,14 +145,6 @@ func debug_announcers_data() -> void:
 		for i in range(current_confirmed_announcers.size()):
 			var announcer_name = current_confirmed_announcers[i]
 			print("    " + str(i + 1) + ". " + str(announcer_name))
-
-# 手动连接方法
-func connect_to_now_announcer(announcer_node: Node) -> void:
-	# 手动连接到解说员选择节点的信号
-	if announcer_node and announcer_node.has_signal("announcer_selected"):
-		if not announcer_node.announcer_selected.is_connected(_on_announcer_confirmed):
-			announcer_node.announcer_selected.connect(_on_announcer_confirmed)
-			print("Manually connected to announcer_selected signal from: " + announcer_node.name)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

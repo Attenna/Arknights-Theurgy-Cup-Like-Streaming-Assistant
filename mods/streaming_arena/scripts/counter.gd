@@ -24,9 +24,8 @@ func _ready() -> void:
 	# 初始化显示
 	_update_time_display()
 	star_reset() # 确保初始状态正确
-	
-	# 连接到 now_player 节点的信号
-	_connect_to_now_player_signals()
+	# 连麦状态事件（player_mic_*）尚未登记 EventCatalog，待发布方按铁律3登记后
+	# 在此经 EventBus 订阅接入；当前无发布方，不再跨插件查找控制面板节点（铁律1）。
 
 func _process(delta: float) -> void:
 	# 处理倒计时
@@ -45,28 +44,6 @@ func _process(delta: float) -> void:
 		# 使用三角函数（sin）来计算透明度，实现平滑的呼吸效果
 		var alpha = (sin(blink_timer * (2 * PI / BLINK_DURATION)) + 1) / 2.0
 		blinking_star.modulate.a = alpha
-
-# --- 信号连接 ---
-
-func _connect_to_now_player_signals() -> void:
-	call_deferred("_delayed_connect")
-
-func _delayed_connect() -> void:
-	var now_player_nodes = get_tree().get_nodes_in_group("now_player_control")
-	if now_player_nodes.is_empty():
-		var root = get_tree().root
-		var found_node = _find_node_with_script(root, "now_player.gd")
-		if found_node:
-			now_player_nodes.append(found_node)
-
-	if not now_player_nodes.is_empty():
-		var now_player = now_player_nodes[0]
-		if now_player.has_signal("player_mic_status_changed"):
-			now_player.player_mic_status_changed.connect(_on_player_mic_status_changed)
-		if now_player.has_signal("player_mic_count_changed"):
-			now_player.player_mic_count_changed.connect(_on_player_mic_count_changed)
-	else:
-		print("Counter Warning: Could not find 'now_player.gd' node.")
 
 # --- 信号处理器 ---
 
@@ -104,15 +81,6 @@ func _on_player_mic_status_changed(_player_id: String, p_is_connected: bool) -> 
 			time_left = 0 # 归零
 		_update_time_display()
 
-
-func _on_player_mic_count_changed(_player_id: String, count: int) -> void:
-	remaining_connections = clamp(count, 0, 3)
-	print("Counter: Remaining connections updated to %d" % remaining_connections)
-	
-	# 如果收到的次数是3，说明是重置信号
-	if remaining_connections == 3:
-		star_reset()
-		reset_countdown()
 
 # --- 内部控制方法 ---
 
@@ -158,15 +126,6 @@ func star_reset() -> void:
 	print("Stars have been reset.")
 
 # --- 辅助函数 ---
-
-func _find_node_with_script(node: Node, script_name: String) -> Node:
-	if node.get_script() and node.get_script().resource_path.ends_with(script_name):
-		return node
-	for child in node.get_children():
-		var found = _find_node_with_script(child, script_name)
-		if found:
-			return found
-	return null
 
 func _update_time_display() -> void:
 	var minutes = floor(time_left / 60)
