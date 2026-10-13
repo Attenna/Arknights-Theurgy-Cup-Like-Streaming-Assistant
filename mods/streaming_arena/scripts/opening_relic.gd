@@ -135,7 +135,7 @@ func _update_relic_display(player_data: Dictionary) -> void:
 		print("Relic Label: No player data available")
 		return
 
-	var relic_choice = player_data.get("starting_relic_choice", "")
+	var relic_choice = player_data.get(DataKeys.PLAYER_STARTING_RELIC_CHOICE, "")
 	if relic_choice.is_empty():
 		self.text = "未选择藏品"
 		print("Relic Label: Player has not selected a starting relic.")
@@ -178,9 +178,9 @@ func _update_relic_display(player_data: Dictionary) -> void:
 func _debug_relic_info(player_data: Dictionary) -> void:
 	"""调试函数：打印藏品相关信息"""
 	print("--- Relic Debug Info ---")
-	print("  Player ID: " + str(player_data.get("id", "Unknown")))
-	print("  Player Name: " + str(player_data.get("name", "Unknown")))
-	print("  Selected Relic: " + str(player_data.get("starting_relic_choice", "None")))
+	print("  Player ID: " + str(player_data.get(DataKeys.PLAYER_ID, "Unknown")))
+	print("  Player Name: " + str(player_data.get(DataKeys.PLAYER_NAME, "Unknown")))
+	print("  Selected Relic: " + str(player_data.get(DataKeys.PLAYER_STARTING_RELIC_CHOICE, "None")))
 	print("  Relics Data Loaded: " + str(relics_data.size()) + " entries")
 	
 	if relics_data.size() > 0:

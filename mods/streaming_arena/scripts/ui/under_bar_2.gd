@@ -75,8 +75,8 @@ func _on_announcer_confirmed(announcer_data: Dictionary) -> void:
 		current_confirmed_announcers = []
 		
 		for announcer in announcers_array:
-			if announcer is Dictionary and announcer.has("name"):
-				current_confirmed_announcers.append(announcer["name"])
+			if announcer is Dictionary and announcer.has(DataKeys.ANNOUNCER_NAME):
+				current_confirmed_announcers.append(announcer[DataKeys.ANNOUNCER_NAME])
 		
 		print("📋 从信号提取的解说员: " + str(current_confirmed_announcers))
 		
@@ -116,8 +116,8 @@ func _load_current_announcer_data() -> void:
 				# 格式2: {"announcers": [{"name": "b", "id": "...", ...}, ...]}
 				current_confirmed_announcers = []
 				for announcer in data["announcers"]:
-					if announcer is Dictionary and announcer.has("name"):
-						current_confirmed_announcers.append(announcer["name"])
+					if announcer is Dictionary and announcer.has(DataKeys.ANNOUNCER_NAME):
+						current_confirmed_announcers.append(announcer[DataKeys.ANNOUNCER_NAME])
 				print("Loaded " + str(current_confirmed_announcers.size()) + " confirmed announcer(s) from announcer objects: " + str(current_confirmed_announcers))
 			else:
 				print("Error: Invalid current announcer data format - missing 'names' or 'announcers' field")

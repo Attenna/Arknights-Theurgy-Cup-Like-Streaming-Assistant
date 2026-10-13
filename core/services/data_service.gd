@@ -41,27 +41,57 @@ func write_json(rel_path: String, data: Variant) -> bool:
 	file.close()
 	return true
 
+# ── 契约数据读取（schema 校验 + 版本迁移，issue #4） ─────────────────────────
+# 读取链路：read_json → DataSchema.migrate 迁移到当前版本信封 → 逐条 validate_item；
+# 校验问题仅 push_warning 不阻断（优雅降级），缺文件 / 解析失败返回空值（与旧版一致）。
+
 func get_current_player() -> Dictionary:
-	var data = read_json("userdata/players/current_player.json")
-	return data if data is Dictionary else {}
+	return _load_single("userdata/players/current_player.json", DataKeys.PLAYER, DataSchema.PLAYER)
 
 func get_current_announcer() -> Dictionary:
-	var data = read_json("userdata/announcers/current_announcer.json")
-	return data if data is Dictionary else {}
+	return _load_single("userdata/announcers/current_announcer.json", DataKeys.ANNOUNCER, DataSchema.ANNOUNCER)
 
 func get_players() -> Array:
-	var data = read_json("userdata/players/players.json")
-	return data if data is Array else []
+	return _load_list("userdata/players/players.json", DataKeys.PLAYERS, DataSchema.PLAYER)
 
 func get_teams() -> Array:
-	var data = read_json("userdata/teams/teams.json")
-	return data if data is Array else []
+	return _load_list("userdata/teams/teams.json", DataKeys.TEAMS, DataSchema.TEAM)
 
 func get_team_by_id(team_id: String) -> Dictionary:
 	for team in get_teams():
-		if team is Dictionary and str(team.get("id", "")) == team_id:
+		if team is Dictionary and str(team.get(DataKeys.TEAM_ID, "")) == team_id:
 			return team
 	return {}
+
+## 读取列表实体文件并逐条校验；内容非数组时告警并返回空数组。
+func _load_list(rel_path: String, items_key: StringName, item_schema: Dictionary) -> Array:
+	var data = read_json(rel_path)
+	if data == null:
+		return []
+	var items: Variant = DataSchema.migrate(data, items_key).get(items_key)
+	if items is Array:
+		for i in items.size():
+			_warn_schema_issues(DataSchema.validate_item(items[i], item_schema, "%s[%d]" % [rel_path, i]))
+		return items
+	push_warning("[DataService] %s 内容应为数组，实际为 %s" % [rel_path, type_string(typeof(items))])
+	return []
+
+## 读取单实体文件并校验；内容非字典时告警并返回空字典。
+func _load_single(rel_path: String, items_key: StringName, item_schema: Dictionary) -> Dictionary:
+	var data = read_json(rel_path)
+	if data == null:
+		return {}
+	var item: Variant = DataSchema.migrate(data, items_key).get(items_key)
+	if item is Dictionary:
+		_warn_schema_issues(DataSchema.validate_item(item, item_schema, rel_path))
+		return item
+	if item != null:
+		push_warning("[DataService] %s 内容应为字典，实际为 %s" % [rel_path, type_string(typeof(item))])
+	return {}
+
+func _warn_schema_issues(issues: Array[String]) -> void:
+	for issue in issues:
+		push_warning("[DataService] schema 校验: " + issue)
 
 ## 通知数据已重新加载（热重载时由 FileWatcher / PluginManager 调用）。
 func notify_reloaded(scope: String) -> void:

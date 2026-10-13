@@ -34,7 +34,8 @@
    `get_scene_director()` / …）或 `self.context`；非 Plugin 派生脚本（面板 UI / 场景根节点）
    用 `PluginContext.for_node(self)`。见 [`adr/0001-plugin-context.md`](framework/docs/adr/0001-plugin-context.md)。
 3. **事件名 / 数据字段名必须常量化**：事件名统一进 `EventCatalog.gd`（autoload，已建立），
-   数据字段常量待 `DataKeys.gd`（先集中登记，禁新增裸字符串事件名）；新事件必须登记目录
+   数据字段常量进 `DataKeys.gd`（已建立，schema 定义与校验见 `DataSchema`，
+   契约本体见 README「数据规范」）；新事件必须登记目录
    并写明 payload 字段契约；订阅一律走 `event_bus.subscribe(事件名, 回调, 插件id)`，
    插件卸载 / 热重载自动清理订阅。
 

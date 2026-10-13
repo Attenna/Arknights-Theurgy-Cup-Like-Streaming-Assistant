@@ -11,5 +11,5 @@ func _on_scene_enter() -> void:
 	title_label.text = scene_name
 
 func _on_player_changed(player_data: Dictionary) -> void:
-	# 数据字段名必须从 DataKeys 常量取（未建立前先集中登记，见 issue #4）
-	title_label.text = str(player_data.get("name", scene_name))
+	# 数据字段名必须从 DataKeys 常量取（铁律 3，issue #4）
+	title_label.text = str(player_data.get(DataKeys.PLAYER_NAME, scene_name))

@@ -98,7 +98,80 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 | [导出指南](framework/docs/导出指南.md) | 导出纯核心、插件打包、发布布局与验证清单 |
 | [Git 工作规范](framework/docs/Git工作规范.md) | 分支模型、提交信息规范、冲突预防、仓库演进路线 |
 
-## 数据规范（DataService 契约）
+## 数据规范（DataService 契约 v1）
+
+> 本节即正式数据契约本体（issue #4）：字段名的唯一权威是 `core/data_keys.gd`
+> （`DataKeys` 常量），字段类型 / 必填定义与校验逻辑在 `core/data_schema.gd`（`DataSchema`）。
+> DataService 加载时自动执行 schema 校验，问题仅告警不阻断（优雅降级）；
+> 字段结构变更必须同步编写迁移函数并递增 `schema_version`。
+
+### 版本信封与迁移
+
+契约文件统一为带 `schema_version` 的信封结构；旧版裸格式（无信封）读取时自动迁移、
+不回写文件，写入侧建议直接产出信封格式：
+
+```json
+// userdata/players/players.json            → { "schema_version": 1, "players":  [ …选手条目… ] }
+// userdata/teams/teams.json                → { "schema_version": 1, "teams":    [ …队伍条目… ] }
+// userdata/players/current_player.json     → { "schema_version": 1, "player":   …选手条目… }
+// userdata/announcers/current_announcer.json → { "schema_version": 1, "announcer": …解说条目… }
+```
+
+### 选手条目（players.json 数组元素 / current_player.json）
+
+```json
+{
+  "id": "小明",
+  "name": "小明",
+  "captain": 0,
+  "icon_path": "{exe_path}/userdata/players/player_icons/小明.jpg",
+  "team_id": "IGP",
+  "starting_operator_choice": "史尔特尔",
+  "starting_relic_choice": "希望时代的涂鸦",
+  "starting_squad_choice": "魂灵护送分队",
+  "stats": { "score": 325, "money_taken": 20, "slogan": "这是感言" }
+}
+```
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `id` / `name` | String | ✅ | 唯一 id / 显示名 |
+| `team_id` / `icon_path` / `starting_*` | String | 可选 | 队伍 id、头像路径、开局三项选择 |
+| `captain` | int | 可选 | 0 / 1 |
+| `stats` | Dictionary | 可选 | 子字段 `score` / `money_taken`（int）、`slogan`（String） |
+
+### 队伍条目（teams.json 数组元素）
+
+```json
+{
+  "id": "IGP",
+  "name": "集批战术分队",
+  "captain": null,
+  "rank": null,
+  "balance": 180,
+  "score": 325,
+  "icon_path": "{exe_path}/userdata/teams/team_icons/IGP.jpg",
+  "members": ["小明"]
+}
+```
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `id` / `name` | String | ✅ | 唯一 id / 显示名 |
+| `balance` / `score` | int | 可选 | 资金 / 积分 |
+| `captain` / `rank` | int | 可选 | 允许 null（视同缺省） |
+| `icon_path` | String | 可选 | 队伍图标路径 |
+| `members` | Array[String] | 可选 | 成员选手 id 列表 |
+
+### 解说条目（current_announcer.json）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `id` / `name` | String | ✅ | 唯一 id / 显示名 |
+| `icon_path` | String | 可选 | 头像路径 |
+
+> 校验对数字统一按数值处理（JSON 解析无整型概念）；插件内字段名一律引用 `DataKeys`
+> 常量（如 `DataKeys.PLAYER_NAME`），禁止裸字符串（铁律 3）。
 
 ### 选手头像与队伍图标
 
@@ -109,43 +182,9 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 | 干员头像 | `data/operators/{星级}/头像_{干员名}.png`（名单 `{星级}_star_namelist.json`） | PNG |
 | 分队图标 | `data/squads/{分队名}.png`（名单 `data/squads.json`） | PNG |
 
-### 选手数据 `userdata/players/players.json`
-
-```json
-[
-  {
-    "id": "小明",
-    "name": "小明",
-    "captain": 0,
-    "icon_path": "{exe_path}/userdata/players/player_icons/小明.jpg",
-    "team_id": "IGP",
-    "starting_operator_choice": "史尔特尔",
-    "starting_relic_choice": "希望时代的涂鸦",
-    "starting_squad_choice": "魂灵护送分队",
-    "stats": { "score": 325, "money_taken": 20, "slogan": "这是感言" }
-  }
-]
-```
-
-### 队伍数据 `userdata/teams/teams.json`
-
-```json
-[
-  {
-    "id": "IGP",
-    "name": "集批战术分队",
-    "captain": null,
-    "rank": null,
-    "balance": 180,
-    "score": 325,
-    "icon_path": "{exe_path}/userdata/teams/team_icons/IGP.jpg",
-    "members": ["小明"]
-  }
-]
-```
-
 > 插件通过 `PluginScene` 基类读取以上数据（`get_current_player()` / `get_players()` /
-> `get_team_by_id()`），并连接 `player_changed` / `announcer_changed` 信号实时刷新。
+> `get_team_by_id()`），并连接 `player_changed` / `announcer_changed` 信号实时刷新；
+> schema 校验问题会在日志中以 `[DataService] schema 校验: …` 告警，不阻断加载。
 
 ## 开发协作
 

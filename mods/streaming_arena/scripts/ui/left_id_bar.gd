@@ -108,7 +108,7 @@ func _load_current_player_data() -> void:
 			current_player_data = {}
 		elif data is Dictionary:
 			current_player_data = data
-			print("Loaded current player data: " + str(data.get("id", "Unknown")))
+			print("Loaded current player data: " + str(data.get(DataKeys.PLAYER_ID, "Unknown")))
 		else:
 			print("Error: Invalid current player data format")
 			current_player_data = {}
@@ -172,7 +172,7 @@ func _clear_ui_display() -> void:
 
 func _update_player_info() -> void:
 	"""更新选手信息"""
-	var player_name_str = current_player_data.get("name", "")
+	var player_name_str = current_player_data.get(DataKeys.PLAYER_NAME, "")
 	
 	# 更新选手姓名
 	if player_name:
@@ -206,7 +206,7 @@ func _update_player_info() -> void:
 
 func _update_team_info() -> void:
 	"""更新队伍信息"""
-	var team_id_str = current_player_data.get("team_id", "")
+	var team_id_str = current_player_data.get(DataKeys.PLAYER_TEAM_ID, "")
 	
 	# 更新队伍名称
 	if team_id:
@@ -232,7 +232,7 @@ func _update_team_info() -> void:
 
 func _update_operator_info() -> void:
 	"""更新开局干员信息"""
-	var operator_choice = current_player_data.get("starting_operator_choice", "")
+	var operator_choice = current_player_data.get(DataKeys.PLAYER_STARTING_OPERATOR_CHOICE, "")
 	
 	# 更新干员名称
 	if operator_name:
@@ -256,7 +256,7 @@ func _update_operator_info() -> void:
 
 func _update_squad_info() -> void:
 	"""更新开局分队信息"""
-	var squad_choice = current_player_data.get("starting_squad_choice", "")
+	var squad_choice = current_player_data.get(DataKeys.PLAYER_STARTING_SQUAD_CHOICE, "")
 	
 	# 更新分队名称
 	if squad_name:
