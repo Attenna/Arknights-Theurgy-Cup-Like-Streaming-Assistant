@@ -1,7 +1,7 @@
 # plugin_context.gd
 # 插件服务访问层（ADR-0001，issue #2）。
 #
-# 插件获取内核服务**只走本层**，禁止在插件代码中硬编码 "/root/Kernel" 路径。
+# 插件获取内核服务**只走本层**，禁止在插件代码中硬编码内核 autoload 节点路径（CI 禁令3）。
 # 两种获取方式：
 #   1. Plugin 派生插件：直接用基类注入的 `context`（PluginManager 实例化时注入）
 #      或基类便捷 getter（get_event_bus / get_scene_director / …）；
