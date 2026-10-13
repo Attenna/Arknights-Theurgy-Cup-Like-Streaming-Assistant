@@ -120,7 +120,8 @@ mods/<插件>/ ──拷贝/解压──▶    mods/<插件>/         ← 文件
 - 「插件」=「模组」：同一份 plugin.json 契约、同一个 mods/ 根目录，仅来源不同。
 - **纯核心导出**：`export_filter="all_resources"` + `exclude_filter="mods/*, framework_cs/*"`
   已固化在 `export_presets.cfg`，勿改动；核心零插件可启动（优雅降级）是设计行为。
-- **插件打包**：`.\export_mods.ps1`（可 `-Name <id>` 指定单个）→ `builds/mods/<id>_<version>.zip`，
+- **插件打包**：Windows `.\export_mods.ps1`（可 `-Name <id>` 指定单个）、
+  Linux / macOS `./export_mods.sh <id>` → `builds/mods/<id>_<version>.zip`，
   zip 内顶层即插件目录，解压到 `{exe}/mods/` 即完成安装。`.import` 随插件走，`.godot` 缓存不带走。
 - **部署目录（大集合）不进 git**：它是拼装产物，不是仓库。更新 = 重新导出核心覆盖 exe/pck、
   替换对应 mods/<id>/ 文件夹；试验性插件直接丢进部署目录的 mods/ 试，不污染仓库。

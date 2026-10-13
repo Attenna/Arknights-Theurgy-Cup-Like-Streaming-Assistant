@@ -71,7 +71,7 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 | 动作 | 命令 / 操作 | 产物 |
 |------|------------|------|
 | 导出纯核心 | 编辑器 `Project → Export` 或 `godot --headless --export-release "Windows Desktop" "builds/演播室2.exe"` | exe + pck（不含 mods） |
-| 打包全部插件 | `.\export_mods.ps1`（`-Name <id>` 打包单个） | `builds/mods/<id>_<版本>.zip` |
+| 打包全部插件 | Windows：`.\export_mods.ps1`（`-Name <id>` 单个）；Linux / macOS：`./export_mods.sh <id>` | `builds/mods/<id>_<版本>.zip` |
 | 安装插件 | 解压 zip 到 `{exe}/mods/` | 文件夹即安装 |
 
 ## 项目结构
@@ -85,7 +85,8 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 ├── shared/                    # 应用图标 + 设计源（.afphoto）
 ├── content/ + userdata/       # 数据源与用户数据（见下方数据规范）
 ├── framework/docs/            # 全部文档
-└── export_mods.ps1            # 插件一键打包脚本
+├── export_mods.ps1            # 插件一键打包脚本（Windows）
+└── export_mods.sh             # 插件一键打包脚本（Linux / macOS）
 ```
 
 ## 文档索引
