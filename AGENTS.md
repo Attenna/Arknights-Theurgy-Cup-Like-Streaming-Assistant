@@ -22,7 +22,27 @@
 - 内核（`core/`）改动是**大事**：先说明影响面，获得确认再动手；改后必须同步
   `framework/docs/` 相应文档并考虑 `api_version` 兼容性。
 
-## 3. 目录职责与禁区
+## 3. 模组协作三铁律（全局强制）
+
+> 细则与演进路线见 [`framework/docs/架构演进路线.md`](framework/docs/架构演进路线.md)。
+
+1. **插件不引用插件**：禁止 `preload`/`load` 其它插件的脚本，禁止跨插件 `get_node`
+   （含 `../xxx` 相对路径）。协作只走官方通道：`EventBus` 事件、`plugin.json provides`
+   声明、`DataService` 共享数据、控制面板 `mount_panel` 挂载协议。
+2. **服务只从访问层获取**：禁止硬编码 `/root/Kernel` 直连内核。⚠️ 过渡期注记：
+   `PluginContext` 访问层落地前（见 issues），现有代码的 `get_node_or_null("/root/Kernel")`
+   暂允许，**新插件代码一律封装访问入口**；落地并迁移后 CI 禁令全量生效。
+3. **事件名 / 数据字段名必须常量化**：统一进 `EventCatalog.gd` / `DataKeys.gd`
+   （未建立前先集中登记，禁新增裸字符串事件名）；新事件必须登记目录并写明 payload 字段契约。
+
+**决策顺序**（新增功能时从上到下，禁止跳级）：EventBus 通知 → `provides` 声明 →
+PluginRegistry 只读查询 → mount_panel 挂载 → DataService 共享 →
+**同步返回值仅当**（① 天然属于核心服务 ② 事件+轮询无法替代 ③ ≥3 处重复实现）三项全为
+「是」才允许引入最小化 `ServiceRegistry`。禁止把 EventBus 当 RPC 用。
+
+---
+
+## 4. 目录职责与禁区
 
 | 目录 | 职责 | 禁止 |
 |------|------|------|
@@ -33,7 +53,7 @@
 | `.godot/` `builds/` | 缓存与导出产物 | 永不提交、永不手工修改 |
 | `framework/docs/` | 全部文档 | 改约定必须同步文档 |
 
-## 4. 插件开发硬性约定（违反必出 bug）
+## 5. 插件开发硬性约定（违反必出 bug）
 
 1. **资源自携带**：纹理/字体/着色器放本插件 `assets/{textures,fonts,shaders}/`，
    核心不提供任何共享资源。
@@ -50,7 +70,7 @@
    SceneDirector / PluginRegistry / DataService），不直接访问其它插件的节点。
    控制面板二级面板用组 `control_panel_base` + `mount_panel` 约定（见文档）。
 
-## 5. 验证流程（提交前必做）
+## 6. 验证流程（提交前必做）
 
 ```powershell
 # 1. 导入新资源（新增文件后必须）
@@ -70,20 +90,20 @@ D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe --h
 **已知伪错误**（勿据此改代码）：`-s` 脚本模式下报 `Identifier not found`（autoload 缺失，
 真实启动正常）。无头验证结论必须用真实启动日志复核。
 
-## 6. 环境注意
+## 7. 环境注意
 
 - 本机 Shell 为 **PowerShell 5**：不支持 `&&` / `||`，用 `;` 分隔；不支持 heredoc，
   多行提交信息用单行 `-m`。
 - Godot 可执行文件：`D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe`。
 - 文档、注释、提交信息一律**中文**（与用户交流语言一致）。
 
-## 7. 重大操作前
+## 8. 重大操作前
 
 - 大规模删除/重构前：先打备份 zip 到 `d:\Projects\`（命名
   `Arknights-Streaming-Assistant_backup_<日期>.zip`，排除 `.godot/` 与 `builds/`）。
 - 提交与推送规范见 [`framework/docs/Git工作规范.md`](framework/docs/Git工作规范.md)。
 
-## 8. 仓库与分发结构（核心认知）
+## 9. 仓库与分发结构（核心认知）
 
 **核心与插件是「运行时拼装」关系，不是打包关系**：
 
