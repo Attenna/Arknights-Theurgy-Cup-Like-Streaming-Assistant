@@ -1,221 +1,164 @@
-# 演播室 - Arknights Theurgy Cup Like Streaming Assistant - A Godot-based rouge-like Streaming scene helper
+# 演播室2 - Arknights Theurgy Cup Like Streaming Assistant
 
-一个基于 Godot 4.6 开发的直播间管理工具，用于管理选手、队伍、解说员信息，并提供实时的界面显示功能。
-## 许可证
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE)
-本项目使用 [Apache License 2.0](https://github.com/Attenna/Arknights-Theurgy-Cup-Like-Streaming-Assistant/blob/main/LICENSE) 许可证。
+基于 **Godot 4.5.1 (mono)** 的直播间管理工具：管理选手、队伍、解说员信息，
+提供可切换、可热重载的直播场景显示。
 
-## 🎯 主要功能
-
-### 核心管理功能
-- **选手管理**: 选手信息录入、编辑和实时选择
-- **队伍管理**: 队伍信息管理和实时显示
-- **解说员管理**: 解说员信息录入和选择
-- **藏品系统**: 选手开局藏品选择和显示
-- **干员系统**: 选手选取开局干员头像和信息显示
-- **分队系统**: 选手选取开局分队图标和信息显示
-
-### 界面功能
-- **控制面板**: 集中的管理界面
-- **场景切换**: 主视觉、比赛场、候场页切换
-- **实时显示**: 左侧ID栏实时显示当前选手信息
-- **图像管理**: 支持选手头像、队伍图标、干员头像、分队图标
-
-## 🧩 插件系统（一切皆插件 · 支持热重载）
-
-程序采用 **「一切皆插件」** 架构：主核心（`core/`）只提供服务与场景调度，所有直播场景、
-控制面板、编辑器都以**插件**形式存在（置于 `mods/`），任何人都可以开发自己的
-**直播场景 / 面板**并一键切换，无需改动核心代码。
-
-- **本仓库为纯核心**：原内置插件（`plugins/`）与示例插件已全部移出，核心零插件也可启动（优雅降级）；
-  所有插件均以外部插件形式放于 `mods/`：**开发时**放项目内 `mods/`；**导出后**放**可执行文件同级的 `mods/`**
-  （该目录已被导出预设排除，不会被打包进程序，用户可直接增删插件文件夹）
-- 在 `plugin.json` 的 `provides.scenes` 中声明直播场景（`id` / `name` / `scene` / `type=live`）
-- 场景根脚本继承 `PluginScene`，即可读取当前选手、队伍、解说数据并响应实时变化
-- 提供 `type=live` 场景的插件会自动出现在控制面板导航区，点击即可切换
-- **依赖解析**：`plugin.json` 的 `dependencies` 强制解析，缺失 / 环形依赖的插件阻塞不加载
-- **热重载**：修改插件场景 / 数据 / 脚本后无需重启即可生效；`F5` 重载全部插件，
-  控制面板提供单插件「重载」按钮（详见开发指南）
-
-完整开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)，
-示例插件随项目备份包归档（`Arknights-Streaming-Assistant_backup_2026-10-13.zip`）。
-
-## 🏗️ 项目结构
-
-```
-演播室2/
-├── core/                      # 主核心（唯一保留）：Kernel + 服务 + 插件契约
-│   ├── kernel.gd              # autoload 入口
-│   ├── plugin.gd              # 插件契约基类
-│   ├── plugin_scene.gd        # 场景插件基类
-│   ├── plugin_manager.gd      # 插件加载 / 依赖解析 / 生命周期 / 热重载
-│   └── services/              # EventBus / DataService / SceneDirector / FileWatcher / PluginRegistry
-├── mods/                      # 插件根目录（开发时把插件放这里，不会被打包进程序）
-├── src/                       # 引导壳（main.tscn / main.gd 等）
-├── shared/                    # 共享资源（仅应用图标）
-├── content/                   # 内容数据包
-├── userdata/                  # 用户数据（选手 / 队伍 / 解说等）
-└── framework/docs/            # 文档
-```
-
-## 🚀 快速开始
-
-### 环境要求
-- **Godot 4.3** 或更高版本
-- **操作系统**: Windows (已测试)
-
-### 安装步骤
-1. 克隆仓库到本地
-2. 使用 Godot 4.3 打开 `project.godot` 文件
-3. 等待项目导入完成
-4. 导出项目为.exe文件，默认文件路径是.exe可执行文件的同目录下/userdata
-5. 选择data.zip，解压缩，放置进.exe同意目录内。目录：{exe}/data
-6. 确保目录如下所示：
-	```
-	父文件夹/
-	 ├── Streaming Assistant.exe   # 可执行文件
-	 ├── data/                    # 游戏数据，包含干员和分队信息
-	 │    ├── operators/          # 干员数据目录
-	 │    └── squads/             # 分队数据目录
-	 ├── mods/                    # 第三方插件（用户自行增删，不会被打包进程序）
-	 └── userdata/                # 用户数据
-   	```
-8. 运行可执行文件并开始使用
-
-### 数据文件设置
-项目运行后会自动创建所需的数据目录结构：
-- `userdata/players/` - 选手数据和头像
-- `userdata/teams/` - 队伍数据和图标  
-- `userdata/announcers/` - 解说员数据
-- `data/operators/` - 干员头像按星级分类
-- `data/squads/` - 分队图标
-
-## 📁 图像资源规范
-
-### 选手头像
-- **路径**: `userdata/players/player_icons/{选手名字}.jpg`
-- **格式**: JPG
-- **命名**: 使用选手姓名
-
-### 队伍图标  
-- **路径**: `userdata/teams/team_icons/{队伍ID}.jpg`
-- **格式**: JPG
-- **命名**: 使用队伍ID
-
-### 干员头像
-- **路径**: `data/operators/{星级}/头像_{干员名}.png`
-- **格式**: PNG
-- **分类**: 按星级(5-6)分目录存放
-- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/operators/{星级}_star_namelist.json`
-
-### 分队图标
-- **路径**: `data/squads/{分队名}.png`
-- **格式**: PNG
-- **命名**: 使用分队名称
-- **数据结构**：由JSON文件管理名单，JSON文件目录：`data/squads.json`
-
-## 📁 文本资源规范
-
-## 选手数据
-- **路径**：`userdata/players/players.json`
-- **格式**：JSON
-- **数据结构**：
-  ```
-  [
-	{
-		"captain": 0,
-		"icon_path": "{exe_path}/userdata/players/player_icons/小明.jpg",
-		"id": "小明",
-		"name": "小明",
-		"starting_operator_choice": "史尔特尔",
-		"starting_relic_choice": "希望时代的涂鸦",
-		"starting_squad_choice": "魂灵护送分队",
-		"stats": {
-      "money_taken": 20,
-			"score": 325,
-			"slogan": "这是感言"
-		},
-		"team_id": "IGP"
-	}//以此类推
-  ]
-  ```
-
-## 队伍数据
-- **路径**：`userdata/teams/teams.json`
-- **格式**：JSON
-- **数据结构**：
-  ```
-  [
-	{
-		"balance": 180,
-		"captain": null,
-		"icon_path": "C:/Users/duck1/Desktop/LiveStreaming/userdata/teams/team_icons/IGP.jpg",
-		"id": "IGP",
-		"members": [
-			"小明"
-		],
-		"name": "集批战术分队",
-		"rank": null,
-		"score": 325
-	}
-  ]
-  ```
-
-## 🎮 使用说明
-
-### 基本操作
-1. **启动项目** - 运行编译后的可执行文件或在Godot中运行
-2. **打开控制面板** - 使用界面上的控制面板进行管理
-3. **录入数据** - 通过各个编辑器录入选手、队伍、解说员信息
-4. **选择选手** - 在控制面板中选择当前参赛选手
-5. **场景切换** - 使用场景管理器切换不同的直播场景
-
-### 数据管理
-- 所有数据以JSON格式存储在 `userdata/` 目录下
-- 支持实时编辑和保存
-- 自动备份当前选择状态
-
-## 🔧 技术特性
-
-- **Godot 4.3** 引擎开发
-- **模块化设计** - 各功能模块独立开发
-- **信号系统** - 使用Godot信号实现模块间通信
-- **JSON数据存储** - 易于编辑和备份的数据格式
-- **路径统一管理** - 基于可执行文件目录的统一路径系统
-- **错误处理** - 完善的错误处理和调试输出
-
-## 📝 开发历史
-
-### 最近更新 (2025年7月6日)
-- ✅ 修复了所有数据文件路径，统一使用 `AppData.get_exe_dir()` 基准
-- ✅ 完善了选手、队伍、解说员的选择和显示系统
-- ✅ 增强了左侧ID栏的图像加载功能
-- ✅ 添加了藏品系统的完整实现
-- ✅ 创建了完整的测试数据和目录结构
-- ✅ 清理了未使用的冗余脚本文件
-
-## 🤝 贡献指南
-
-欢迎提交Issue和Pull Request来改进这个项目！
-
-### 开发环境设置
-1. 安装 Godot 4.3
-2. 克隆仓库
-3. 打开项目文件
-4. 开始开发
-
-## 📞 联系方式
-
-如有问题或建议，请通过GitHub Issues联系。
-
-## 未来开发计划
-1. 文件路径软编码，可以任意修改
-2. 直播场景软编码，提供默认资源下载，用户可自定义场景（已实现：见「插件系统」，内置场景已插件化）
-3. 可自由编辑的选手，队伍，解说数据结构
-4. 实现 A to C to B 转场等更丰富的转场方式
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ---
 
-**项目状态**: 🟢 活跃开发中  
-**Godot版本**: 4.3+  
-**最后更新**: 2025年7月7日
+## 核心认知：一切皆插件（core 2.0.0）
+
+```
+仓库（开发时）                 部署目录（运行时）
+core/ + src/  ──导出──▶        演播室2.exe + .pck   ← 纯核心
+mods/<插件>/  ──拷贝/解压──▶   mods/<插件>/         ← 文件夹即安装
+```
+
+- 主核心（`core/`）只提供引导、服务总线（事件 / 数据 / 场景调度 / 插件注册 / 热重载）、
+  插件契约与依赖解析；**不包含任何具体功能**。
+- 所有直播场景、控制面板、编辑器均为 `mods/` 下的外部插件，共享同一份
+  `plugin.json` 契约；核心**零插件可正常启动**（空窗口 + 优雅降级）。
+- **依赖强制解析**：`dependencies` 缺失 / 环形的插件阻塞不加载，无半加载状态。
+- **热重载**：改场景 / 数据 / 脚本无需重启即可生效（`F5` 重载全部）。
+
+当前随仓库提供的插件：
+
+| 插件 | 类型 | 说明 |
+|------|------|------|
+| `streaming_arena` | 直播场景 | 比赛场（素材 / 字体 / 着色器全自携带的实例模板） |
+| `control_panel_base` | 面板（基底） | 控制面板骨架，装载所有 `slot="control_panel"` 二级面板 |
+| `scene_manager_panel` | 面板（二级） | 依赖基底，列出全部已注册直播场景供选择播出 |
+
+## 快速开始
+
+### 路线 A：开发者（从源码运行）
+
+1. 克隆仓库
+2. 用 **Godot 4.5.1 mono** 打开 `project.godot`，等待导入完成
+3. 直接 `F5` 运行：控制面板弹出，含「直播场景」列表，可切换比赛场
+
+### 路线 B：用户（发布版部署）
+
+1. 获取 `演播室2.exe` + `.pck`（纯核心）与各插件 zip
+2. 按以下结构放置（**mods 永不打包进 exe**，文件夹即安装）：
+
+```
+父文件夹/
+├── 演播室2.exe
+├── mods/                     # 插件：解压各插件 zip 到这里，可自由增删
+│   ├── streaming_arena/
+│   ├── control_panel_base/
+│   └── scene_manager_panel/
+├── data/                     # 干员 / 分队等静态资源
+│   ├── operators/            # 干员头像（按星级分目录）
+│   └── squads/               # 分队图标
+└── userdata/                 # 用户数据（选手 / 队伍 / 解说，首次运行可自动创建）
+```
+
+3. 运行 exe，控制面板中选择场景播出
+
+### 无控制面板时直连场景（调试）
+
+```powershell
+# 编辑器：项目设置 → 运行 → 自定义参数：-- --scene streaming_arena
+# 命令行：
+godot_console.exe --path <项目> -- --scene streaming_arena
+```
+
+## 打包与分发
+
+| 动作 | 命令 / 操作 | 产物 |
+|------|------------|------|
+| 导出纯核心 | 编辑器 `Project → Export` 或 `godot --headless --export-release "Windows Desktop" "builds/演播室2.exe"` | exe + pck（不含 mods） |
+| 打包全部插件 | `.\export_mods.ps1`（`-Name <id>` 打包单个） | `builds/mods/<id>_<版本>.zip` |
+| 安装插件 | 解压 zip 到 `{exe}/mods/` | 文件夹即安装 |
+
+## 项目结构
+
+```
+├── AGENTS.md                  # AI 协作工作规范（Agent 先读）
+├── core/                      # 内核：Kernel autoload + 六服务 + Plugin/PluginScene 契约
+├── src/                       # 引导壳（main.tscn / main.gd，含 --scene 直连参数）
+├── mods/                      # 插件根目录（开发时插件放这里）
+├── framework_cs/              # C# 内容框架（独立未接入，见插件开发指南第 7 节）
+├── shared/                    # 应用图标 + 设计源（.afphoto）
+├── content/ + userdata/       # 数据源与用户数据（见下方数据规范）
+├── framework/docs/            # 全部文档
+└── export_mods.ps1            # 插件一键打包脚本
+```
+
+## 文档索引
+
+| 文档 | 内容 |
+|------|------|
+| [AGENTS.md](AGENTS.md) | AI 协作规范：最小改动原则、目录禁区、验证流程、已知坑 |
+| [插件开发指南](framework/docs/插件开发指南.md) | plugin.json 契约、生命周期、资源自携带、依赖解析、热重载边界 |
+| [控制面板插件约定](framework/docs/控制面板插件约定.md) | 基底 + 二级面板架构、挂载约定、新增二级面板步骤 |
+| [导出指南](framework/docs/导出指南.md) | 导出纯核心、插件打包、发布布局与验证清单 |
+| [Git 工作规范](framework/docs/Git工作规范.md) | 分支模型、提交信息规范、冲突预防、仓库演进路线 |
+
+## 数据规范（DataService 契约）
+
+### 选手头像与队伍图标
+
+| 资源 | 路径 | 格式 |
+|------|------|------|
+| 选手头像 | `userdata/players/player_icons/{选手名}.jpg` | JPG |
+| 队伍图标 | `userdata/teams/team_icons/{队伍ID}.jpg` | JPG |
+| 干员头像 | `data/operators/{星级}/头像_{干员名}.png`（名单 `{星级}_star_namelist.json`） | PNG |
+| 分队图标 | `data/squads/{分队名}.png`（名单 `data/squads.json`） | PNG |
+
+### 选手数据 `userdata/players/players.json`
+
+```json
+[
+  {
+    "id": "小明",
+    "name": "小明",
+    "captain": 0,
+    "icon_path": "{exe_path}/userdata/players/player_icons/小明.jpg",
+    "team_id": "IGP",
+    "starting_operator_choice": "史尔特尔",
+    "starting_relic_choice": "希望时代的涂鸦",
+    "starting_squad_choice": "魂灵护送分队",
+    "stats": { "score": 325, "money_taken": 20, "slogan": "这是感言" }
+  }
+]
+```
+
+### 队伍数据 `userdata/teams/teams.json`
+
+```json
+[
+  {
+    "id": "IGP",
+    "name": "集批战术分队",
+    "captain": null,
+    "rank": null,
+    "balance": 180,
+    "score": 325,
+    "icon_path": "{exe_path}/userdata/teams/team_icons/IGP.jpg",
+    "members": ["小明"]
+  }
+]
+```
+
+> 插件通过 `PluginScene` 基类读取以上数据（`get_current_player()` / `get_players()` /
+> `get_team_by_id()`），并连接 `player_changed` / `announcer_changed` 信号实时刷新。
+
+## 开发协作
+
+- 提交 / 分支规范见 [Git 工作规范](framework/docs/Git工作规范.md)；
+  AI 助手遵循 [AGENTS.md](AGENTS.md)（最小改动原则最高优先级）。
+- 重大删除 / 重构前先打备份 zip；`core/` 改动需先声明影响面。
+
+## 未来计划
+
+1. 可自由编辑的选手、队伍、解说数据结构
+2. 实现 A to C to B 转场等更丰富的转场方式
+3. 插件生态：第三方插件分发约定与更多实例模板
+
+---
+
+**项目状态**: 活跃开发中 | **Godot**: 4.5.1 (mono) | **内核契约**: core 2.0.0 | **许可证**: Apache 2.0
