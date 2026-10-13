@@ -1,0 +1,23 @@
+{
+    "id": "main_vision",
+    "name": "主视觉",
+    "version": "1.0.0",
+    "author": "演播室2",
+    "description": "直播场景插件：主视觉画面",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": 0,
+    "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
+    "watch": ["scenes/", "scripts/", "assets/"],
+    "provides": {
+        "scenes": [
+            {
+                "id": "main_vision",
+                "name": "主视觉",
+                "type": "live",
+                "scene": "scenes/main_vision.tscn",
+                "description": "主视觉直播场景"
+            }
+        ]
+    }
+}
