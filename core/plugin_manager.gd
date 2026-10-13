@@ -362,6 +362,10 @@ func _instantiate_entry(res_dir: String, plugin_id: String) -> Node:
 			node.name = plugin_id
 			node.set_script(script)
 			add_child(node)
+			# 注入服务访问上下文（ADR-0001）：插件代码经 context 取内核服务，禁硬编码路径。
+			var plugin_instance := node as Plugin
+			if plugin_instance != null:
+				plugin_instance.context = PluginContext.new(_kernel)
 			return node
 	return null
 

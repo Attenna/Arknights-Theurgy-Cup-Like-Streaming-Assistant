@@ -96,7 +96,5 @@ func get_team_by_id(team_id: String) -> Dictionary:
 	return data_service.get_team_by_id(team_id) if data_service else {}
 
 func _get_data_service() -> DataService:
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel == null:
-		return null
-	return kernel.data_service as DataService
+	# 经访问层经内核入组名查找（ADR-0001）；本类非 Plugin 派生，走 for_node 兜底。
+	return PluginContext.for_node(self).data_service

@@ -41,11 +41,12 @@ func unmount_panel(panel_id: String) -> void:
 
 ## 全量装载当前注册在 PANEL_SLOT 下的所有面板（启动 / 基底自身重建时的兜底）。
 func _mount_all() -> void:
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel == null or kernel.plugin_registry == null:
+	# 本脚本非 Plugin 派生，经访问层 for_node 取内核服务（ADR-0001）。
+	var registry := PluginContext.for_node(self).plugin_registry
+	if registry == null:
 		print("[control_panel_base] 内核不可用，跳过二级面板装载")
 		return
-	for entry in kernel.plugin_registry.get_panels_by_slot(PANEL_SLOT):
+	for entry in registry.get_panels_by_slot(PANEL_SLOT):
 		var packed = entry.get("packed")
 		if packed == null:
 			var res_path := str(entry.get("res_path", ""))

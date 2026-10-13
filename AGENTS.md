@@ -29,9 +29,10 @@
 1. **插件不引用插件**：禁止 `preload`/`load` 其它插件的脚本，禁止跨插件 `get_node`
    （含 `../xxx` 相对路径）。协作只走官方通道：`EventBus` 事件、`plugin.json provides`
    声明、`DataService` 共享数据、控制面板 `mount_panel` 挂载协议。
-2. **服务只从访问层获取**：禁止硬编码 `/root/Kernel` 直连内核。⚠️ 过渡期注记：
-   `PluginContext` 访问层落地前（见 issues），现有代码的 `get_node_or_null("/root/Kernel")`
-   暂允许，**新插件代码一律封装访问入口**；落地并迁移后 CI 禁令全量生效。
+2. **服务只从访问层获取**：禁止硬编码 `/root/Kernel` 直连内核（CI 门禁已生效）。插件经
+   `PluginContext` 访问层取服务——`Plugin` 派生用基类 getter（`get_event_bus()` /
+   `get_scene_director()` / …）或 `self.context`；非 Plugin 派生脚本（面板 UI / 场景根节点）
+   用 `PluginContext.for_node(self)`。见 [`adr/0001-plugin-context.md`](framework/docs/adr/0001-plugin-context.md)。
 3. **事件名 / 数据字段名必须常量化**：事件名统一进 `EventCatalog.gd`（autoload，已建立），
    数据字段常量待 `DataKeys.gd`（先集中登记，禁新增裸字符串事件名）；新事件必须登记目录
    并写明 payload 字段契约；订阅一律走 `event_bus.subscribe(事件名, 回调, 插件id)`，

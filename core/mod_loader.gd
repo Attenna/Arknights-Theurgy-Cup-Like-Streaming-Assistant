@@ -9,7 +9,8 @@
 extends Node
 
 func _kernel() -> Node:
-	return get_node_or_null("/root/Kernel")
+	# 经访问层经内核入组名查找（ADR-0001），不硬编码节点路径。
+	return PluginContext.for_node(self).kernel
 
 # ── 插件（旧"模组"）清单 ─────────────────────────────────────────────────────
 

@@ -40,10 +40,11 @@ func _mount() -> void:
 	if base == null or not base.has_method("mount_panel"):
 		# 基底面板尚未创建（main 壳未 ready）——由基底 _ready 全量装载兜底。
 		return
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel == null or kernel.plugin_registry == null:
+	# Plugin 派生：经基类 getter 取内核服务（ADR-0001，禁硬编码路径）。
+	var registry := get_plugin_registry()
+	if registry == null:
 		return
-	for entry in kernel.plugin_registry.get_panels_by_slot(PANEL_SLOT):
+	for entry in registry.get_panels_by_slot(PANEL_SLOT):
 		if str(entry.get("id", "")) != PANEL_ID:
 			continue
 		var packed = entry.get("packed")

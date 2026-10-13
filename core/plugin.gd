@@ -37,6 +37,9 @@ signal plugin_event(plugin_id: String, event_name: String, event_data: Dictionar
 
 var state: int = PluginState.UNLOADED
 
+# 服务访问上下文（ADR-0001），由 PluginManager 实例化时注入；插件代码经本上下文取内核服务。
+var context: PluginContext = null
+
 # ── 元数据 ───────────────────────────────────────────────────────────────────
 
 func get_metadata() -> PluginMetadata:
@@ -73,22 +76,34 @@ func on_after_reload() -> void:
 func on_unload() -> void:
 	pass
 
-# ── 内核访问入口 ─────────────────────────────────────────────────────────────
+# ── 内核访问入口（ADR-0001：一律经 PluginContext，禁硬编码节点路径） ──────────────
+
+## 取访问上下文：未注入（异常路径，如脚本被独立实例化）时经内核入组名兜底重建并回填。
+func _context() -> PluginContext:
+	if context == null or not is_instance_valid(context):
+		context = PluginContext.for_node(self)
+	return context
 
 func get_kernel() -> Node:
-	return get_node_or_null("/root/Kernel")
+	return _context().kernel
 
 func get_event_bus() -> EventBus:
-	var kernel := get_kernel()
-	if kernel == null:
-		return null
-	return kernel.event_bus as EventBus
+	return _context().event_bus
 
 func get_data_service() -> DataService:
-	var kernel := get_kernel()
-	if kernel == null:
-		return null
-	return kernel.data_service as DataService
+	return _context().data_service
+
+func get_scene_director() -> SceneDirector:
+	return _context().scene_director
+
+func get_plugin_registry() -> PluginRegistry:
+	return _context().plugin_registry
+
+func get_file_watcher() -> FileWatcher:
+	return _context().file_watcher
+
+func get_plugin_manager() -> Node:
+	return _context().plugin_manager
 
 ## 向内核发布一个插件事件。
 func emit_plugin_event(event_name: String, data: Dictionary = {}) -> void:

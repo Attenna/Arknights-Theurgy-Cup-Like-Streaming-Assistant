@@ -6,32 +6,31 @@
 extends VBoxContainer
 
 var _buttons: Dictionary = {}
+var _director: SceneDirector = null
 
 @onready var buttons_box: VBoxContainer = $Buttons
 
 func _ready() -> void:
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel == null or kernel.scene_director == null:
+	# 本脚本非 Plugin 派生，经访问层 for_node 取内核服务（ADR-0001）。
+	_director = PluginContext.for_node(self).scene_director
+	if _director == null:
 		return
-	if not kernel.scene_director.scene_changed.is_connected(_on_scene_changed):
-		kernel.scene_director.scene_changed.connect(_on_scene_changed)
+	if not _director.scene_changed.is_connected(_on_scene_changed):
+		_director.scene_changed.connect(_on_scene_changed)
 	_rebuild()
 
 func _exit_tree() -> void:
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel != null and kernel.scene_director != null \
-			and kernel.scene_director.scene_changed.is_connected(_on_scene_changed):
-		kernel.scene_director.scene_changed.disconnect(_on_scene_changed)
+	if _director != null and _director.scene_changed.is_connected(_on_scene_changed):
+		_director.scene_changed.disconnect(_on_scene_changed)
 
 func _rebuild() -> void:
 	for child in buttons_box.get_children():
 		child.queue_free()
 	_buttons.clear()
 
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel == null or kernel.scene_director == null:
+	if _director == null:
 		return
-	var director = kernel.scene_director
+	var director := _director
 	var current := str(director.get_current_scene_id())
 
 	for info in director.get_scenes_by_type("live"):
@@ -55,9 +54,8 @@ func _rebuild() -> void:
 		buttons_box.add_child(empty)
 
 func _on_scene_button_pressed(scene_id: String) -> void:
-	var kernel := get_node_or_null("/root/Kernel")
-	if kernel != null and kernel.scene_director != null:
-		kernel.scene_director.switch_to(scene_id)
+	if _director != null:
+		_director.switch_to(scene_id)
 
 func _on_scene_changed(_from_scene: String, to_scene: String) -> void:
 	for id in _buttons:

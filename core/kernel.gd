@@ -16,6 +16,8 @@ var file_watcher: FileWatcher
 var plugin_manager: PluginManager
 
 func _ready() -> void:
+	# 入组供 PluginContext.for_node() 查找（插件访问层，ADR-0001）。
+	add_to_group(PluginContext.KERNEL_GROUP)
 	_create_services()
 	_create_plugin_manager()
 	print("[Kernel] 内核就绪（core %s）" % CORE_VERSION)
