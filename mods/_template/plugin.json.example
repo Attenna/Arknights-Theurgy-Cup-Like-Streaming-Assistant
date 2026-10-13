@@ -1,0 +1,24 @@
+{
+    "id": "my_plugin",
+    "name": "我的插件",
+    "version": "0.1.0",
+    "author": "你的名字",
+    "description": "从 _template 复制后修改此清单",
+    "api_version": "2.0.0",
+    "dependencies": [],
+    "load_priority": 0,
+    "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
+    "watch": ["scenes/", "scripts/", "panels/", "data/"],
+    "provides": {
+        "scenes": [
+            {
+                "id": "my_live_scene",
+                "name": "我的直播场景",
+                "type": "live",
+                "scene": "scenes/example_scene.tscn",
+                "description": "示例直播场景（1920x1080）"
+            }
+        ],
+        "panels": []
+    }
+}

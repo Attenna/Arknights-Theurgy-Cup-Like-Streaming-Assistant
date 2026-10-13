@@ -1,0 +1,26 @@
+# 示例直播场景：演示 PluginScene 基类用法（复制后按需修改）
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="../scripts/example_scene.gd" id="1_tpl"]
+
+[node name="ExampleScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_tpl")
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -30.0
+offset_right = 200.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+text = "我的直播场景"

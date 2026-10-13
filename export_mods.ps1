@@ -24,6 +24,10 @@ if (-not (Test-Path $outRoot)) {
 $packed = 0
 Get-ChildItem -Directory -Path $modsRoot | ForEach-Object {
     $pluginDir = $_.FullName
+    if ($_.Name -like '_*') {
+        Write-Host "跳过（模板/测试目录）: $($_.Name)" -ForegroundColor Yellow
+        return
+    }
     $manifestPath = Join-Path $pluginDir "plugin.json"
     if (-not (Test-Path $manifestPath)) {
         Write-Host "跳过（无 plugin.json）: $($_.Name)" -ForegroundColor Yellow
