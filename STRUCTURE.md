@@ -1,266 +1,212 @@
-# Streaming Assistant Framework - Project Structure
+# 演播室2 项目结构（STRUCTURE）
 
-## Overview
+## 一、概览
 
-本项目已重构为模块化架构，清晰分离 **核心框架**、**源代码**、**共享资源** 和 **用户内容**。
+演播室2 采用 **纯核心 + 一切皆插件** 架构（内核版本 `core 2.0.0`）：
+
+- **仓库是纯核心**：只保留运行时内核（`core/`）与引导壳（`src/`），
+  **不含任何内置插件**；所有直播场景 / 控制面板 / 编辑器都是 `mods/` 下的外部插件。
+- **核心与插件是「运行时拼装」关系，不是打包关系**：`mods/` 永不进 pck，
+  导出后插件以真实文件夹形式与可执行文件同级，用户解压即安装。
+- 核心零插件可正常启动（优雅降级），这是设计行为。
+
+约定细则见 [`AGENTS.md`](AGENTS.md) 与 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
 
 ---
 
-## 目录结构优化前后对比
-
-### 优化前（旧结构）
+## 二、目录总览
 
 ```
 项目根目录/
-├── assets/              # 纹理资源（与 fonts/ 分离）
-│   └── textures/
-├── fonts/               # 字体文件（独立目录）
-├── icons/               # 图标文件（独立目录）
-├── data/                # 数据文件（位置不明确）
-├── scene/               # 场景文件
-│   ├── main/
-│   ├── ui/
-│   └── prefabs/
-├── scripts/             # 脚本文件（与 scene/ 结构重复）
-│   ├── main/
-│   ├── ui/
-│   ├── data/
-│   └── prefabs/
-├── markdown/            # 文档文件（独立目录）
-├── core/                # 核心框架
-├── framework_cs/        # C# 框架模块
-├── framework/docs/      # 框架文档
-├── mods/                # 模组目录
-└── project.godot
+├── core/                    # 内核：Kernel autoload + 服务 + 插件契约
+├── src/                     # 引导壳（main.tscn / main.gd），不含任何业务场景
+├── mods/                    # 全部插件（每个子目录一个独立插件）
+├── shared/                  # 仅应用图标 + 设计源（.afphoto / .afdesign）
+├── content/                 # 只读内置内容数据（干员名单 / 藏品等）
+├── userdata/                # 首次运行播种到 user:// 的示例用户数据
+├── tests/                   # 契约测试（无头运行）
+├── framework/               # 框架文档
+│   └── docs/                # 全部文档（含 adr/）
+├── framework_cs/            # C# 内容框架模块（独立，未接插件系统）
+├── .github/workflows/       # CI 门禁（grep 禁令 + 契约测试，Linux runner）
+├── export_presets.cfg       # 导出预设（Windows Desktop，纯核心 exclude_filter 已固化）
+├── export_mods.ps1          # 插件打包脚本（Windows PowerShell）
+├── export_mods.sh           # 插件打包脚本（Linux / macOS）
+├── project.godot            # 项目配置（autoload：AppData → Kernel → ModLoader）
+├── AGENTS.md                # AI 协作规范
+├── README.md                # 架构现状与快速开始
+├── STRUCTURE.md             # 本文件
+└── LICENSE
 ```
 
-### 优化后（新结构）
-
-```
-项目根目录/
-├── src/                   # 源代码（合并原 scene/ 和 scripts/）
-│   ├── scenes/            # 场景文件
-│   │   ├── main/          # 主场景
-│   │   ├── ui/            # UI 场景
-│   │   └── prefabs/       # 预制件
-│   └── scripts/           # 脚本文件
-│       ├── main/          # 主逻辑脚本
-│       ├── ui/            # UI 脚本
-│       ├── data/          # 数据管理脚本
-│       └── prefabs/       # 预制件脚本
-├── shared/                # 共享资源（统一管理）
-│   ├── assets/            # 纹理资源
-│   ├── fonts/             # 字体文件
-│   └── icons/             # 图标文件
-├── content/               # 用户内容包
-│   └── data/              # 游戏数据文件
-├── userdata/              # 用户数据（新增）
-├── core/                  # 主核心（唯一保留）：Kernel + 服务 + 插件契约
-├── plugins/               # 内置插件（随包分发，与 mods/ 同构）
-├── framework/             # 框架文档
-│   └── docs/              # 所有文档（含原 markdown/）
-├── framework_cs/          # C# 框架模块（保留）
-├── mods/                  # 第三方插件目录（旧称模组）
-└── project.godot
-```
+> `.godot/`（导入缓存）、`builds/`（导出产物）**永不提交**，已在 `.gitignore` 排除。
 
 ---
 
-## 优化调整理由
+## 三、各目录说明
 
-### 1. 合并 scene/ 和 scripts/ 为 src/
+### `core/` — 主核心（一切皆插件）
 
-**问题**：原结构中 `scene/` 和 `scripts/` 目录结构完全重复，导致查找文件时需要在两个目录间来回切换，降低开发效率。
-
-**解决方案**：合并为 `src/` 目录，按功能模块组织场景和脚本，符合行业惯例。
-
-### 2. 统一资源管理到 shared/
-
-**问题**：原结构中 `assets/`、`fonts/`、`icons/` 分散在根目录，资源管理混乱。
-
-**解决方案**：统一归到 `shared/` 目录下，便于查找和管理共享资源。
-
-### 3. 数据文件归类到 content/
-
-**问题**：原 `data/` 目录位置不明确，与用户内容和框架数据混在一起。
-
-**解决方案**：迁移到 `content/data/`，明确标识为游戏内容数据。
-
-### 4. 文档统一到 framework/docs/
-
-**问题**：原 `markdown/` 目录与 `framework/docs/` 分离，文档分散。
-
-**解决方案**：统一合并到 `framework/docs/`，便于文档管理和查阅。
-
-### 5. 新增 userdata/ 目录
-
-**理由**：为用户自定义数据（如存档、配置）提供明确的存放位置，便于区分框架数据和用户数据。
-
----
-
-## 新目录结构详细说明
-
-### `src/` - 源代码
-
-```
-src/
-├── scenes/               # 场景文件
-│   ├── main/             # 主场景（主菜单、游戏主界面等）
-│   ├── ui/               # UI 场景（控制面板、编辑器等）
-│   └── prefabs/          # 预制件场景
-└── scripts/              # 脚本文件（与 scenes/ 对应）
-    ├── main/             # 主逻辑脚本
-    ├── ui/               # UI 脚本
-    ├── data/             # 数据管理脚本
-    └── prefabs/          # 预制件脚本
-```
-
-### `shared/` - 共享资源
-
-```
-shared/
-├── assets/               # 纹理和图像资源
-├── fonts/                # 字体文件
-└── icons/                # 图标文件
-```
-
-### `content/` - 用户内容包
-
-```
-content/
-└── data/                 # 游戏数据文件（选手、队伍、干员等）
-```
-
-### `userdata/` - 用户数据
-
-```
-userdata/
-├── config/               # 用户配置文件
-├── saves/                # 存档文件
-└── logs/                 # 日志文件
-```
-
-### `core/` - 主核心（一切皆插件）
-
-主核心只保留服务与契约，**不含任何业务场景**。所有直播场景 / 控制面板 / 编辑器均为插件。
+主核心只保留服务与契约，**不含任何业务场景**，且不认识任何具体插件 id。
 
 ```
 core/
-├── core_config.json      # 核心配置
 ├── kernel.gd             # autoload 入口：初始化服务、扫描并启动插件
 ├── plugin.gd             # 插件契约基类（Plugin）
 ├── plugin_scene.gd       # 场景插件基类（PluginScene）
-├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载
+├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载（扫描 mods/）
+├── plugin_context.gd     # 插件服务访问层（PluginContext，ADR-0001）
+├── event_catalog.gd      # 事件目录（事件名常量化 + payload 契约）
+├── data_keys.gd          # 数据字段常量
+├── data_schema.gd        # 数据 schema 定义与校验 / 版本迁移
 ├── mod_interface.gd      # 【兼容别名】ModInterface -> Plugin
 ├── mod_scene.gd          # 【兼容别名】ModScene -> PluginScene
 ├── mod_loader.gd         # 【兼容别名】旧 ModLoader autoload，转发 Kernel
 └── services/             # EventBus / DataService / SceneDirector / FileWatcher / PluginRegistry
 ```
 
-### `plugins/` - 内置插件
+### `src/` — 引导壳
 
-随程序分发，与 `mods/` **同构**（同一份 `plugin.json`、同一套生命周期与热重载管线）。
-
-```
-plugins/
-├── builtin_main_vision/      # 主视觉直播场景
-├── builtin_streaming_arena/  # 比赛场直播场景
-├── builtin_waiting_scene/    # 候场页直播场景
-├── builtin_control_panel/    # 控制面板（导航面板 / 直播管理 / 模组管理）
-└── builtin_editors/          # 选手 / 队伍 / 解说录入编辑器
-```
-
-### `framework_cs/` - C# 框架模块
+只负责装配内核并注入控制面板，**不得认识任何具体场景**。
 
 ```
-framework_cs/
-├── Core/                 # 框架核心
-├── Content/              # 内容加载
-├── Config/               # 配置管理
-├── Validation/           # 内容验证
-├── Extensions/           # 扩展点
-└── framework_metadata.json
+src/
+├── scenes/main/main.tscn     # 入口场景
+└── scripts/
+    ├── main/main.gd          # 纯引导壳：从 PluginRegistry 注入 main_window 面板
+    └── data/app_data.gd      # AppData autoload：exe 目录 / 用户数据目录 / 首运行播种
 ```
 
-### `mods/` - 第三方插件目录
+### `mods/` — 全部插件
+
+每个子目录即一个独立插件（同一份 `plugin.json` 契约、同一套生命周期与热重载管线）。
 
 ```
 mods/
-└── example_mod/          # 示例插件（可直接复制作为起点）
-    ├── plugin.json       # 插件清单（声明 provides.scenes）
-    ├── plugin.gd         # 入口脚本：extends Plugin
-    ├── scenes/           # 场景（live_scene.tscn 等）
-    ├── scripts/          # 插件脚本
-    ├── assets/           # 插件资源
-    └── data/             # 插件数据
+├── control_panel_base/     # 控制面板基底（一级面板容器 + mount_panel 挂载协议）
+├── scene_manager_panel/    # 场景管理二级面板（dependencies: control_panel_base）
+├── streaming_arena/        # 比赛场直播场景（实例模板：素材/字体/着色器全自携带）
+├── _template/              # 插件脚手架骨架（plugin.json.example，复制即用）
+├── _test_pair_a/           # 契约测试插件对（`_` 前缀，打包时排除）
+└── _test_pair_b/
 ```
 
-> 插件无需注册表：`PluginManager` 自动扫描 `plugins/` 与 `mods/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
-> 开发说明见 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
+> 插件无需注册表：`PluginManager` 自动扫描 `mods/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
+> **资源自携带**：纹理 / 字体 / 着色器必须放在插件自身 `assets/` 下，核心不提供共享资源。
+
+### `shared/` — 仅应用图标 + 设计源
+
+```
+shared/
+├── icons/icon.svg              # 应用图标
+└── assets/textures/*.afphoto   # 设计源文件（Affinity），不参与运行时
+```
+
+> 禁止在此恢复共享字体 / 纹理 —— 插件资源必须自携带。
+
+### `content/` — 只读内置内容数据
+
+```
+content/
+└── data/
+    ├── relics.json             # 藏品数据
+    └── operators/*.json        # 干员星级名单
+```
+
+### `userdata/` — 示例用户数据（播种源）
+
+首次运行时由 `AppData.seed_userdata_if_missing()` 复制到用户数据目录
+（Linux：`~/.local/share/godot/app_userdata/演播室2/userdata/`；
+Windows：`%APPDATA%\Godot\app_userdata\演播室2\userdata\`）。
+
+```
+userdata/
+├── players/players.json
+├── teams/teams.json
+└── announcers/                 # 解说相关缓存（空占位文件不会被播种）
+```
+
+### `tests/` — 契约测试
+
+无头运行 `res://tests/test_main.tscn`，覆盖事件目录 / 数据 schema / EventBus 契约 / 集成场景。
+
+```
+tests/
+├── test_main.tscn / test_main.gd      # 测试入口
+├── test_case.gd                        # 轻量断言框架
+├── test_event_catalog.gd
+├── test_event_bus.gd
+├── test_data_contract.gd
+├── test_data_schema.gd
+└── test_integration.gd                # 纯事件协作 / 热重载订阅守恒 / 依赖阻塞补加载
+```
+
+### `framework/` — 框架文档
+
+```
+framework/docs/
+├── 插件开发指南.md            # 插件契约、生命周期、资源自携带、热重载
+├── 控制面板插件约定.md        # 面板挂载协议（control_panel_base + mount_panel）
+├── 架构演进路线.md            # 三铁律与分阶段演进
+├── 导出指南.md                # 导出与用户数据位置
+├── Git工作规范.md             # 分支与提交规范
+└── adr/                       # 架构决策记录 0001~0003
+```
+
+### `framework_cs/` — C# 内容框架模块
+
+独立模块（`Core/` `Content/` `Config/` `Validation/` `Extensions/`），
+**尚未接入插件系统**；集成说明见插件开发指南 §C# 框架。
 
 ---
 
-## 文件路径引用更新清单
+## 四、插件打包与分发
 
-| 原路径 | 新路径 |
-|--------|--------|
-| `res://scene/main/main.tscn` | `res://src/scenes/main/main.tscn` |
-| `res://scripts/data/app_data.gd` | `res://src/scripts/data/app_data.gd` |
-| `res://icons/icon.svg` | `res://shared/icons/icon.svg` |
-| `res://fonts/` | `res://shared/fonts/` |
-| `res://assets/` | `res://shared/assets/` |
-| `res://data/` | `res://content/data/` |
+| 平台 | 脚本 | 用法 |
+|------|------|------|
+| Windows | `export_mods.ps1` | `.\export_mods.ps1` / `.\export_mods.ps1 -Name <id>` |
+| Linux / macOS | `export_mods.sh` | `./export_mods.sh` / `./export_mods.sh <id>` |
+
+- 产物：`builds/mods/<id>_<version>.zip`，**zip 内顶层即插件目录**，
+  解压到 `{exe}/mods/` 即完成安装；`.import` 随插件走，`.godot` 缓存不带走。
+- 打包时自动跳过 `_` 前缀目录（脚手架 / 测试插件）与无 `plugin.json` 的目录。
 
 ---
 
-## 命名规范
+## 五、命名规范
 
 ### 目录命名
-- 使用 **小写字母** 和 **下划线**（如 `main_menu`）
-- 避免使用空格和特殊字符
-- 目录名应具有描述性（如 `ui`, `scripts`, `data`）
+- 使用 **小写字母** 和 **下划线**（如 `main_menu`），避免空格与特殊字符。
 
 ### 文件命名
-- **场景文件**：使用 **小写字母** 和 **下划线**（如 `main_menu.tscn`）
-- **脚本文件**：使用 **小写字母** 和 **下划线**（如 `player_editor.gd`）
-- **资源文件**：保持原有命名，建议使用英文或拼音
-
-### 代码文件命名
-- GDScript 文件：`snake_case.gd`
-- C# 文件：`PascalCase.cs`
+- **场景文件**：小写 + 下划线（如 `main_menu.tscn`）
+- **脚本文件**：小写 + 下划线（如 `player_editor.gd`）
+- **GDScript**：`snake_case.gd`；**C#**：`PascalCase.cs`
 
 ---
 
-## 最佳实践建议
+## 六、最佳实践
 
-1. **单一职责**：每个目录和文件应有明确的职责
-2. **一致性**：保持目录结构和命名规范的一致性
-3. **可扩展性**：设计时考虑未来扩展需求
-4. **文档化**：为复杂模块添加 README 文档
-5. **.gitignore**：确保忽略临时文件和构建产物
+1. **单一职责**：每个目录与文件职责明确。
+2. **资源自携带**：插件所需的字体 / 纹理 / 着色器随插件分发，不依赖核心共享资源。
+3. **协作走官方通道**：`EventBus` 事件 / `plugin.json` provides / `DataService` / `mount_panel`，
+   禁止跨插件 `preload` 或跨插件 `get_node`（见 AGENTS.md 三铁律）。
+4. **服务从访问层获取**：`PluginContext` / `Plugin` 基类 getter，禁止硬编码 `/root/Kernel`。
+5. **分支管时间，不管模块**：禁止用分支隔离 core / 插件。
 
 ---
 
-## 迁移完成验证
-
-运行以下命令验证目录结构：
+## 七、验证流程（提交前必做）
 
 ```bash
-# 查看完整目录结构
-ls -la
+# 1. 导入资源（新增文件后必须）
+godot4 --headless --path . --import
 
-# 验证关键文件是否存在
-ls -la src/scenes/main/
-ls -la src/scripts/data/
-ls -la shared/fonts/
-ls -la content/data/
+# 2. 冒烟启动（观察日志，不得出现 ERROR / SCRIPT ERROR）
+godot4 --headless --path . --quit-after 300
+
+# 3. 契约测试
+godot4 --headless --path . res://tests/test_main.tscn
 ```
 
----
-
-## 下一步建议
-
-1. 更新场景文件中的脚本引用路径
-2. 更新脚本中的资源引用路径
-3. 运行项目验证所有路径引用正确
-4. 更新项目文档以反映新结构
+> 无头模式特有的 `Window spawned at invalid position` 属伪错误（无真实屏幕所致），窗口运行无此问题。
