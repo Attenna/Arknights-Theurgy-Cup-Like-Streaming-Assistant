@@ -44,3 +44,19 @@
 > **验收完成（2026-10-14，issue #6）**：热重载订阅清理已由集成测试验证——
 > `tests/test_integration.gd` 断言测试插件对热重载 N 次后订阅数守恒
 > （直查 `_subs` 按 owner 计数），随 CI 无头执行。
+
+## 补充（2026-10-23）：场景节点订阅残留修复
+
+**问题**：`unsubscribe_all(owner)` 仅在插件卸载 / 热重载时由 PluginManager 调用。
+场景切换时 SceneDirector 对旧场景 `queue_free()`，场景内 UI 子节点在 `_ready` 里按
+owner=插件 id 订阅后，其回调条目滞留 `_subs`（Callable 绑定已释放节点，靠
+`cb.is_valid()` 兜底跳过），反复切换场景会持续累积死条目。
+
+**修复**（纯增量，`api_version` 维持 2.0.0）：
+- `EventBus.unsubscribe(event_name: StringName, callback: Callable) -> void`
+  —— 只移除该事件下回调相同的条目，不影响同 owner 的其它订阅；条目不存在时静默忽略，
+  可安全重复调用（与 `unsubscribe_all` 清理顺序无关）。
+- `mods/streaming_arena` 的三个场景脚本改为**命名方法回调**（原匿名 lambda 无法匹配退订），
+  并新增 `_exit_tree()` 精确退订本节点订阅。
+- 契约测试：`tests/test_event_bus.gd` 的 `_test_unsubscribe_precise()` 断言
+  「精确退订不影响同事件其它订阅者」「重复退订不误删条目」。

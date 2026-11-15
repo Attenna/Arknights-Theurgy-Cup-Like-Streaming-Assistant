@@ -93,7 +93,8 @@ func _collect_third_party_roots() -> void:
 
 ## 可执行文件同级的 mods/ 目录绝对路径（取不到 exe 目录时返回空串）。
 func _external_mods_root() -> String:
-	var app_data := get_node_or_null("/root/AppData")
+	# 按入组名查找 AppData（ADR-0001），不硬编码 autoload 节点路径。
+	var app_data := PluginContext.find_app_data(self)
 	if app_data != null and app_data.has_method("get_exe_dir"):
 		var exe_dir := str(app_data.get_exe_dir())
 		if not exe_dir.is_empty():

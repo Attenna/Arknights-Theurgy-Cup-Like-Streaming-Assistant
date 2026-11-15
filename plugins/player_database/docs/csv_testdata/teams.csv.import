@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bi1oewy8gqd4i"
+
+[deps]
+
+files=["res://plugins/player_database/docs/csv_testdata/teams.队名.translation", "res://plugins/player_database/docs/csv_testdata/teams.资金.translation", "res://plugins/player_database/docs/csv_testdata/teams.排名.translation", "res://plugins/player_database/docs/csv_testdata/teams.备注.translation"]
+
+source_file="res://plugins/player_database/docs/csv_testdata/teams.csv"
+dest_files=["res://plugins/player_database/docs/csv_testdata/teams.队名.translation", "res://plugins/player_database/docs/csv_testdata/teams.资金.translation", "res://plugins/player_database/docs/csv_testdata/teams.排名.translation", "res://plugins/player_database/docs/csv_testdata/teams.备注.translation"]
+
+[params]
+
+compress=true
+delimiter=0

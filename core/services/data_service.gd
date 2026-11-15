@@ -10,9 +10,10 @@ var event_bus: EventBus = null
 
 ## userdata 根目录（用户数据目录 user://）
 func get_userdata_dir() -> String:
-	var app_data := get_node_or_null("/root/AppData")
+	# 按入组名查找 AppData（ADR-0001），不硬编码 autoload 节点路径。
+	var app_data := PluginContext.find_app_data(self)
 	if app_data and app_data.has_method("get_user_dir"):
-		return app_data.get_user_dir()
+		return str(app_data.get_user_dir())
 	return OS.get_user_data_dir()
 
 ## 读取 JSON。文件不存在或解析失败时返回 null。

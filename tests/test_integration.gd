@@ -13,6 +13,7 @@ const FIXTURE_DIRS: Array[String] = ["_test_pair_a", "_test_pair_b"]
 const RELOAD_TIMES := 3
 
 func run() -> bool:
+	_test_app_data_group_lookup()
 	_load_fixture_pairs()
 	_test_pair_loaded()
 	await _test_collaboration()
@@ -45,6 +46,10 @@ func _settle() -> void:
 	await _tree().process_frame
 
 # ── 用例 ─────────────────────────────────────────────────────────────────────
+
+## AppData 按入组名查找（ADR-0001 补充）：内核解析 userdata / exe 同级 mods 依赖该入口。
+func _test_app_data_group_lookup() -> void:
+	ok(PluginContext.find_app_data(_tree().root) != null, "AppData 已入组，可按组名查找")
 
 func _test_pair_loaded() -> void:
 	ok(_pm().is_loaded(PAIR_A), "测试插件对 A 加载")

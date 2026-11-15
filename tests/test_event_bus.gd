@@ -6,6 +6,7 @@ extends TestCase
 func run() -> bool:
 	_test_subscribe_roundtrip()
 	_test_unsubscribe_all()
+	_test_unsubscribe_precise()
 	_test_duplicate_subscribe()
 	_test_validate_payload()
 	return summary("test_event_bus")
@@ -31,6 +32,25 @@ func _test_unsubscribe_all() -> void:
 	bus.unsubscribe_all(&"test_owner")
 	bus.emit_event(EventCatalog.DATA_RELOADED, {"scope": "after"})
 	eq(received.size(), 0, "unsubscribe_all 后不再分发")
+	bus.free()
+
+func _test_unsubscribe_precise() -> void:
+	var bus := _bus()
+	var got_a := []
+	var got_b := []
+	var cb_a := func(p): got_a.append(p)
+	var cb_b := func(p): got_b.append(p)
+	bus.subscribe(EventCatalog.DATA_RELOADED, cb_a, &"owner_a")
+	bus.subscribe(EventCatalog.DATA_RELOADED, cb_b, &"owner_b")
+	# 精确退订仅移除目标回调，同事件下其它 owner 的订阅不受影响
+	bus.unsubscribe(EventCatalog.DATA_RELOADED, cb_a)
+	bus.emit_event(EventCatalog.DATA_RELOADED, {"scope": "precise"})
+	eq(got_a.size(), 0, "unsubscribe 后目标回调不再分发")
+	eq(got_b.size(), 1, "unsubscribe 不影响同事件其它订阅者")
+	# 重复退订 / 未订阅事件均应静默忽略
+	bus.unsubscribe(EventCatalog.DATA_RELOADED, cb_a)
+	bus.unsubscribe(EventCatalog.SCENE_CHANGED, cb_b)
+	eq(bus._subs.get(EventCatalog.DATA_RELOADED, []).size(), 1, "重复退订不误删其它条目")
 	bus.free()
 
 func _test_duplicate_subscribe() -> void:

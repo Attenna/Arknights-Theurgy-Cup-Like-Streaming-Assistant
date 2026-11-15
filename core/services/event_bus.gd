@@ -64,3 +64,18 @@ func unsubscribe_all(owner: StringName) -> void:
 	for event_name in _subs.keys():
 		var subs: Array = _subs[event_name]
 		_subs[event_name] = subs.filter(func(sub): return sub["owner"] != owner)
+
+## 精确取消单个订阅（仅移除该事件下 callback 相同的条目，owner 不受影响）。
+## 供场景内节点在 _exit_tree 时退订，避免场景切换后订阅表残留死条目；
+## 条目不存在（如已被 unsubscribe_all 清理）时静默忽略，可安全重复调用。
+func unsubscribe(event_name: StringName, callback: Callable) -> void:
+	if not _subs.has(event_name):
+		return
+	var remaining: Array = []
+	for sub in _subs[event_name]:
+		if sub["cb"] != callback:
+			remaining.append(sub)
+	if remaining.is_empty():
+		_subs.erase(event_name)
+	else:
+		_subs[event_name] = remaining

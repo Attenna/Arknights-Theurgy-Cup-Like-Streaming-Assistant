@@ -4,6 +4,9 @@ var current_player_data_path: String
 var relics_data_path: String
 var relics_data: Dictionary = {}
 
+# 事件总线引用（_exit_tree 精确退订用，避免场景切换后订阅残留）
+var _event_bus: EventBus = null
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# 初始化路径变量
@@ -15,13 +18,22 @@ func _ready() -> void:
 
 	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
 	var ctx := PluginContext.for_node(self)
-	if ctx.event_bus:
-		ctx.event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
-		ctx.event_bus.subscribe(EventCatalog.DATA_RELOADED, func(_p: Dictionary) -> void: _on_player_data_updated(), &"streaming_arena")
+	_event_bus = ctx.event_bus
+	if _event_bus:
+		_event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
+		_event_bus.subscribe(EventCatalog.DATA_RELOADED, _on_data_reloaded, &"streaming_arena")
 
 	# Initial load of the current player's data to set the display.
 	var initial_player_data = _load_current_player_data()
 	_update_relic_display(initial_player_data)
+
+
+func _exit_tree() -> void:
+	# 节点随场景销毁时精确退订本节点回调，杜绝订阅表残留死条目
+	if _event_bus == null:
+		return
+	_event_bus.unsubscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected)
+	_event_bus.unsubscribe(EventCatalog.DATA_RELOADED, _on_data_reloaded)
 
 
 # --- Signal Handlers ---
@@ -30,6 +42,10 @@ func _on_player_selected(player_data: Dictionary) -> void:
 	"""Handles the player_selected signal."""
 	print("Relic Label: Received player_selected signal.")
 	_update_relic_display(player_data)
+
+func _on_data_reloaded(_payload: Dictionary) -> void:
+	"""Handles the DATA_RELOADED event."""
+	_on_player_data_updated()
 
 func _on_player_data_updated() -> void:
 	"""Handles the player_data_updated signal."""

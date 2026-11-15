@@ -16,6 +16,10 @@ extends RefCounted
 ## 内核入组名（core/kernel.gd 中 add_to_group，禁散落硬编码）。
 const KERNEL_GROUP := "kernel"
 
+## 用户数据服务（AppData autoload）入组名（src/scripts/data/app_data.gd 中 add_to_group，
+## 禁在内核代码里硬编码 `/root/AppData` 节点路径）。
+const APP_DATA_GROUP := "app_data"
+
 var kernel: Node = null
 var event_bus: EventBus = null
 var data_service: DataService = null
@@ -47,3 +51,13 @@ static func for_node(node: Node) -> PluginContext:
 		if tree != null:
 			found = tree.get_first_node_in_group(KERNEL_GROUP)
 	return PluginContext.new(found)
+
+## 查找用户数据服务（AppData）：按入组名而非硬编码节点路径。
+## AppData 是引导壳 autoload，不挂在 Kernel 下，故独立查找；不存在时返回 null。
+static func find_app_data(node: Node) -> Node:
+	if node == null:
+		return null
+	var tree := node.get_tree()
+	if tree == null:
+		return null
+	return tree.get_first_node_in_group(APP_DATA_GROUP)

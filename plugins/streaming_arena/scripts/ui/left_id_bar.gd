@@ -8,6 +8,11 @@ var CURRENT_PLAYER_DATA_PATH = user_data_path + "/userdata/players/current_playe
 # 数据存储
 var current_player_data: Dictionary = {}
 
+# 事件总线引用（_exit_tree 精确退订用，避免场景切换后订阅残留）
+var _event_bus: EventBus = null
+# 数据访问统一走 DataService（自动处理 schema_version 信封与旧格式迁移）
+var _data_service: DataService = null
+
 # UI节点引用
 @onready var player_icon: TextureRect = get_node_or_null("Player/PlayerIcon")
 @onready var player_name: Label = get_node_or_null("Player/PlayerName")
@@ -21,9 +26,11 @@ var current_player_data: Dictionary = {}
 func _ready() -> void:
 	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
 	var ctx := PluginContext.for_node(self)
-	if ctx.event_bus:
-		ctx.event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
-		ctx.event_bus.subscribe(EventCatalog.DATA_RELOADED, func(_p: Dictionary) -> void: _on_player_data_updated(), &"streaming_arena")
+	_event_bus = ctx.event_bus
+	_data_service = ctx.data_service
+	if _event_bus:
+		_event_bus.subscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected, &"streaming_arena")
+		_event_bus.subscribe(EventCatalog.DATA_RELOADED, _on_player_data_updated, &"streaming_arena")
 
 	# 初始加载当前选手数据
 	_load_current_player_data()
@@ -31,45 +38,32 @@ func _ready() -> void:
 	# 更新UI显示
 	_update_ui_display()
 
+func _exit_tree() -> void:
+	# 节点随场景销毁时精确退订本节点回调，杜绝订阅表残留死条目
+	if _event_bus == null:
+		return
+	_event_bus.unsubscribe(EventCatalog.PLAYER_CHANGED, _on_player_selected)
+	_event_bus.unsubscribe(EventCatalog.DATA_RELOADED, _on_player_data_updated)
+
 func _on_player_selected(player_data: Dictionary) -> void:
 	"""处理选手选择信号"""
 	print("🎯 接收到选手选择信号，更新左侧ID栏...")
 	current_player_data = player_data
 	_update_ui_display()
 
-func _on_player_data_updated() -> void:
+func _on_player_data_updated(_payload: Dictionary) -> void:
 	"""处理选手数据更新信号"""
 	print("🔄 接收到选手数据更新信号，重新加载当前选手...")
 	_load_current_player_data()
 	_update_ui_display()
 
 func _load_current_player_data() -> void:
-	"""从current_player.json加载当前选手数据"""
-	print("Loading current player data from: " + CURRENT_PLAYER_DATA_PATH)
-	
-	if not FileAccess.file_exists(CURRENT_PLAYER_DATA_PATH):
-		print("Current player data file not found")
+	"""从 DataService 加载当前选手数据（兼容 v1 信封与旧版裸格式）"""
+	if _data_service == null:
 		current_player_data = {}
 		return
-	
-	var file = FileAccess.open(CURRENT_PLAYER_DATA_PATH, FileAccess.READ)
-	if file:
-		var content = file.get_as_text()
-		file.close()
-		
-		var data = JSON.parse_string(content)
-		if data == null:
-			print("Error: Failed to parse current player JSON")
-			current_player_data = {}
-		elif data is Dictionary:
-			current_player_data = data
-			print("Loaded current player data: " + str(data.get(DataKeys.PLAYER_ID, "Unknown")))
-		else:
-			print("Error: Invalid current player data format")
-			current_player_data = {}
-	else:
-		print("Error: Could not open current player data file")
-		current_player_data = {}
+	current_player_data = _data_service.get_current_player()
+	print("Loaded current player data: " + str(current_player_data.get(DataKeys.PLAYER_ID, "Unknown")))
 
 func _update_ui_display() -> void:
 	"""更新UI显示"""

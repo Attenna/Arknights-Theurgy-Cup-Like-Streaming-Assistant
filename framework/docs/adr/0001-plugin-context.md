@@ -96,3 +96,19 @@
 - [x] 全插件无头冒烟 + `--scene streaming_arena` 验证通过（三插件加载、二级面板挂载、场景进入无 SCRIPT ERROR）
 - [x] AGENTS.md 铁律 2 过渡期注记删除
 - [x] CI 禁令（issue #3 workflow）对 `mods/`、`core/` 生效为 error
+
+## 补充（2026-10-23）：AppData 也改为组名查找
+
+**问题**：`core/plugin_manager.gd`（第三方插件根目录解析）与
+`core/services/data_service.gd`（userdata 根目录）硬编码 `get_node_or_null("/root/AppData")`。
+AppData 是 autoload 节点名，重命名后内核会**静默降级**（返回空串 / 退回 `OS.get_user_data_dir()`），
+导出后第三方插件可能全部不加载且无明确报错。
+
+**修复**（纯增量，`api_version` 维持 2.0.0）：
+- `PluginContext` 新增 `const APP_DATA_GROUP := "app_data"` 与静态
+  `PluginContext.find_app_data(node) -> Node`（按入组名查找，不含任何节点路径字符串）；
+- `src/scripts/data/app_data.gd` 的 `_ready()` 增加 `add_to_group(PluginContext.APP_DATA_GROUP)`，
+  时机先于 Kernel `_ready()`（autoload 顺序：EventCatalog → AppData → Kernel）；
+- 上述两处内核代码改走 `PluginContext.find_app_data(self)`，
+  找不到时维持原有兜底（空串 / `OS.get_user_data_dir()`）；
+- `src/scripts/main/main.gd` 的 `/root/Kernel` 属引导壳装配职责，保持不动。

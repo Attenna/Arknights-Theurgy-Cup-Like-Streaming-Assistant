@@ -4,6 +4,8 @@ extends Node
 var exe_dir: String
 
 func _ready():
+    # 入组供内核/插件按组名查找（不硬编码 /root/AppData 节点路径）
+    add_to_group(PluginContext.APP_DATA_GROUP)
     # 获取当前可执行文件的路径
     var exe_path = OS.get_executable_path()
     # 提取目录部分
