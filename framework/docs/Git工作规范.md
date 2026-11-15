@@ -53,7 +53,7 @@
 
 ## 4. 冲突与覆盖预防
 
-1. **高频区与低频区分离提交**：`core/`（低频、高影响）与 `mods/<某插件>/`（高频）
+1. **高频区与低频区分离提交**：`core/`（低频、高影响）与 `plugins/<某插件>/`（高频）
    不放同一提交，回滚时互不牵连。
 2. **一个插件目录同一时间只在一个分支/会话中修改**：插件目录是天然的冲突单元，
    跨分支并行改同一插件几乎必然冲突。
@@ -62,7 +62,7 @@
    并在提交信息中注明去向（如"内容已归档备份"）。
 5. **恢复历史文件**：从 git 历史（`git show <commit>:<path>`）或备份 zip 提取时，
    注意历史版本可能**早于最新改造**（例：git 里的 builtin_streaming_arena 是资源
-   自携带改造前的旧版）——先核对内容再入 `mods/`。
+   自携带改造前的旧版）——先核对内容再入 `plugins/`。
 
 ## 5. 禁止事项
 
@@ -89,7 +89,7 @@
 
 ### 现在：单仓库单 main（现状保持）
 
-- core、mods、docs 同仓库演进，原子提交保证契约一致。
+- core、plugins、docs 同仓库演进，原子提交保证契约一致。
 - 用 `feature/*` 分支处理大改动，用完即删。
 
 ### 将来拆分（满足任一条件时启动）
@@ -101,10 +101,10 @@
 | 仓库因资源膨胀影响 clone | 主仓库应只含内核与文档 |
 
 **拆法**：
-1. 主仓库保留 `core/ src/ framework/docs/` + `mods/` 内 1-2 个官方示例；
+1. 主仓库保留 `core/ src/ framework/docs/` + `plugins/` 内 1-2 个官方示例；
 2. 其余插件迁入新仓库 `plugins-official`（按插件目录拆出，保留各自 git 历史
-   可用 `git filter-repo --subdirectory-filter mods/<id>`）；
-3. `plugins-official` 以 **git submodule** 挂在主仓库 `mods/` 下；
+   可用 `git filter-repo --subdirectory-filter plugins/<id>`）；
+3. `plugins-official` 以 **git submodule** 挂在主仓库 `plugins/` 下；
 4. 第三方插件不走 submodule，只以 zip / 文件夹分发（部署目录解压即装）。
 
 ### 永久禁止

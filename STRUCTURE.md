@@ -4,10 +4,10 @@
 
 演播室2 采用 **纯核心 + 一切皆插件** 架构（内核版本 `core 2.0.0`）：
 
-- **仓库是纯核心**：只保留运行时内核（`core/`）与引导壳（`src/`），
-  **不含任何内置插件**；所有直播场景 / 控制面板 / 编辑器都是 `mods/` 下的外部插件。
-- **核心与插件是「运行时拼装」关系，不是打包关系**：`mods/` 永不进 pck，
-  导出后插件以真实文件夹形式与可执行文件同级，用户解压即安装。
+- **仓库只保留内核与插件源码**：内核为 `core/` 与引导壳 `src/`，**不含任何随程序分发的
+  内置插件**；所有直播场景 / 控制面板 / 编辑器都是 `plugins/` 下的外部插件。
+- **核心与插件是「运行时拼装」关系，不是打包关系**：`plugins/` 永不进 pck，
+  导出后插件以真实文件夹形式与可执行文件同级（部署目录名 `mods/`），用户解压即安装。
 - 核心零插件可正常启动（优雅降级），这是设计行为。
 
 约定细则见 [`AGENTS.md`](AGENTS.md) 与 [`framework/docs/插件开发指南.md`](framework/docs/插件开发指南.md)。
@@ -20,7 +20,7 @@
 项目根目录/
 ├── core/                    # 内核：Kernel autoload + 服务 + 插件契约
 ├── src/                     # 引导壳（main.tscn / main.gd），不含任何业务场景
-├── mods/                    # 全部插件（每个子目录一个独立插件）
+├── plugins/                 # 全部插件源码（每个子目录一个独立插件）
 ├── shared/                  # 仅应用图标 + 设计源（.afphoto / .afdesign）
 ├── content/                 # 只读内置内容数据（干员名单 / 藏品等）
 ├── userdata/                # 首次运行播种到 user:// 的示例用户数据
@@ -54,7 +54,7 @@ core/
 ├── kernel.gd             # autoload 入口：初始化服务、扫描并启动插件
 ├── plugin.gd             # 插件契约基类（Plugin）
 ├── plugin_scene.gd       # 场景插件基类（PluginScene）
-├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载（扫描 mods/）
+├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载（扫描 plugins/）
 ├── plugin_context.gd     # 插件服务访问层（PluginContext，ADR-0001）
 ├── event_catalog.gd      # 事件目录（事件名常量化 + payload 契约）
 ├── data_keys.gd          # 数据字段常量
@@ -77,21 +77,19 @@ src/
     └── data/app_data.gd      # AppData autoload：exe 目录 / 用户数据目录 / 首运行播种
 ```
 
-### `mods/` — 全部插件
+### `plugins/` — 全部插件源码
 
 每个子目录即一个独立插件（同一份 `plugin.json` 契约、同一套生命周期与热重载管线）。
 
 ```
-mods/
+plugins/
 ├── control_panel_base/     # 控制面板基底（一级面板容器 + mount_panel 挂载协议）
 ├── scene_manager_panel/    # 场景管理二级面板（dependencies: control_panel_base）
 ├── streaming_arena/        # 比赛场直播场景（实例模板：素材/字体/着色器全自携带）
-├── _template/              # 插件脚手架骨架（plugin.json.example，复制即用）
-├── _test_pair_a/           # 契约测试插件对（`_` 前缀，打包时排除）
-└── _test_pair_b/
+└── _template/              # 插件脚手架骨架（plugin.json.example，复制即用）
 ```
 
-> 插件无需注册表：`PluginManager` 自动扫描 `mods/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
+> 插件无需注册表：`PluginManager` 自动扫描 `plugins/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
 > **资源自携带**：纹理 / 字体 / 着色器必须放在插件自身 `assets/` 下，核心不提供共享资源。
 
 ### `shared/` — 仅应用图标 + 设计源
@@ -138,7 +136,9 @@ tests/
 ├── test_event_bus.gd
 ├── test_data_contract.gd
 ├── test_data_schema.gd
-└── test_integration.gd                # 纯事件协作 / 热重载订阅守恒 / 依赖阻塞补加载
+├── test_docs_links.gd                  # 文档相对链接 / 锚点校验
+├── test_integration.gd                # 纯事件协作 / 热重载订阅守恒 / 依赖阻塞补加载
+└── fixtures/                          # 测试插件对（_test_pair_a/b），由集成测试显式加载
 ```
 
 ### `framework/` — 框架文档

@@ -10,8 +10,8 @@
 ## 1. 项目定位（先读）
 
 - **演播室2**：Godot 4.5.1 mono 直播场景助手，`Windows Desktop` 平台。
-- 架构：**一切皆插件（core 2.0.0）**。仓库是**纯核心**——`plugins/` 内置插件已全部移出，
-  所有直播场景、控制面板、编辑器均为 `mods/` 下的外部插件。
+- 架构：**一切皆插件（core 2.0.0）**。内核不认识任何具体插件；所有直播场景、控制面板、
+  编辑器均为 `plugins/` 下的外部插件（导出后部署到 `{exe}/mods/`）。
 - 核心零插件可正常启动（优雅降级），这是设计行为，不是 bug。
 - 历史完整内容（旧内置插件、示例）在备份包 `d:\Projects\Arknights-Streaming-Assistant_backup_2026-10-13.zip`。
 
@@ -57,7 +57,7 @@ PluginRegistry 只读查询 → mount_panel 挂载 → DataService 共享 →
 |------|------|------|
 | `core/` | 内核：Kernel autoload + 六服务 + Plugin/PluginScene 契约 | 勿在内核代码里认识任何具体插件 id；勿随意改公开接口 |
 | `src/` | 引导壳（main.tscn / main.gd） | 勿在此注册/认识具体场景 |
-| `mods/` | 全部插件（每个子目录一个独立插件） | 勿跨插件互相引用对方内部文件（只走 manifest 能力） |
+| `plugins/` | 全部插件源码（每个子目录一个独立插件） | 勿跨插件互相引用对方内部文件（只走 manifest 能力） |
 | `shared/` | 仅应用图标 + 设计源（.afphoto） | 勿恢复共享字体/纹理——插件资源必须自携带 |
 | `.godot/` `builds/` | 缓存与导出产物 | 永不提交、永不手工修改 |
 | `framework/docs/` | 全部文档 | 改约定必须同步文档 |
@@ -70,7 +70,7 @@ PluginRegistry 只读查询 → mount_panel 挂载 → DataService 共享 →
    手写时删除 `uid="uid://..."` 属性（旧 uid 跨目录失效反而报错）。
 3. **脚本相对加载**：以 `get_script().resource_path.get_base_dir().path_join(...)` 为基准。
    ⚠️ `get_script()` 返回 Variant，变量必须显式 `: String` 标注，`:=` 推断会编译失败。
-4. **禁止硬编码** `res://plugins/...`、`res://mods/...`——导出后插件在 exe 同级真实目录，
+4. **禁止硬编码** `res://plugins/...`——导出后插件在 exe 同级真实目录（`{exe}/mods/`），
    这类路径无法解析。场景/面板路径只写在 `plugin.json` 中（相对插件目录）。
 5. **`.import` 文件不复制**：搬运插件目录后删除 `*.import`，让 Godot 重新生成（避免旧 uid 残留）。
 6. **依赖声明**：`plugin.json` 的 `dependencies` 是强制解析——缺失/环形依赖的插件会被
@@ -120,12 +120,12 @@ D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe --h
 
 ```
 仓库（开发时）                 部署目录（运行时，如用户的"大集合"）
-core/ + src/ ──导出──▶         演播室2.exe + .pck   ← 纯核心（mods 永不进 pck）
-mods/<插件>/ ──拷贝/解压──▶    mods/<插件>/         ← 文件夹即安装
+core/ + src/ ──导出──▶         演播室2.exe + .pck   ← 纯核心（插件永不进 pck）
+plugins/<插件>/ ──拷贝/解压──▶  mods/<插件>/        ← 文件夹即安装
 ```
 
-- 「插件」=「模组」：同一份 plugin.json 契约、同一个 mods/ 根目录，仅来源不同。
-- **纯核心导出**：`export_filter="all_resources"` + `exclude_filter="mods/*, framework_cs/*"`
+- 「插件」=「模组」：同一份 plugin.json 契约、同一个部署根目录 `mods/`；源码目录为 `plugins/`。
+- **纯核心导出**：`export_filter="all_resources"` + `exclude_filter="plugins/*, framework_cs/*, tests/*"`
   已固化在 `export_presets.cfg`，勿改动；核心零插件可启动（优雅降级）是设计行为。
 - **插件打包**：Windows `.\export_mods.ps1`（可 `-Name <id>` 指定单个）、
   Linux / macOS `./export_mods.sh <id>` → `builds/mods/<id>_<version>.zip`，

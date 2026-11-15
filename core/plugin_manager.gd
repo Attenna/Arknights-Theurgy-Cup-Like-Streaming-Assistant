@@ -1,9 +1,10 @@
 # plugin_manager.gd
 # 插件管理器：发现 / 加载 / 启用 / 禁用 / 卸载插件，并把插件声明的能力注册到内核服务。
-# 内置插件位于 res://plugins，第三方插件位于 res://mods，二者同构（同一套清单与生命周期）。
+# 插件源码位于 res://plugins（开发期）；导出后从可执行文件同级的 mods/ 加载
+# （部署目录名保持 mods/ 不变，交付结构不受源码重命名影响）。
 #
-# 自 P3 起，本管理器同时扫描 plugins/ 与 mods/，成为唯一加载入口；
-# 旧 ModLoader 退化为转发本管理器 / SceneDirector 的兼容别名（见 core/mod_loader.gd）。
+# 本管理器是唯一加载入口；旧 ModLoader 退化为转发本管理器 / SceneDirector 的兼容别名
+# （见 core/mod_loader.gd，@deprecated）。
 
 class_name PluginManager
 extends Node
@@ -16,13 +17,13 @@ signal plugin_reloaded(plugin_id: String, success: bool)
 signal all_plugins_ready()
 
 const PLUGIN_MANIFEST := "plugin.json"
+# @deprecated 旧清单名，仅兼容存量插件；新插件一律使用 plugin.json。
 const LEGACY_MANIFEST := "mod.json"
-const BUILTIN_ROOT := "res://plugins"
-# 编辑器内的第三方插件根目录。res:// 在导出后只读（指向打包进 pck 的虚拟文件系统），
+# 编辑器内的插件源码根目录。res:// 在导出后只读（指向打包进 pck 的虚拟文件系统），
 # 因此该路径仅供编辑器 / 开发期使用，不能作为导出后的用户插件入口。
-const EDITOR_THIRD_PARTY_ROOT := "res://mods"
+const EDITOR_THIRD_PARTY_ROOT := "res://plugins"
 # 导出后第三方插件的目录名：与可执行文件同级的真实文件系统目录 `{exe}/mods`，
-# 用户可直接增删插件文件夹；该目录不进 pck（导出预设 exclude_filter 排除 mods/*）。
+# 用户可直接增删插件文件夹；该目录不进 pck（导出预设 exclude_filter 排除 plugins/*）。
 const THIRD_PARTY_DIR_NAME := "mods"
 
 # 默认监听路径（清单未声明 watch 时使用）
@@ -39,7 +40,7 @@ var _kernel: Node = null
 # plugin_id -> { manifest, res_path, provides, instance, state }
 var _plugins: Dictionary = {}
 
-# 本次运行实际扫描的第三方插件根目录列表（编辑器内 res://mods + 始终包括 exe 同级 mods/）
+# 本次运行实际扫描的插件根目录列表（编辑器内 res://plugins + 导出后 exe 同级 mods/）
 var _third_party_roots: Array = []
 
 # 依赖解析结果：本次 setup 的拓扑加载顺序（plugin_id 数组）
@@ -69,7 +70,7 @@ func setup(kernel: Node) -> void:
 
 	# 两阶段加载：先扫描全部根目录的清单，再做依赖校验与拓扑排序，最后按序加载。
 	# 缺依赖 / 依赖被阻塞 / 环形依赖的插件不会产生任何半加载状态（不注册能力、不进 _plugins）。
-	var all_manifests := _scan_manifests(BUILTIN_ROOT)
+	var all_manifests: Array = []
 	_collect_third_party_roots()
 	for root in _third_party_roots:
 		all_manifests.append_array(_scan_manifests(str(root)))
@@ -78,9 +79,9 @@ func setup(kernel: Node) -> void:
 		_load_plugin(str(info.get("res_dir", "")), info.get("manifest", {}), str(info.get("origin", "")))
 	all_plugins_ready.emit()
 
-## 计算第三方插件根目录：
-## - 编辑器内：项目内 res://mods（开发调试用，res:// 只读，仅编辑器期有效）；
-## - 导出后：可执行文件同级的 mods/（真实文件系统目录，用户可直接增删）。
+## 计算插件根目录：
+## - 编辑器内：项目内 res://plugins（源码目录，开发调试用；res:// 只读，仅编辑器期有效）；
+## - 导出后：可执行文件同级的 mods/（真实文件系统目录，用户可直接增删；交付结构不变）。
 func _collect_third_party_roots() -> void:
 	_third_party_roots.clear()
 	if OS.has_feature("editor"):
@@ -99,8 +100,8 @@ func _external_mods_root() -> String:
 			return exe_dir.path_join(THIRD_PARTY_DIR_NAME)
 	return ""
 
-## 返回第三方（mods/）插件 id 列表，区别于随程序分发的内置 plugins/。
-## 注意：导出后 exe 同级 mods/ 为真实路径、编辑器内为 res://mods，故按"根目录集合"判定而非固定字符串。
+## 返回从插件根加载的插件 id（编辑器内为 res://plugins，导出后为 {exe}/mods）。
+## 注意：导出后 exe 同级 mods/ 为真实路径、编辑器内为 res://plugins，故按"根目录集合"判定而非固定字符串。
 func get_third_party_plugin_ids() -> Array:
 	var result: Array = []
 	for plugin_id in _plugins.keys():
@@ -265,7 +266,7 @@ func get_provides(plugin_id: String) -> Dictionary:
 		return _plugins[plugin_id].provides
 	return {}
 
-## 返回指定根目录下加载的插件 id（用于区分内置 plugins/ 与第三方 mods/）。
+## 返回指定根目录下加载的插件 id（按根目录筛选，用于区分源码目录与部署目录）。
 func get_plugin_ids_by_root(root_path: String) -> Array:
 	var result: Array = []
 	for plugin_id in _plugins.keys():
@@ -333,6 +334,7 @@ func _read_manifest(res_dir: String) -> Dictionary:
 	return {}
 
 ## 归一化能力声明：兼容旧清单的 streaming_scenes -> provides.scenes[type=live]。
+## @deprecated 旧键仅兼容存量清单；新插件一律写 provides.scenes。
 func _normalize_provides(manifest: Dictionary) -> Dictionary:
 	var provides: Dictionary = manifest.get("provides", {}).duplicate(true)
 	var scenes: Array = provides.get("scenes", []).duplicate()
