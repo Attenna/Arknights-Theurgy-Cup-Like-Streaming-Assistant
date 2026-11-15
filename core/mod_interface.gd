@@ -1,5 +1,5 @@
 # mod_interface.gd
-# 【兼容别名】旧版模组契约，现等价于 Plugin（由 Plugin 演进而来）。
+# @deprecated 兼容别名：旧版模组契约，现等价于 Plugin（由 Plugin 演进而来）。
 #
 # 说明：新代码请直接 `extends Plugin`。本文件仅为兼容既有第三方模组而保留一版，
 # 它把旧的生命周期方法（on_initialize / on_activate / on_pause / on_resume 等）

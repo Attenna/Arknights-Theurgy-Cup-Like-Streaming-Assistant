@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyng6que6rsu1"
-path="res://.godot/imported/civilight_eterna.png-ef04cf3cc16322bb015cab92a79d4f39.ctex"
+uid="uid://ctxqh5l52hgn3"
+path="res://.godot/imported/streaming_arena.png-1cd4b78b4d9cd27fd28b1dc71836a8a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods/streaming_arena/assets/textures/civilight_eterna.png"
-dest_files=["res://.godot/imported/civilight_eterna.png-ef04cf3cc16322bb015cab92a79d4f39.ctex"]
+source_file="res://plugins/streaming_arena/assets/textures/streaming_arena.png"
+dest_files=["res://.godot/imported/streaming_arena.png-1cd4b78b4d9cd27fd28b1dc71836a8a3.ctex"]
 
 [params]
 

@@ -163,6 +163,7 @@ func rebuild_current() -> bool:
 	return true
 
 # 为场景实例注入身份信息（兼容 PluginScene.setup_plugin_scene 与 ModScene.setup_mod_scene）。
+# setup_mod_scene 分支 @deprecated，仅为旧场景保留。
 func _pump_identity(instance: Node, info: Dictionary) -> void:
 	if instance == null:
 		return

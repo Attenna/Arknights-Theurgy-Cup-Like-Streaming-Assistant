@@ -1,10 +1,10 @@
 # mod_loader.gd
-# 【兼容别名】旧版模组加载器 autoload（名：ModLoader）。
+# @deprecated 兼容别名：旧版模组加载器 autoload（名：ModLoader）。
+# 仅为存量引用保留，后续版本移除；新代码请直接使用 Kernel / PluginManager。
 #
 # 自 core 2.0.0 起，"模组"已是"插件"的一种（Everything is a Plugin）：
-# 所有插件（含 mods/ 下的旧模组）统一由 Kernel.PluginManager 发现与加载。
-# 本节点不再自行扫描或加载，仅作为 Kernel / SceneDirector 的转发门面保留，
-# 供既有引用（如 ModManager 面板、第三方模组）继续工作。后续版本将移除。
+# 所有插件统一由 Kernel.PluginManager 发现与加载（源码 res://plugins，部署 {exe}/mods）。
+# 本节点不再自行扫描或加载，仅作为 Kernel / SceneDirector 的转发门面。
 
 extends Node
 
@@ -18,8 +18,7 @@ func get_loaded_mods() -> Array:
 	var kernel := _kernel()
 	if kernel == null or kernel.plugin_manager == null:
 		return []
-	# 仅返回第三方（mods/）插件，保持"模组"语义（内置 plugins/ 不计入）。
-	# 第三方根目录随运行环境变化（编辑器 res://mods / 导出后 exe 同级 mods/），
+	# 返回从插件根加载的插件 id（编辑器 res://plugins / 导出后 exe 同级 mods/）。
 	# 故交由 PluginManager 按"根目录集合"判定。
 	return kernel.plugin_manager.get_third_party_plugin_ids()
 
@@ -60,6 +59,7 @@ func reload_all() -> void:
 		kernel.plugin_manager.reload_all()
 
 # ── 直播场景（旧名 streaming_scenes）转发到 SceneDirector ──────────────────────
+# @deprecated 旧名 streaming_scenes；新代码用 SceneDirector.get_scenes_by_type("live")。
 
 func get_streaming_scenes() -> Array:
 	var kernel := _kernel()

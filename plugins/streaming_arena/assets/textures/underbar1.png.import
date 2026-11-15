@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://brq1qoyfyxp0y"
-path="res://.godot/imported/star.png-081fe167146ee1c6d940ca670ebc5918.ctex"
+uid="uid://c3xhmyooo40g1"
+path="res://.godot/imported/underbar1.png-6dbd9233ad85beb623c315ae197bf123.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods/streaming_arena/assets/textures/star.png"
-dest_files=["res://.godot/imported/star.png-081fe167146ee1c6d940ca670ebc5918.ctex"]
+source_file="res://plugins/streaming_arena/assets/textures/underbar1.png"
+dest_files=["res://.godot/imported/underbar1.png-6dbd9233ad85beb623c315ae197bf123.ctex"]
 
 [params]
 

@@ -19,7 +19,7 @@ var scene_name: String = ""
 
 func _ready() -> void:
 	add_to_group("plugin_scenes")
-	add_to_group("mod_scenes") # 兼容旧代码对 "mod_scenes" 分组的引用
+	add_to_group("mod_scenes") # @deprecated 兼容旧代码对 "mod_scenes" 分组的引用
 	_connect_core_signals()
 	_on_scene_enter()
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://capjmc11fq385"
-path="res://.godot/imported/underbar2.png-d844cbf08b076581fdeb93bd0858ddfb.ctex"
+path="res://.godot/imported/underbar2.png-3ff1db7eccbb8eaadc7b8e934d4e68c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods/streaming_arena/assets/textures/underbar2.png"
-dest_files=["res://.godot/imported/underbar2.png-d844cbf08b076581fdeb93bd0858ddfb.ctex"]
+source_file="res://plugins/streaming_arena/assets/textures/underbar2.png"
+dest_files=["res://.godot/imported/underbar2.png-3ff1db7eccbb8eaadc7b8e934d4e68c5.ctex"]
 
 [params]
 

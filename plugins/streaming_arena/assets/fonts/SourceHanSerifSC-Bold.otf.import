@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://ct5d5nbj3m542"
-path="res://.godot/imported/SourceHanSerifSC-Bold.otf-5ff873b536e73194e64af48f84eddf5b.fontdata"
+path="res://.godot/imported/SourceHanSerifSC-Bold.otf-dcaf45fd009f7e42195c07be2bf0351e.fontdata"
 
 [deps]
 
-source_file="res://mods/streaming_arena/assets/fonts/SourceHanSerifSC-Bold.otf"
-dest_files=["res://.godot/imported/SourceHanSerifSC-Bold.otf-5ff873b536e73194e64af48f84eddf5b.fontdata"]
+source_file="res://plugins/streaming_arena/assets/fonts/SourceHanSerifSC-Bold.otf"
+dest_files=["res://.godot/imported/SourceHanSerifSC-Bold.otf-dcaf45fd009f7e42195c07be2bf0351e.fontdata"]
 
 [params]
 

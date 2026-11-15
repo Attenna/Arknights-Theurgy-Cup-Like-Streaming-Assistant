@@ -1,5 +1,5 @@
 # mod_scene.gd
-# 【兼容别名】旧版模组直播场景基类，现等价于 PluginScene（由 PluginScene 演进而来）。
+# @deprecated 兼容别名：旧版模组直播场景基类，现等价于 PluginScene（由 PluginScene 演进而来）。
 #
 # 说明：新代码请直接 `extends PluginScene`。本文件把旧钩子名
 # （_on_mod_scene_ready / setup_mod_scene / mod_id）映射到新的 PluginScene 契约之上，

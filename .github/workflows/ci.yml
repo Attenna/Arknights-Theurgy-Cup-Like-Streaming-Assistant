@@ -15,39 +15,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 禁令1 mods/ 内禁止 preload/load 其它插件脚本
+      - name: 禁令1 plugins/ 内禁止 preload/load 其它插件脚本
         run: |
           # 铁律1：插件不引用插件。插件脚本相对加载一律走
           # get_script().resource_path.get_base_dir().path_join(...)；
-          # 硬编码 res://mods/ 或 res://plugins/ 路径即判违例。
-          hits=$(grep -rnE "(preload|load)[[:space:]]*\([[:space:]]*[\"']res://(mods|plugins)/" mods --include='*.gd' || true)
+          # 硬编码 res://plugins/ 或 res://mods/ 路径即判违例。
+          hits=$(grep -rnE "(preload|load)[[:space:]]*\([[:space:]]*[\"']res://(mods|plugins)/" plugins --include='*.gd' || true)
           if [ -n "$hits" ]; then
-            echo "::error::禁令1 违例：mods/ 内出现硬编码 res://mods|plugins 路径的 preload/load（铁律1：插件不引用插件）"
+            echo "::error::禁令1 违例：plugins/ 内出现硬编码 res://mods|plugins 路径的 preload/load（铁律1：插件不引用插件）"
             echo "$hits"
             exit 1
           fi
           echo "禁令1 通过"
 
-      - name: 禁令2 mods/ 内禁止跨插件相对路径 get_node
+      - name: 禁令2 plugins/ 内禁止跨插件相对路径 get_node
         run: |
           # 铁律1：禁止 get_node("../xxx") / $"../xxx" 跨插件访问节点。
-          hits=$(grep -rnE "get_node(_or_null)?[[:space:]]*\([[:space:]]*[\"'][^\"']*\.\./" mods --include='*.gd' || true)
-          hits2=$(grep -rnE '\$"[^"]*\.\./' mods --include='*.gd' || true)
+          hits=$(grep -rnE "get_node(_or_null)?[[:space:]]*\([[:space:]]*[\"'][^\"']*\.\./" plugins --include='*.gd' || true)
+          hits2=$(grep -rnE '\$"[^"]*\.\./' plugins --include='*.gd' || true)
           if [ -n "$hits" ] || [ -n "$hits2" ]; then
-            echo "::error::禁令2 违例：mods/ 内出现跨插件相对路径节点访问（铁律1：插件不引用插件）"
+            echo "::error::禁令2 违例：plugins/ 内出现跨插件相对路径节点访问（铁律1：插件不引用插件）"
             echo "$hits"
             echo "$hits2"
             exit 1
           fi
           echo "禁令2 通过"
 
-      - name: 禁令3 mods/ 与 core/ 内禁止硬编码 /root/Kernel
+      - name: 禁令3 plugins/ 与 core/ 内禁止硬编码 /root/Kernel
         run: |
           # 铁律2：服务只从访问层获取（PluginContext，ADR-0001）。
           # 白名单：src/ 引导壳（main.gd 负责装配内核本体，属基础设施而非插件代码）。
-          hits=$(grep -rn "/root/Kernel" mods core --include='*.gd' || true)
+          hits=$(grep -rn "/root/Kernel" plugins core --include='*.gd' || true)
           if [ -n "$hits" ]; then
-            echo "::error::禁令3 违例：mods/ 或 core/ 内硬编码 /root/Kernel（铁律2：服务只从访问层获取）"
+            echo "::error::禁令3 违例：plugins/ 或 core/ 内硬编码 /root/Kernel（铁律2：服务只从访问层获取）"
             echo "$hits"
             exit 1
           fi
@@ -98,11 +98,11 @@ jobs:
           set -euo pipefail
           fixture="$RUNNER_TEMP/mod-fixture"
           rm -rf "$fixture"
-          mkdir -p "$fixture/mods/_skip" "$fixture/mods/valid/scripts" "$fixture/mods/valid/.godot" "$fixture/mods/no_manifest"
+          mkdir -p "$fixture/plugins/_skip" "$fixture/plugins/valid/scripts" "$fixture/plugins/valid/.godot" "$fixture/plugins/no_manifest"
           cp export_mods.sh "$fixture/"
-          printf '%s\n' '{"id":"skip","version":"1.0.0"}' > "$fixture/mods/_skip/plugin.json"
-          printf '%s\n' '{"id":"valid","version":"1.0.0"}' > "$fixture/mods/valid/plugin.json"
-          touch "$fixture/mods/valid/scripts/a.gd" "$fixture/mods/valid/.godot/cache.bin"
+          printf '%s\n' '{"id":"skip","version":"1.0.0"}' > "$fixture/plugins/_skip/plugin.json"
+          printf '%s\n' '{"id":"valid","version":"1.0.0"}' > "$fixture/plugins/valid/plugin.json"
+          touch "$fixture/plugins/valid/scripts/a.gd" "$fixture/plugins/valid/.godot/cache.bin"
 
           out="$(cd "$fixture" && bash ./export_mods.sh)"
           echo "$out"
@@ -125,11 +125,11 @@ jobs:
           set -euo pipefail
           fixture="$RUNNER_TEMP/mod-fixture-ps"
           rm -rf "$fixture"
-          mkdir -p "$fixture/mods/_skip" "$fixture/mods/valid/scripts" "$fixture/mods/valid/.godot" "$fixture/mods/no_manifest"
+          mkdir -p "$fixture/plugins/_skip" "$fixture/plugins/valid/scripts" "$fixture/plugins/valid/.godot" "$fixture/plugins/no_manifest"
           cp export_mods.ps1 "$fixture/"
-          printf '%s\n' '{"id":"skip","version":"1.0.0"}' > "$fixture/mods/_skip/plugin.json"
-          printf '%s\n' '{"id":"valid","version":"1.0.0"}' > "$fixture/mods/valid/plugin.json"
-          touch "$fixture/mods/valid/scripts/a.gd" "$fixture/mods/valid/.godot/cache.bin"
+          printf '%s\n' '{"id":"skip","version":"1.0.0"}' > "$fixture/plugins/_skip/plugin.json"
+          printf '%s\n' '{"id":"valid","version":"1.0.0"}' > "$fixture/plugins/valid/plugin.json"
+          touch "$fixture/plugins/valid/scripts/a.gd" "$fixture/plugins/valid/.godot/cache.bin"
 
           (cd "$fixture" && pwsh -NoProfile -File ./export_mods.ps1)
 

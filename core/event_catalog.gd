@@ -29,7 +29,7 @@ const SCENE_CHANGED := &"scene_changed"
 # 通用通道 payload：{ "scope": String }
 const DATA_RELOADED := &"data_reloaded"
 
-# ── 测试协作事件（issue #6 集成测试，插件对 mods/_test_pair_*） ────────────────
+# ── 测试协作事件（issue #6 集成测试，插件对 tests/fixtures/_test_pair_*） ─────────
 # 测试插件对纯 EventBus 协作闭环（铁律 1 活教材）：发布方发 ping，订阅方回 pong。
 # 供集成测试断言协作收发与热重载订阅守恒。
 

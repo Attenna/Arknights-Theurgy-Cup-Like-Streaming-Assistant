@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cdsk4awtsy18l"
-path="res://.godot/imported/主视觉.png-8e9e85e02cedb4836cf14774e08cbf6d.ctex"
+path="res://.godot/imported/主视觉.png-0218c1207a5ae8bb4250701deda70f58.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods/main_vision/assets/textures/主视觉.png"
-dest_files=["res://.godot/imported/主视觉.png-8e9e85e02cedb4836cf14774e08cbf6d.ctex"]
+source_file="res://plugins/main_vision/assets/textures/主视觉.png"
+dest_files=["res://.godot/imported/主视觉.png-0218c1207a5ae8bb4250701deda70f58.ctex"]
 
 [params]
 

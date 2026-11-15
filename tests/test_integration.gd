@@ -1,5 +1,5 @@
 # tests/test_integration.gd
-# 协作集成测试（issue #6）：测试插件对（mods/_test_pair_*）纯 EventBus 协作闭环。
+# 协作集成测试（issue #6）：测试插件对（tests/fixtures/_test_pair_*）纯 EventBus 协作闭环。
 # 断言：插件对随内核启动加载并完成协作收发；热重载 N 次后订阅数守恒
 # （owner 清理证明，ADR-0002）；依赖阻塞不加载 + 依赖就绪后补加载。
 # 运行于真实启动场景（tests/test_main.tscn），run() 内含 await，runner 统一 await 调用。
@@ -8,9 +8,12 @@ extends TestCase
 
 const PAIR_A := "test_pair_a"
 const PAIR_B := "test_pair_b"
+const FIXTURES_ROOT := "res://tests/fixtures"
+const FIXTURE_DIRS: Array[String] = ["_test_pair_a", "_test_pair_b"]
 const RELOAD_TIMES := 3
 
 func run() -> bool:
+	_load_fixture_pairs()
 	_test_pair_loaded()
 	await _test_collaboration()
 	await _test_reload_subscription_conserved()
@@ -44,8 +47,18 @@ func _settle() -> void:
 # ── 用例 ─────────────────────────────────────────────────────────────────────
 
 func _test_pair_loaded() -> void:
-	ok(_pm().is_loaded(PAIR_A), "测试插件对 A 随内核启动加载")
-	ok(_pm().is_loaded(PAIR_B), "测试插件对 B 随内核启动加载")
+	ok(_pm().is_loaded(PAIR_A), "测试插件对 A 加载")
+	ok(_pm().is_loaded(PAIR_B), "测试插件对 B 加载")
+
+## 测试夹具不在启动扫描根（res://plugins）内，按清单显式加载；
+## 加载路径与 PluginManager 正常加载一致，只是来源目录不同。
+func _load_fixture_pairs() -> void:
+	var pm := _pm()
+	for dir_name in FIXTURE_DIRS:
+		var res_dir := FIXTURES_ROOT.path_join(dir_name)
+		var manifest: Dictionary = pm._read_manifest(res_dir)
+		if not manifest.is_empty():
+			pm._load_plugin(res_dir, manifest, FIXTURES_ROOT, true)
 
 func _test_collaboration() -> void:
 	await _settle()
@@ -81,10 +94,10 @@ func _test_reload_subscription_conserved() -> void:
 
 func _test_blocked_plugin() -> void:
 	var pm := _pm()
-	var mods := DirAccess.open("res://mods")
+	var plugins_dir := DirAccess.open("res://plugins")
 	# 阶段 1：动态创建缺失依赖的插件 → 重走发现流程 → 阻塞不加载
-	mods.make_dir("_test_blocking")
-	_write_json("res://mods/_test_blocking/plugin.json", {
+	plugins_dir.make_dir("_test_blocking")
+	_write_json("res://plugins/_test_blocking/plugin.json", {
 		"id": "test_blocking",
 		"name": "阻塞测试插件",
 		"version": "1.0.0",
@@ -99,8 +112,8 @@ func _test_blocked_plugin() -> void:
 		blocked_ids.append(str(b.get("id", "")))
 	ok(blocked_ids.has("test_blocking"), "阻塞列表记录缺失依赖插件")
 	# 阶段 2：补上缺失依赖（模拟用户放置依赖插件目录）→ 走 reload_all 尾部的补加载路径
-	mods.make_dir("_missing_dep_xyz")
-	_write_json("res://mods/_missing_dep_xyz/plugin.json", {
+	plugins_dir.make_dir("_missing_dep_xyz")
+	_write_json("res://plugins/_missing_dep_xyz/plugin.json", {
 		"id": "missing_dep_xyz",
 		"name": "补依赖测试插件",
 		"version": "1.0.0",
@@ -108,22 +121,22 @@ func _test_blocked_plugin() -> void:
 		"dependencies": [],
 		"hot_reload": { "enabled": false },
 	})
-	pm._load_plugin("res://mods/_missing_dep_xyz", {
+	pm._load_plugin("res://plugins/_missing_dep_xyz", {
 		"id": "missing_dep_xyz", "dependencies": [],
-	}, "res://mods", true)
+	}, "res://plugins", true)
 	pm._try_load_blocked()
 	ok(pm.is_loaded("missing_dep_xyz"), "补上的依赖插件已加载")
 	ok(pm.is_loaded("test_blocking"), "依赖就绪后阻塞插件补加载成功（_try_load_blocked）")
 	# 清理动态目录，保持工作区干净（测试进程随后退出）
-	eq(DirAccess.remove_absolute("res://mods/_test_blocking/plugin.json"), OK, "清理阻塞测试插件清单")
-	eq(DirAccess.remove_absolute("res://mods/_test_blocking"), OK, "清理阻塞测试插件目录")
-	eq(DirAccess.remove_absolute("res://mods/_missing_dep_xyz/plugin.json"), OK, "清理依赖插件清单")
-	eq(DirAccess.remove_absolute("res://mods/_missing_dep_xyz"), OK, "清理依赖插件目录")
+	eq(DirAccess.remove_absolute("res://plugins/_test_blocking/plugin.json"), OK, "清理阻塞测试插件清单")
+	eq(DirAccess.remove_absolute("res://plugins/_test_blocking"), OK, "清理阻塞测试插件目录")
+	eq(DirAccess.remove_absolute("res://plugins/_missing_dep_xyz/plugin.json"), OK, "清理依赖插件清单")
+	eq(DirAccess.remove_absolute("res://plugins/_missing_dep_xyz"), OK, "清理依赖插件目录")
 
-## 重走插件发现流程：重扫描 mods → 依赖重解析 → 加载新出现的插件（已加载者跳过）。
+## 重走插件发现流程：重扫描 plugins → 依赖重解析 → 加载新出现的插件（已加载者跳过）。
 ## 模拟"重启后的发现"，用于动态创建插件目录后的加载验证。
 func _rediscover(pm: Node) -> void:
-	var manifests: Array = pm._scan_manifests("res://mods")
+	var manifests: Array = pm._scan_manifests("res://plugins")
 	var ordered: Array = pm._resolve_load_order(manifests)
 	for info in ordered:
 		var pid := str(info.get("manifest", {}).get("id", str(info.get("res_dir", "")).get_file()))
