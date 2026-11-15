@@ -122,7 +122,7 @@ func _test_blocked_plugin() -> void:
 		"hot_reload": { "enabled": false },
 	})
 	pm._load_plugin("res://plugins/_missing_dep_xyz", {
-		"id": "missing_dep_xyz", "dependencies": [],
+		"id": "missing_dep_xyz", "dependencies": [], "api_version": "2.0.0",
 	}, "res://plugins", true)
 	pm._try_load_blocked()
 	ok(pm.is_loaded("missing_dep_xyz"), "补上的依赖插件已加载")

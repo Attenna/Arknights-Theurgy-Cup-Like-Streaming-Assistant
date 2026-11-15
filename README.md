@@ -95,6 +95,7 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 |------|------|
 | [AGENTS.md](AGENTS.md) | AI 协作规范：最小改动原则、目录禁区、验证流程、已知坑 |
 | [代码库导览](framework/docs/代码库导览.md) | 项目全貌：核心理念、启动顺序、内核服务、插件契约、数据根与阅读路径 |
+| [API 契约版本](framework/docs/api-version.md) | api_version 语义、范围语法与不兼容时的阻塞行为 |
 | [插件开发指南](framework/docs/插件开发指南.md) | plugin.json 契约、生命周期、资源自携带、依赖解析、热重载边界 |
 | [控制面板插件约定](framework/docs/控制面板插件约定.md) | 基底 + 二级面板架构、挂载约定、新增二级面板步骤 |
 | [导出指南](framework/docs/导出指南.md) | 导出纯核心、插件打包、发布布局与验证清单 |

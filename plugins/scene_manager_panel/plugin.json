@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "author": "演播室2",
     "description": "二级面板插件：在控制面板基底上列出全部已注册直播场景，供选择播出（依赖 control_panel_base）",
-    "api_version": "2.0.0",
+    "api_version": ">=2.0.0 <3.0.0",
     "dependencies": ["control_panel_base"],
     "load_priority": 0,
     "hot_reload": { "enabled": true, "mode": "auto", "debounce_ms": 300 },
