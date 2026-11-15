@@ -10,6 +10,12 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if (-not ('System.IO.Compression.ZipArchiveMode' -as [type])) {
+    Add-Type -AssemblyName System.IO.Compression
+}
+if (-not ('System.IO.Compression.ZipFile' -as [type])) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+}
 $root = $PSScriptRoot
 $modsRoot = Join-Path $root "mods"
 $outRoot = Join-Path $root "builds\mods"
@@ -42,8 +48,19 @@ Get-ChildItem -Directory -Path $modsRoot | ForEach-Object {
 
     $zipPath = Join-Path $outRoot "${id}_${version}.zip"
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-    # 压缩整个插件目录 → zip 内顶层即 <id>/，解压到 mods/ 即安装
-    Compress-Archive -Path $pluginDir -DestinationPath $zipPath
+    # 压缩整个插件目录 → zip 内顶层即 <目录名>/；排除 .godot 缓存（与 export_mods.sh 一致）
+    $pluginName = Split-Path $pluginDir -Leaf
+    $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        Get-ChildItem -LiteralPath $pluginDir -Recurse -File -Force |
+            Where-Object { $_.FullName -notmatch '[\\/]\.godot[\\/]' } |
+            ForEach-Object {
+                $inside = $_.FullName.Substring($pluginDir.Length + 1).Replace('\', '/')
+                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, "$pluginName/$inside") | Out-Null
+            }
+    } finally {
+        $zip.Dispose()
+    }
     $sizeKB = [math]::Round((Get-Item $zipPath).Length / 1KB)
     Write-Host "已打包: ${id}_${version}.zip (${sizeKB} KB)" -ForegroundColor Green
     $packed++
