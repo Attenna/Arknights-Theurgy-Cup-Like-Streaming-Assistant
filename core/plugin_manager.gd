@@ -179,12 +179,19 @@ func _resolve_load_order(all: Array) -> Array:
 	for id in by_id.keys():
 		deps[id] = _manifest_dependencies(by_id[id].manifest)
 		priority[id] = int(by_id[id].manifest.get("load_priority", 0))
-	# 1) 缺失依赖 → 直接阻塞
+	# 1) 缺失依赖 / API 版本不兼容 → 直接阻塞
 	var blocked_ids: Dictionary = {}   # id -> reason
 	for id in deps.keys():
 		for dep in deps[id]:
 			if not by_id.has(dep):
 				blocked_ids[id] = "缺少依赖: %s" % dep
+		if blocked_ids.has(id):
+			continue
+		var declared := str(by_id[id].manifest.get("api_version", "")).strip_edges()
+		if declared.is_empty():
+			blocked_ids[id] = "缺少 api_version（需声明兼容范围）"
+		elif not ApiVersion.is_compatible(declared, ApiVersion.CURRENT):
+			blocked_ids[id] = "API 版本不兼容: 声明 %s，核心 %s" % [declared, ApiVersion.CURRENT]
 	# 2) Kahn：反复从待定集合中挑出"依赖全部就绪"的最优先者
 	var pending: Array = []
 	for id in by_id.keys():
@@ -237,7 +244,12 @@ func _resolve_load_order(all: Array) -> Array:
 		})
 	_blocked.sort_custom(func(a, b): return str(a.get("id", "")) < str(b.get("id", "")))
 	for b in _blocked:
-		push_warning("[PluginManager] 插件被阻塞，不加载: %s — %s" % [b.get("id", ""), b.get("reason", "")])
+		var reason := str(b.get("reason", ""))
+		var message := "[PluginManager] 插件被阻塞，不加载: %s — %s" % [b.get("id", ""), reason]
+		if reason.begins_with("API 版本") or reason.begins_with("缺少 api_version"):
+			push_error(message)
+		else:
+			push_warning(message)
 	# 返回按拓扑序排列的清单信息，供 setup 按序加载
 	var ordered: Array = []
 	for id in _load_order:
@@ -280,6 +292,14 @@ func _load_plugin(res_dir: String, manifest: Dictionary, origin: String = "", fr
 	var plugin_id := str(manifest.get("id", ""))
 	if plugin_id.is_empty():
 		plugin_id = res_dir.get_file()
+	var declared_api := str(manifest.get("api_version", "")).strip_edges()
+	if not ApiVersion.is_compatible(declared_api, ApiVersion.CURRENT):
+		var why := "缺少 api_version"
+		if not declared_api.is_empty():
+			why = "声明 %s，核心 %s" % [declared_api, ApiVersion.CURRENT]
+		push_error("[PluginManager] 插件 API 版本不兼容，拒绝加载: %s（%s）" % [plugin_id, why])
+		plugin_loaded.emit(plugin_id, false)
+		return false
 	if _plugins.has(plugin_id):
 		push_warning("[PluginManager] 插件 id 重复，跳过: %s" % plugin_id)
 		return false
