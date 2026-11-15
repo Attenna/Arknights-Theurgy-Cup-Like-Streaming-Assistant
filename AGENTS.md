@@ -100,6 +100,8 @@ D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe --h
   多行提交信息用单行 `-m`。
 - Godot 可执行文件：`D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe`。
 - 文档、注释、提交信息一律**中文**（与用户交流语言一致）。
+- **文档语言策略**：中文是唯一正式版本，**不维护英文副本**；确需英文版时另开 issue 决策，
+  不默认双语、不在仓库内保留英文归档（讨论过程的英文原文不入库）。
 
 ## 8. 重大操作前
 
