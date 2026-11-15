@@ -12,14 +12,22 @@ var current_announcer_data_path: String
 # 数据存储
 var current_confirmed_announcers: Array = []
 
+# 事件总线引用（_exit_tree 精确退订用，避免场景切换后订阅残留）
+var _event_bus: EventBus = null
+# 数据访问统一走 DataService（兼容 v1 信封与旧版裸格式）
+var _data_service: DataService = null
+
 func _ready() -> void:
 	# 初始化路径变量
 	current_announcer_data_path = AppData.get_user_dir() + "/userdata/announcers/current_announcer.json"
 
 	# 订阅内核契约事件（铁律1/2/3：插件协作只走 EventBus，服务经 PluginContext 获取）
 	var ctx := PluginContext.for_node(self)
-	if ctx.event_bus:
-		ctx.event_bus.subscribe(EventCatalog.ANNOUNCER_CHANGED, _on_announcer_confirmed, &"streaming_arena")
+	_event_bus = ctx.event_bus
+	_data_service = ctx.data_service
+	if _event_bus:
+		_event_bus.subscribe(EventCatalog.ANNOUNCER_CHANGED, _on_announcer_confirmed, &"streaming_arena")
+		_event_bus.subscribe(EventCatalog.DATA_RELOADED, _on_data_reloaded, &"streaming_arena")
 
 	# 初始加载当前解说员数据
 	_load_current_announcer_data()
@@ -27,11 +35,27 @@ func _ready() -> void:
 	# 更新显示
 	_update_announcers_display()
 
+func _exit_tree() -> void:
+	# 节点随场景销毁时精确退订本节点回调，杜绝订阅表残留死条目
+	if _event_bus != null:
+		_event_bus.unsubscribe(EventCatalog.ANNOUNCER_CHANGED, _on_announcer_confirmed)
+		_event_bus.unsubscribe(EventCatalog.DATA_RELOADED, _on_data_reloaded)
+
+func _on_data_reloaded(_payload: Dictionary) -> void:
+	# 数据重载 / 当前解说被清空时，从 DataService 重读并刷新显示
+	_load_current_announcer_data()
+	_update_announcers_display()
+
 func _on_announcer_confirmed(announcer_data: Dictionary) -> void:
 	# 处理解说员确认信号
 	print("🎯 接收到解说员确认信号: " + str(announcer_data))
 	
-	# 直接从信号数据提取解说员名称
+	# 契约事件负载为单个解说实体（含 name）；旧格式为 {"announcers": [...]} 列表
+	if announcer_data.has(DataKeys.ANNOUNCER_NAME):
+		var name_str := str(announcer_data.get(DataKeys.ANNOUNCER_NAME, ""))
+		current_confirmed_announcers = [] if name_str.is_empty() else [name_str]
+		_update_announcers_display()
+		return
 	if announcer_data.has("announcers") and announcer_data["announcers"] is Array:
 		# 新格式 {"announcers": [...], "count": 3, "timestamp": ...}
 		var announcers_array = announcer_data["announcers"]
@@ -52,46 +76,14 @@ func _on_announcer_confirmed(announcer_data: Dictionary) -> void:
 		_update_announcers_display()
 
 func _load_current_announcer_data() -> void:
-	# 从current_announcer.json加载当前确认的解说员数据
-	print("Loading current announcer data from: " + current_announcer_data_path)
-	
-	if not FileAccess.file_exists(current_announcer_data_path):
-		print("Current announcer data file not found")
+	# 从 DataService 读取当前解说（兼容 v1 信封与旧版裸格式）
+	if _data_service == null:
 		current_confirmed_announcers = []
 		return
-	
-	var file = FileAccess.open(current_announcer_data_path, FileAccess.READ)
-	if file:
-		var content = file.get_as_text()
-		file.close()
-		
-		var data = JSON.parse_string(content)
-		if data == null:
-			print("Error: Failed to parse current announcer JSON")
-			current_confirmed_announcers = []
-		elif data is Dictionary:
-			# 支持多种格式
-			if data.has("names") and data["names"] is Array:
-				# 格式1: {"names": ["b", "A", "刚刚"]}
-				current_confirmed_announcers = data["names"]
-				print("Loaded " + str(current_confirmed_announcers.size()) + " confirmed announcer(s): " + str(current_confirmed_announcers))
-			elif data.has("announcers") and data["announcers"] is Array:
-				# 格式2: {"announcers": [{"name": "b", "id": "...", ...}, ...]}
-				current_confirmed_announcers = []
-				for announcer in data["announcers"]:
-					if announcer is Dictionary and announcer.has(DataKeys.ANNOUNCER_NAME):
-						current_confirmed_announcers.append(announcer[DataKeys.ANNOUNCER_NAME])
-				print("Loaded " + str(current_confirmed_announcers.size()) + " confirmed announcer(s) from announcer objects: " + str(current_confirmed_announcers))
-			else:
-				print("Error: Invalid current announcer data format - missing 'names' or 'announcers' field")
-				print("Data structure: " + str(data.keys()) + " | Data: " + str(data))
-				current_confirmed_announcers = []
-		else:
-			print("Error: Current announcer data is not a Dictionary")
-			current_confirmed_announcers = []
-	else:
-		print("Error: Could not open current announcer data file")
-		current_confirmed_announcers = []
+	var announcer := _data_service.get_current_announcer()
+	var name_str := str(announcer.get(DataKeys.ANNOUNCER_NAME, ""))
+	current_confirmed_announcers = [] if name_str.is_empty() else [name_str]
+	print("Loaded " + str(current_confirmed_announcers.size()) + " confirmed announcer(s): " + str(current_confirmed_announcers))
 
 func _update_announcers_display() -> void:
 	# 更新解说员名单显示

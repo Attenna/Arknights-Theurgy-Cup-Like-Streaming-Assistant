@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://c36wlyg3pmiko"
+
+[deps]
+
+files=["res://plugins/player_database/docs/csv_testdata/announcers.名称.translation", "res://plugins/player_database/docs/csv_testdata/announcers.头像路径.translation", "res://plugins/player_database/docs/csv_testdata/announcers.备注.translation"]
+
+source_file="res://plugins/player_database/docs/csv_testdata/announcers.csv"
+dest_files=["res://plugins/player_database/docs/csv_testdata/announcers.名称.translation", "res://plugins/player_database/docs/csv_testdata/announcers.头像路径.translation", "res://plugins/player_database/docs/csv_testdata/announcers.备注.translation"]
+
+[params]
+
+compress=true
+delimiter=0

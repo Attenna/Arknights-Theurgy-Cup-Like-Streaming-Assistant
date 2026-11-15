@@ -29,6 +29,7 @@ plugins/<插件>/ ──拷贝/解压──▶   mods/<插件>/        ← 文�
 | `streaming_arena` | 直播场景 | 比赛场（素材 / 字体 / 着色器全自携带的实例模板） |
 | `control_panel_base` | 面板（基底） | 控制面板骨架，装载所有 `slot="control_panel"` 二级面板 |
 | `scene_manager_panel` | 面板（二级） | 依赖基底，列出全部已注册直播场景供选择播出 |
+| `player_database` | 面板（二级）+ 数据 | SQLite 选手 / 队伍 / 解说数据库，自动同步 `userdata` 契约 JSON（自带 Windows x64 godot-sqlite 原生扩展） |
 
 ## 快速开始
 
@@ -175,6 +176,39 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 
 > 校验对数字统一按数值处理（JSON 解析无整型概念）；插件内字段名一律引用 `DataKeys`
 > 常量（如 `DataKeys.PLAYER_NAME`），禁止裸字符串（铁律 3）。
+
+### SQLite 主库（`player_database` 插件）
+
+- 存储：`userdata/player_database/player_database.db`（SQLite，表 `players` / `teams` /
+  `announcers` / `app_state`）。原生扩展由插件自带并在 `on_load` 时运行时加载，核心无需安装 addon。
+- 权威：所有增删改先写 SQLite，再自动导出上文的契约 JSON（含 `schema_version` 信封）；
+  现有场景与其它插件继续经 `DataService` 读取，并订阅 `player_changed` /
+  `announcer_changed` / `data_reloaded` 事件。
+- 接口（插件内服务节点）：`list/get/create/update/delete_*`、`set_current_*` /
+  `clear_current_*`、`import_from_json()` / `export_to_json()`、`set_team_members()`、
+  `import_from_csv()` / `export_to_csv()` / `ensure_csv_templates()` / `get_csv_dir()`。
+- 队伍成员由 `players.team_id` 派生，`teams.members` 在导出时自动生成，避免两份数据漂移。
+- 原生库当前随包提供 **Windows x86_64**（debug / release）；其它平台需替换
+  `native/` 下对应二进制并在 `gdsqlite.gdextension` 增加条目。
+
+#### CSV 快速录入
+
+1. 控制面板「数据」页点「导出 CSV 模板」或「打开 CSV 目录」，文件位于
+   `userdata/player_database/csv/`：`players.csv` / `teams.csv` / `announcers.csv`。
+2. 用 Excel / WPS / 文本编辑器填行（建议保存为 **CSV UTF-8**），点「从 CSV 导入（合并）」。
+3. 也可用任意路径调用 `import_from_csv("D:/.../csv")` 批量导入。
+
+- 表头支持英文契约名（`id,name,team_id,captain,score,money_taken,slogan,...`）与常用中文别名
+  （`姓名 / 队伍 / 队长 / 开局干员 / 开局藏品 / 开局分队 / 积分 / 取钱 / 感言` 等）。
+- 合并语义：以 `id` 为唯一键；只覆盖 CSV 中出现的列，未出现的列保持不变，空单元格清空该列。
+- **自适应扩展列**：任何未识别的表头（如 `备注`、`评级`）自动写入数据库 `extra_json`，
+  并出现在 JSON 导出与「导出当前数据为 CSV」中；后续 CSV 未写该列时原值保留。
+- 队伍成员以选手 `team_id` 为准；CSV 的 `members` 列仅作导出参考，导入时忽略。
+- 解析支持逗号 / 分号 / 制表符分隔、UTF-8 BOM、引号包裹的逗号与换行；
+  空行与缺 `id` 行会被跳过，问题行汇总在导入结果的 `issues` 中。
+- 配套样例 CSV：[docs/csv_testdata](plugins/player_database/docs/csv_testdata/)（含故意异常行，
+  复制到 CSV 目录即可验证导入告警）。
+- 完整测试用例见 [CSV 导入测试用例](plugins/player_database/docs/CSV导入测试用例.md)。
 
 ### 选手头像与队伍图标
 
