@@ -10,34 +10,36 @@
 ## 核心认知：一切皆插件（core 2.0.0）
 
 ```
-仓库（开发时）                 部署目录（运行时）
-core/ + src/  ──导出──▶        演播室2.exe + .pck   ← 纯核心
-plugins/<插件>/ ──拷贝/解压──▶   mods/<插件>/        ← 文件夹即安装
+仓库（开发时）                          部署目录（运行时）
+core/ + src/ ──导出──▶ exe + .pck        ← 纯核心
+插件仓库 ──shiyingshi-dist 组装──▶ mods/<插件>/  ← 文件夹即安装
 ```
 
 - 主核心（`core/`）只提供引导、服务总线（事件 / 数据 / 场景调度 / 插件注册 / 热重载）、
   插件契约与依赖解析；**不包含任何具体功能**。
-- 所有直播场景、控制面板、编辑器均为 `plugins/` 下的外部插件，共享同一份
-  `plugin.json` 契约；核心**零插件可正常启动**（空窗口 + 优雅降级）。
+- 所有直播场景、控制面板、编辑器均为**独立插件仓库**，共享同一份 `plugin.json` 契约；
+  由 `shiyingshi-dist` 按 manifest 组装成交付文件夹。核心**零插件可正常启动**（空窗口 + 优雅降级）。
 - **依赖强制解析**：`dependencies` 缺失 / 环形的插件阻塞不加载，无半加载状态。
 - **热重载**：改场景 / 数据 / 脚本无需重启即可生效（`F5` 重载全部）。
 
-当前随仓库提供的插件：
+插件仓库（独立维护，tag 由 dist manifest 固定）：
 
-| 插件 | 类型 | 说明 |
-|------|------|------|
-| `streaming_arena` | 直播场景 | 比赛场（素材 / 字体 / 着色器全自携带的实例模板） |
-| `control_panel_base` | 面板（基底） | 控制面板骨架，装载所有 `slot="control_panel"` 二级面板 |
-| `scene_manager_panel` | 面板（二级） | 依赖基底，列出全部已注册直播场景供选择播出 |
-| `player_database` | 面板（二级）+ 数据 | SQLite 选手 / 队伍 / 解说数据库，自动同步 `userdata` 契约 JSON（自带 Windows x64 godot-sqlite 原生扩展） |
+| 插件 | 仓库 | 类型 | 说明 |
+|------|------|------|------|
+| `streaming_arena` | `shiyingshi-plugin-streaming-arena` | 直播场景 | 比赛场（素材 / 字体 / 着色器全自携带的实例模板） |
+| `main_vision` | `shiyingshi-plugin-main-vision` | 直播场景 | 主视觉 |
+| `control_panel_base` | `shiyingshi-plugin-control-panel-base` | 面板（基底） | 控制面板骨架，装载所有 `slot="control_panel"` 二级面板 |
+| `scene_manager_panel` | `shiyingshi-plugin-scene-manager-panel` | 面板（二级） | 依赖基底，列出全部已注册直播场景供选择播出 |
+| `player_database` | `shiyingshi-plugin-player-database` | 面板（二级）+ 数据 | SQLite 选手 / 队伍 / 解说数据库，自动同步 `userdata` 契约 JSON（自带 Windows x64 godot-sqlite 原生扩展） |
 
 ## 快速开始
 
 ### 路线 A：开发者（从源码运行）
 
-1. 克隆仓库
+1. 克隆本仓库（纯核心）与 `shiyingshi-dist`
 2. 用 **Godot 4.5.1 mono** 打开 `project.godot`，等待导入完成
-3. 直接 `F5` 运行：控制面板弹出，含「直播场景」列表，可切换比赛场
+3. 在 `shiyingshi-dist` 运行 `scripts/assemble.ps1`，或把插件仓库复制到本地 `plugins/` 后 `F5`
+4. 核心单独启动时为空窗口（优雅降级）；交付形态由 dist 组装
 
 ### 路线 B：用户（发布版部署）
 
@@ -81,7 +83,6 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 ├── AGENTS.md                  # AI 协作工作规范（Agent 先读）
 ├── core/                      # 内核：Kernel autoload + 六服务 + Plugin/PluginScene 契约
 ├── src/                       # 引导壳（main.tscn / main.gd，含 --scene 直连参数）
-├── plugins/                   # 插件源码根目录（开发时插件放这里）
 ├── framework_cs/              # C# 内容框架（独立未接入，见插件开发指南第 7 节）
 ├── shared/                    # 应用图标 + 设计源（.afphoto）
 ├── content/ + userdata/       # 数据源与用户数据（见下方数据规范）

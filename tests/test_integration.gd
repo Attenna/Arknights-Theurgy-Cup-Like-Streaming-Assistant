@@ -99,6 +99,9 @@ func _test_reload_subscription_conserved() -> void:
 
 func _test_blocked_plugin() -> void:
 	var pm := _pm()
+	# core 仓库不再携带插件；干净检出时 plugins/ 可能不存在，测试自行创建。
+	if not DirAccess.dir_exists_absolute("res://plugins"):
+		DirAccess.make_dir_recursive_absolute("res://plugins")
 	var plugins_dir := DirAccess.open("res://plugins")
 	# 阶段 1：动态创建缺失依赖的插件 → 重走发现流程 → 阻塞不加载
 	plugins_dir.make_dir("_test_blocking")

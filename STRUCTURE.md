@@ -20,7 +20,6 @@
 项目根目录/
 ├── core/                    # 内核：Kernel autoload + 服务 + 插件契约
 ├── src/                     # 引导壳（main.tscn / main.gd），不含任何业务场景
-├── plugins/                 # 全部插件源码（每个子目录一个独立插件）
 ├── shared/                  # 仅应用图标 + 设计源（.afphoto / .afdesign）
 ├── content/                 # 只读内置内容数据（干员名单 / 藏品等）
 ├── userdata/                # 首次运行播种到 user:// 的示例用户数据
@@ -54,7 +53,7 @@ core/
 ├── kernel.gd             # autoload 入口：初始化服务、扫描并启动插件
 ├── plugin.gd             # 插件契约基类（Plugin）
 ├── plugin_scene.gd       # 场景插件基类（PluginScene）
-├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载（扫描 plugins/）
+├── plugin_manager.gd     # 发现 / 加载 / 启用 / 卸载 / 热重载（插件根由运行环境决定）
 ├── plugin_context.gd     # 插件服务访问层（PluginContext，ADR-0001）
 ├── event_catalog.gd      # 事件目录（事件名常量化 + payload 契约）
 ├── data_keys.gd          # 数据字段常量
@@ -77,19 +76,20 @@ src/
     └── data/app_data.gd      # AppData autoload：exe 目录 / 用户数据目录 / 首运行播种
 ```
 
-### `plugins/` — 全部插件源码
+### 插件仓库（外部）
 
-每个子目录即一个独立插件（同一份 `plugin.json` 契约、同一套生命周期与热重载管线）。
+插件源码不在本仓库，各自独立仓库维护，由 `shiyingshi-dist` 组装：
 
-```
-plugins/
-├── control_panel_base/     # 控制面板基底（一级面板容器 + mount_panel 挂载协议）
-├── scene_manager_panel/    # 场景管理二级面板（dependencies: control_panel_base）
-├── streaming_arena/        # 比赛场直播场景（实例模板：素材/字体/着色器全自携带）
-└── _template/              # 插件脚手架骨架（plugin.json.example，复制即用）
-```
+| 插件 | 仓库 |
+|---|---|
+| `streaming_arena` | `shiyingshi-plugin-streaming-arena` |
+| `main_vision` | `shiyingshi-plugin-main-vision` |
+| `control_panel_base` | `shiyingshi-plugin-control-panel-base` |
+| `scene_manager_panel` | `shiyingshi-plugin-scene-manager-panel` |
+| `player_database` | `shiyingshi-plugin-player-database` |
 
-> 插件无需注册表：`PluginManager` 自动扫描 `plugins/` 下带 `plugin.json`（或旧 `mod.json`）的目录。
+> 开发期可把插件仓库复制到本地 `plugins/`（不提交）；导出后从可执行文件同级 `mods/` 加载。
+> 插件模板在 `shiyingshi-dist/templates/plugin-template/`。
 > **资源自携带**：纹理 / 字体 / 着色器必须放在插件自身 `assets/` 下，核心不提供共享资源。
 
 ### `shared/` — 仅应用图标 + 设计源

@@ -57,7 +57,8 @@ PluginRegistry 只读查询 → mount_panel 挂载 → DataService 共享 →
 |------|------|------|
 | `core/` | 内核：Kernel autoload + 六服务 + Plugin/PluginScene 契约 | 勿在内核代码里认识任何具体插件 id；勿随意改公开接口 |
 | `src/` | 引导壳（main.tscn / main.gd） | 勿在此注册/认识具体场景 |
-| `plugins/` | 全部插件源码（每个子目录一个独立插件） | 勿跨插件互相引用对方内部文件（只走 manifest 能力） |
+| `shiyingshi-plugin-*` | 各插件独立仓库（源码 + 独立 CI + tag） | 勿跨插件互相引用对方内部文件（只走 manifest 能力） |
+| `shiyingshi-dist` | 交付组装仓库（manifest + assemble 脚本） | 勿把交付产物提交进 git |
 | `shared/` | 仅应用图标 + 设计源（.afphoto） | 勿恢复共享字体/纹理——插件资源必须自携带 |
 | `.godot/` `builds/` | 缓存与导出产物 | 永不提交、永不手工修改 |
 | `framework/docs/` | 全部文档 | 改约定必须同步文档 |
@@ -119,17 +120,16 @@ D:\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64_console.exe --h
 **核心与插件是「运行时拼装」关系，不是打包关系**：
 
 ```
-仓库（开发时）                 部署目录（运行时，如用户的"大集合"）
-core/ + src/ ──导出──▶         演播室2.exe + .pck   ← 纯核心（插件永不进 pck）
-plugins/<插件>/ ──拷贝/解压──▶  mods/<插件>/        ← 文件夹即安装
+仓库（开发时）                          部署目录（运行时，如用户的"大集合"）
+core/ + src/ ──导出──▶ exe + .pck        ← 纯核心（插件永不进 pck）
+插件仓库 ──shiyingshi-dist 组装──▶ mods/<插件>/  ← 文件夹即安装
 ```
 
-- 「插件」=「模组」：同一份 plugin.json 契约、同一个部署根目录 `mods/`；源码目录为 `plugins/`。
+- 「插件」=「模组」：同一份 plugin.json 契约、同一个部署根目录 `mods/`；源码在各自插件仓库。
 - **纯核心导出**：`export_filter="all_resources"` + `exclude_filter="plugins/*, framework_cs/*, tests/*"`
   已固化在 `export_presets.cfg`，勿改动；核心零插件可启动（优雅降级）是设计行为。
-- **插件打包**：Windows `.\export_mods.ps1`（可 `-Name <id>` 指定单个）、
-  Linux / macOS `./export_mods.sh <id>` → `builds/mods/<id>_<version>.zip`，
-  zip 内顶层即插件目录，解压到 `{exe}/mods/` 即完成安装。`.import` 随插件走，`.godot` 缓存不带走。
+- **插件打包 / 交付**：由 `shiyingshi-dist` 读取 `manifest.json`，按各插件仓库的 tag 组装
+  `exe + pck + mods/`；`export_mods.ps1/.sh` 仅用于本地开发打包（源目录 `plugins/`，需自行放置）。
 - **部署目录（大集合）不进 git**：它是拼装产物，不是仓库。更新 = 重新导出核心覆盖 exe/pck、
   替换对应 mods/<id>/ 文件夹；试验性插件直接丢进部署目录的 mods/ 试，不污染仓库。
 - **分支管时间，不管模块**：禁止用分支隔离 core / 插件。仓库演进（何时拆分、怎么拆）
