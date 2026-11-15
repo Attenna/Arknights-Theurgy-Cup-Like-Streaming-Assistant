@@ -13,6 +13,7 @@ const TEST_SCRIPTS: Array[String] = [
 	"res://tests/test_event_catalog.gd",
 	"res://tests/test_event_bus.gd",
 	"res://tests/test_integration.gd",
+	"res://tests/test_docs_links.gd",
 ]
 
 func _ready() -> void:
