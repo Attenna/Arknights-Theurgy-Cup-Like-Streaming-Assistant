@@ -1,4 +1,5 @@
 # export_mods.ps1 —— 一键打包所有插件为可分发 zip
+# 排除规则（_ 前缀 / 无 plugin.json）需与 export_mods.sh 保持一致；CI job: export-mods-parity。
 # 用法：
 #   .\export_mods.ps1                          # 打包 mods/ 下全部插件
 #   .\export_mods.ps1 -Name streaming_arena    # 只打包指定插件
@@ -24,6 +25,7 @@ if (-not (Test-Path $outRoot)) {
 $packed = 0
 Get-ChildItem -Directory -Path $modsRoot | ForEach-Object {
     $pluginDir = $_.FullName
+    # _ 前缀目录（模板/测试）不打包；规则变更需同步 export_mods.sh。
     if ($_.Name -like '_*') {
         Write-Host "跳过（模板/测试目录）: $($_.Name)" -ForegroundColor Yellow
         return
