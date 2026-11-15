@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # export_mods.sh —— 一键打包所有插件为可分发 zip（Linux / macOS 版，对齐 export_mods.ps1）
+# 排除规则（_ 前缀 / 无 plugin.json）需与 export_mods.ps1 保持一致；CI job: export-mods-parity。
 # 依赖：bash、zip、python3
 # 用法：
 #   ./export_mods.sh                    # 打包 mods/ 下全部插件
@@ -26,7 +27,7 @@ for plugin_dir in "$MODS_ROOT"/*/; do
     [ -d "$plugin_dir" ] || continue
     dir_name="$(basename "$plugin_dir")"
 
-    # 跳过模板 / 测试目录（_ 前缀）
+    # 跳过模板 / 测试目录（_ 前缀）；规则变更需同步 export_mods.ps1。
     case "$dir_name" in
         _*) echo "跳过（模板/测试目录）: $dir_name"; continue ;;
     esac
