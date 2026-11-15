@@ -206,9 +206,9 @@ godot_console.exe --path <项目> -- --scene streaming_arena
 - 队伍成员以选手 `team_id` 为准；CSV 的 `members` 列仅作导出参考，导入时忽略。
 - 解析支持逗号 / 分号 / 制表符分隔、UTF-8 BOM、引号包裹的逗号与换行；
   空行与缺 `id` 行会被跳过，问题行汇总在导入结果的 `issues` 中。
-- 配套样例 CSV：[docs/csv_testdata](plugins/player_database/docs/csv_testdata/)（含故意异常行，
+- 配套样例 CSV：[docs/csv_testdata](https://github.com/Attenna/shiyingshi-plugin-player-database/tree/v1.0.0/docs/csv_testdata/)（含故意异常行，
   复制到 CSV 目录即可验证导入告警）。
-- 完整测试用例见 [CSV 导入测试用例](plugins/player_database/docs/CSV导入测试用例.md)。
+- 完整测试用例见 [CSV 导入测试用例](https://github.com/Attenna/shiyingshi-plugin-player-database/blob/v1.0.0/docs/CSV导入测试用例.md)。
 
 ### 选手头像与队伍图标
 

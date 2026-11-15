@@ -85,7 +85,6 @@ src/
 plugins/
 ├── control_panel_base/     # 控制面板基底（一级面板容器 + mount_panel 挂载协议）
 ├── scene_manager_panel/    # 场景管理二级面板（dependencies: control_panel_base）
-├── player_database/        # 选手 / 队伍 / 解说 SQLite 数据库 + 管理面板（自带原生扩展）
 ├── streaming_arena/        # 比赛场直播场景（实例模板：素材/字体/着色器全自携带）
 └── _template/              # 插件脚手架骨架（plugin.json.example，复制即用）
 ```
